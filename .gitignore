@@ -1,4 +1,6 @@
 *.tst
 *.out
 *.cmp
+qui*.hack
 *.hack
+*.dat
