@@ -16,5 +16,16 @@ CHIP DMux8Way {
     OUT a, b, c, d, e, f, g, h;
 
     PARTS:
-    // Put your code here:
+    // 1段目
+    DMux(in=in, sel=sel[2], a=dout11, b=dout12);
+
+    // 2段目
+    DMux(in=dout11, sel=sel[1], a=dout21, b=dout22);
+    DMux(in=dout12, sel=sel[1], a=dout23, b=dout24);
+
+    // 3段目g
+    DMux(in=dout21, sel=sel[0], a=a, b=b);
+    DMux(in=dout22, sel=sel[0], a=c, b=d);
+    DMux(in=dout23, sel=sel[0], a=e, b=f);
+    DMux(in=dout24, sel=sel[0], a=g, b=h);
 }
