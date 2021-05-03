@@ -42,5 +42,39 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+    // if (zx == 1) set x = 0
+    Mux16(a=x, b[0..15]=false, sel=zx, out=x1);
+    
+    // if (nx == 1) set x = !x
+    Not16(in=x1, out=notx1);
+    Mux16(a=x1, b=notx1, sel=nx, out=x2);
+    
+    // if (zy == 1) set y = 0
+    Mux16(a=y, b[0..15]=false, sel=zy, out=y1);
+
+    // if (ny == 1) set y = !y
+    Not16(in=y1, out=noty1);
+    Mux16(a=y1, b=noty1, sel=ny, out=y2);
+
+    // if (f == 1)  set out = x + y
+    // if (f == 0)  set out = x & y
+    And16(a=x2, b=y2, out=xandy);    
+    Add16(a=x2, b=y2, out=xplusy);
+    Mux16(a=xandy, b=xplusy, sel=f, out=out1);
+
+    // if (no == 1) set out = !out
+    Not16(in=out1, out=notout);
+    Mux16(a=out1, b=notout, sel=no, out=out);
+
+    // zr, no を算出するための出力
+    Mux16(a=out1, b=notout, sel=no, out=out2);
+
+    // zr の算出
+//    Or8Way(in=out2[0..7], out=orout1);
+//    Or8Way(in=out2[8..15], out=orout2);
+//    Or(a=orout1, b=orout2, out=orout);
+//    Not(in=orout, out=zr);
+
+    // no の算出
+//    And(a=out2[15], b=true, out=no);
 }
