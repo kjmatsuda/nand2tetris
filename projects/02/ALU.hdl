@@ -67,14 +67,23 @@ CHIP ALU {
     Mux16(a=out1, b=notout, sel=no, out=out);
 
     // zr, no を算出するための出力
-    Mux16(a=out1, b=notout, sel=no, out=out2);
+    Mux16(a=out1, b=notout, sel=no, out[0..7]=out2Low, out[8..14]=out2High, out[15]=out2HighHigh);
 
     // zr の算出
+    Or8Way(in=out2Low, out=orOut1);
+    Or8Way(in[0..6]=out2High, in[7]=out2HighHigh, out=orOut2);
+    Or(a=orOut1,b=orOut2, out=orOut);
+    Not(in=orOut, out=zr);     
+
+    // zr の算出(自分の間違った答え。読み込み時にエラーになった)
 //    Or8Way(in=out2[0..7], out=orout1);
 //    Or8Way(in=out2[8..15], out=orout2);
 //    Or(a=orout1, b=orout2, out=orout);
 //    Not(in=orout, out=zr);
 
     // no の算出
-//    And(a=out2[15], b=true, out=no);
+    And(a=out2HighHigh, b=true, out=ng);    
+
+    // no の算出(自分の間違った答え。読み込み時にエラーになった)
+//    And(a=out2[15], b=true, out=ng);
 }
