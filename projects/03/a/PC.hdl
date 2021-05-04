@@ -16,5 +16,19 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // まずは制御ビットを優先度に応じて排他(reset が立っていたら load, inc は落とす)
+    Mux(a=load, b=false, sel=reset, out=load2);
+
+    Mux(a=inc, b=false, sel=reset, out=inc2);
+    Mux(a=inc2, b=false, sel=load, out=inc3);
+
+
+    Mux16(a=fb, b[0..15]=false, sel=reset, out=ResetOut);
+
+    Mux16(a=ResetOut, b=in, sel=load2, out=LoadOut);
+
+    Inc16(in=LoadOut, out=IncTmpOut);
+    Mux16(a=LoadOut, b=IncTmpOut, sel=inc3, out=in1);
+
+    Register(in=in1, load=true, out=out, out=fb);
 }
