@@ -60,7 +60,8 @@ CHIP CPU {
     And(a=instruction[2], b=negative, out=j1AndNegative);
     And(a=instruction[1], b=zero, out=j2AndZero);
     And(a=instruction[0], b=positive, out=j3AndPositive);
-    Or8Way(in[0]=j1AndNegative, in[1]=j2AndZero, in[2]=j3AndPositive, in[3..7]=false, out=loadPC);
+    Or8Way(in[0]=j1AndNegative, in[1]=j2AndZero, in[2]=j3AndPositive, in[3..7]=false, out=loadPCTmp);
+    And(a=loadPCTmp, b=instruction[15], out=loadPC);
 
     Or(a=operationA, b=writeA, out=loadRegisterA);
     Mux16(a=instruction, b=outALU, sel=writeA, out=outA);
