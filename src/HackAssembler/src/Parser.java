@@ -26,26 +26,49 @@ public class Parser {
 		currentCommand = currentCommand.replaceAll(" ", "");
 	}
 
-	// TODO commandType
+	public CommandType commandType() {
+		CommandType type = CommandType.A_COMMAND;
+		if (currentCommand.startsWith("@"))
+		{
+			type = CommandType.A_COMMAND;
+		}
+		else if (currentCommand.startsWith("("))
+		{
+			type = CommandType.L_COMMAND;
+		}
+		else
+		{
+			type = CommandType.C_COMMAND;
+		}
+		return type;
+	}
 
 	public String symbol() {
-		// TODO symbol
-		return currentCommand;
+		String symbolStr = "";
+		if (currentCommand.startsWith("@"))
+		{
+			symbolStr = currentCommand.substring(1);
+		}
+		else if (currentCommand.startsWith("("))
+		{
+			symbolStr = currentCommand.substring(1, currentCommand.length() - 2);
+		}
+		return symbolStr;
 	}
 
 	public String dest() {
-		// TODO dest
-		return "TODO dest";
+		int indexOfEq = currentCommand.indexOf('=');
+		return currentCommand.substring(0, indexOfEq - 1);
 	}
 
 	public String comp() {
-		// TODO comp
-		return "TODO comp";
+		int indexOfEq = currentCommand.indexOf('=');
+		return currentCommand.substring(indexOfEq + 1);
 	}
 
 	public String jump() {
-		// TODO jump
-		return "TODO jump";
+		int indexOfSemiColon = currentCommand.indexOf(';');
+		return currentCommand.substring(indexOfSemiColon + 1);
 	}
 
 	private boolean skipLine(String line) {
