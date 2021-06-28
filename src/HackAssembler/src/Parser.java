@@ -58,7 +58,7 @@ public class Parser {
 
 	public String dest() {
 		int indexOfEq = currentCommand.indexOf('=');
-		return currentCommand.substring(0, indexOfEq - 1);
+		return currentCommand.substring(0, indexOfEq);
 	}
 
 	public String comp() {
@@ -68,7 +68,11 @@ public class Parser {
 
 	public String jump() {
 		int indexOfSemiColon = currentCommand.indexOf(';');
-		return currentCommand.substring(indexOfSemiColon + 1);
+		String jumpStr = "null";
+		if (indexOfSemiColon >= 0) {
+			jumpStr = currentCommand.substring(indexOfSemiColon + 1);
+		}
+		return jumpStr;
 	}
 
 	private boolean skipLine(String line) {
