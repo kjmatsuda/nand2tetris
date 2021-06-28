@@ -58,12 +58,30 @@ public class Parser {
 
 	public String dest() {
 		int indexOfEq = currentCommand.indexOf('=');
-		return currentCommand.substring(0, indexOfEq);
+		String destStr = "null";
+		if (indexOfEq > 0) {
+			destStr = currentCommand.substring(0, indexOfEq);
+		}
+		return destStr;
 	}
 
 	public String comp() {
 		int indexOfEq = currentCommand.indexOf('=');
-		return currentCommand.substring(indexOfEq + 1);
+		int indexOfSemiColon = currentCommand.indexOf(';');
+
+		int startIndex = 0;
+		if (indexOfEq > 0)
+		{
+			startIndex = indexOfEq + 1;
+		}
+
+		int endIndex = currentCommand.length();
+		if (indexOfSemiColon > 0)
+		{
+			endIndex = indexOfSemiColon;
+		}
+
+		return currentCommand.substring(startIndex, endIndex);
 	}
 
 	public String jump() {

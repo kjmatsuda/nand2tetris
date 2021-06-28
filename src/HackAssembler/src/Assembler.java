@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,7 +9,7 @@ import java.io.IOException;
 public class Assembler {
 	public static void main(String[] args) {
 		BufferedReader reader = null;
-		FileWriter writer = null;
+		BufferedWriter writer = null;
 		if (args.length != 1 || !args[0].endsWith(".asm"))
 		{
 			System.out.println("usage: java Assembler XXX.asm");
@@ -21,7 +22,7 @@ public class Assembler {
 			reader = new BufferedReader(new FileReader(inputFile));
 
 			File outputFile = new File(fileNameWithoutExtension + ".hack");
-			writer = new FileWriter(outputFile);
+			writer = new BufferedWriter(new FileWriter(outputFile));
 
 			Parser parser = new Parser(reader);
 			Code code = new Code();
@@ -34,7 +35,7 @@ public class Assembler {
 				case A_COMMAND:
 					// TODO A_COMMAND　シンボルか10進数の数値の場合で分岐する
 					int digitNumber = Integer.parseInt(parser.symbol());
-					output = "1" + String.format("%15s", Integer.toBinaryString(digitNumber)).replace(' ', '0');
+					output = "0" + String.format("%15s", Integer.toBinaryString(digitNumber)).replace(' ', '0');
 					break;
 				case C_COMMAND:
 					output = "111"
@@ -49,6 +50,7 @@ public class Assembler {
 					break;
 				}
 				writer.write(output);
+				writer.newLine();
 				System.out.println(output);
 			}
 		} catch(FileNotFoundException e) {
