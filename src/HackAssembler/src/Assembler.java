@@ -80,6 +80,7 @@ public class Assembler {
 						else
 						{
 							symbolTable.addEntry(parser.symbol(), ramAddress);
+							digitNumber = ramAddress;
 							ramAddress++;
 						}
 					}
