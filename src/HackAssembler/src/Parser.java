@@ -29,6 +29,8 @@ public class Parser {
 		}
 		// 空白文字は削除
 		currentCommand = currentCommand.replaceAll(" ", "");
+		// コメントは削除
+		currentCommand = currentCommand.replaceAll("//.*", "");
 	}
 
 	public CommandType commandType() {
