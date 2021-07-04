@@ -58,7 +58,7 @@ public class Parser {
 		}
 		else if (currentCommand.startsWith("("))
 		{
-			symbolStr = currentCommand.substring(1, currentCommand.length() - 2);
+			symbolStr = currentCommand.substring(1, currentCommand.length() - 1);
 		}
 		return symbolStr;
 	}

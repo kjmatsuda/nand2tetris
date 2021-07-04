@@ -100,9 +100,11 @@ public class Assembler {
 				default:
 					break;
 				}
-				writer.write(output);
-				writer.newLine();
-				System.out.println(output);
+				if (!output.isEmpty()) {
+					writer.write(output);
+					writer.newLine();
+					System.out.println(output);
+				}
 			}
 		} catch(FileNotFoundException e) {
 			System.out.println(e);
