@@ -8,6 +8,11 @@ public class Parser {
 	Parser(BufferedReader input) {
 		this.input = input;
 	}
+
+	public void setReader(BufferedReader input) {
+		this.input = input;
+	}
+
 	public boolean hasMoreCommands() throws IOException {
 		boolean hasMore = false;
 		input.mark(256);

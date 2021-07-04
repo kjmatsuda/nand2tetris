@@ -26,6 +26,43 @@ public class Assembler {
 
 			Parser parser = new Parser(reader);
 			Code code = new Code();
+
+			// シンボルテーブルの生成
+			SymbolTable symbolTable = new SymbolTable();
+			// 1回目のパスでは(Xxx)のような疑似コマンドをシンボルテーブルに追加する
+			int romAddress = 0;
+			while (parser.hasMoreCommands())
+			{
+				parser.advance();
+				CommandType commandType = parser.commandType();
+				switch (commandType) {
+				case A_COMMAND:
+					romAddress++;
+					break;
+				case C_COMMAND:
+					romAddress++;
+					break;
+				case L_COMMAND:
+					if (!Util.isInteger(parser.symbol()))
+					{
+						if (!symbolTable.contains(parser.symbol()))
+						{
+							symbolTable.addEntry(parser.symbol(), romAddress);
+						}
+					}
+					break;
+				default:
+					break;
+				}
+			}
+
+			// ファイルを開き直して先頭に戻す
+			reader.close();
+			reader = new BufferedReader(new FileReader(inputFile));
+			parser.setReader(reader);
+
+			// パース
+			int ramAddress = 16;
 			while (parser.hasMoreCommands())
 			{
 				parser.advance();
@@ -33,8 +70,23 @@ public class Assembler {
 				String output = "";
 				switch (commandType) {
 				case A_COMMAND:
-					// TODO A_COMMAND　シンボルか10進数の数値の場合で分岐する
-					int digitNumber = Integer.parseInt(parser.symbol());
+					int digitNumber = 0;
+					if (!Util.isInteger(parser.symbol()))
+					{
+						if (symbolTable.contains(parser.symbol()))
+						{
+							digitNumber = symbolTable.getAddress(parser.symbol());
+						}
+						else
+						{
+							symbolTable.addEntry(parser.symbol(), ramAddress);
+							ramAddress++;
+						}
+					}
+					else
+					{
+						digitNumber = Integer.parseInt(parser.symbol());
+					}
 					output = "0" + String.format("%15s", Integer.toBinaryString(digitNumber)).replace(' ', '0');
 					break;
 				case C_COMMAND:
@@ -44,7 +96,6 @@ public class Assembler {
 							+ code.jump(parser.jump());
 					break;
 				case L_COMMAND:
-					// TODO L_COMMAND
 					break;
 				default:
 					break;
