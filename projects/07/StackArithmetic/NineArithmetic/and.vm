@@ -1,0 +1,6 @@
+// 0b1110 (14)
+// 0b0111 (7)
+// and とったら 0b0110 (6)
+push constant 14
+push constant 7
+and

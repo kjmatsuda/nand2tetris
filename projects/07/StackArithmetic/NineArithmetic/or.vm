@@ -1,0 +1,6 @@
+// 0b1110 (14)
+// 0b0111 (7)
+// or とったら 0b1111 (15)
+push constant 14
+push constant 7
+or
