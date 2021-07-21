@@ -14,7 +14,6 @@ public class Parser {
 	}
 
 	public boolean hasMoreCommands() throws IOException {
-		// TODO hasMoreCommands
 		boolean hasMore = false;
 		input.mark(256);
 		hasMore = (input.readLine() != null);
@@ -23,34 +22,73 @@ public class Parser {
 	}
 
 	public void advance() throws IOException {
-		// TODO advance
 		currentCommand = input.readLine();
 		while (skipLine(currentCommand))
 		{
 			currentCommand = input.readLine();
 		}
-		// 空白文字は削除
-		currentCommand = currentCommand.replaceAll(" ", "");
 		// コメントは削除
 		currentCommand = currentCommand.replaceAll("//.*", "");
 	}
 
 	public CommandType commandType() {
-		// TODO advance
+		// TODO commandType
 		CommandType type = CommandType.C_ARITHMETIC;
+		
+		if (currentCommand.startsWith("push"))
+		{
+			type = CommandType.C_PUSH;
+		}
+		else if (currentCommand.startsWith("pop"))
+		{
+			type = CommandType.C_POP;
+		}
+		
 		return type;
 	}
 
 	public String arg1() {
-		// TODO arg1
 		String retString = "";
+
+		String[] args = currentCommand.split(" ");
+		if (commandType().equals(CommandType.C_ARITHMETIC))
+		{
+			retString = args[0];
+		}
+		else
+		{
+			if (args.length > 1)
+			{
+				retString = args[1];
+			}
+		}
 		
 		return retString;
 	}
 
 	public int arg2() {
-		// TODO arg2
 		int retInt = 0;
+
+		String[] args = currentCommand.split(" ");
+
+		switch (commandType()) {
+		case C_PUSH:
+		case C_POP:
+		case C_FUNCTION:
+		case C_CALL:
+			if (args.length > 2)
+			{
+				try {
+					retInt = Integer.parseInt(args[2]);
+				} catch (Exception e)
+				{
+					retInt = 0;
+				}
+			}
+			break;
+		default:
+			break;
+		}
 		
 		return retInt;
 	}
