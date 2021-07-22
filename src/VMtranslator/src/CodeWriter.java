@@ -3,6 +3,7 @@ import java.io.IOException;
 
 public class CodeWriter {
 	private BufferedWriter output;
+	private int condLabelNum = 0;
 
 	CodeWriter(BufferedWriter output) {
 		this.output = output;
@@ -11,7 +12,7 @@ public class CodeWriter {
 	void setFileName(String fileName) {
 		// TODO setFileName
 	}
-	
+
 	void writeArithmetic(String command) throws IOException {
 		if (isUnaryOperator(command))
 		{
@@ -90,7 +91,7 @@ public class CodeWriter {
 	void close() {
 		// TODO close
 	}
-	
+
 	private boolean isUnaryOperator(String command) {
 		boolean isUnary = false;
 
@@ -102,7 +103,7 @@ public class CodeWriter {
 		default:
 			break;
 		}
-		
+
 		return isUnary;
 	}
 
@@ -119,10 +120,10 @@ public class CodeWriter {
 		default:
 			break;
 		}
-		
+
 		return isBinary;
 	}
-	
+
 	private void writeBinaryArithmeticOperator(String command) throws IOException {
 		switch (command) {
 		case "add":
@@ -144,11 +145,13 @@ public class CodeWriter {
 	}
 
 	private void writeBinaryCompareOperator(String command) throws IOException {
+		this.condLabelNum++;
+
 		output.write("D=M-D");
 		output.newLine();
-		output.write("@COND_SATISFIED");
+		output.write("@COND_SATISFIED" + condLabelNum);
 		output.newLine();
-		
+
 		switch (command) {
 		case "eq":
 			output.write("D;JEQ");
@@ -170,11 +173,11 @@ public class CodeWriter {
 		output.newLine();
 		output.write("M=0");
 		output.newLine();
-		output.write("@COND_END");
+		output.write("@COND_END" + condLabelNum);
 		output.newLine();
 		output.write("0;JEQ");
 		output.newLine();
-		output.write("(COND_SATISFIED)");
+		output.write("(COND_SATISFIED" + condLabelNum + ")");
 		output.newLine();
 		output.write("@SP");
 		output.newLine();
@@ -182,7 +185,7 @@ public class CodeWriter {
 		output.newLine();
 		output.write("M=-1");
 		output.newLine();
-		output.write("(COND_END)");
+		output.write("(COND_END" + condLabelNum + ")");
 		output.newLine();
 	}
 }
