@@ -127,11 +127,11 @@
     @11  // @Temp6
     M=D
     // push local 0
-    // local 0 に登録されているデータを SP に push する
+    // local 0 に登録されているデータを push SP に push する
     @0
     D=A
     @LCL
-    A=D+A   // これで M が local 0 を指す
+    A=D+M   // これで M が local 0 を指す
     D=M
     @SP
     A=M
@@ -142,7 +142,7 @@
     @5
     D=A
     @THAT
-    A=D+A
+    A=D+M
     D=M
     @SP
     A=M
@@ -161,6 +161,16 @@
     @SP
     M=M+1
     // push argument 1
+    @1
+    D=A
+    @ARG
+    A=D+M
+    D=M
+    @SP
+    A=M
+    M=D
+    @SP
+    M=M+1
     // sub
     @SP
     M=M-1
@@ -176,7 +186,7 @@
     @6
     D=A
     @THIS
-    A=D+A
+    A=D+M
     D=M
     @SP
     A=M
@@ -187,7 +197,7 @@
     @6
     D=A
     @THIS
-    A=D+A
+    A=D+M
     D=M
     @SP
     A=M
