@@ -71,21 +71,104 @@ public class CodeWriter {
 	}
 
 	void writePushPop(CommandType commandType, String segment, int index) throws IOException {
-		// TODO writePushPop。 pop にも対応できるようにする
-		output.write("@" + index);
-		output.newLine();
-		output.write("D=A");
-		output.newLine();
-		output.write("@SP");
-		output.newLine();
-		output.write("A=M");
-		output.newLine();
-		output.write("M=D");
-		output.newLine();
-		output.write("@SP");
-		output.newLine();
-		output.write("M=M+1");
-		output.newLine();
+		if (commandType.equals(CommandType.C_PUSH))
+		{
+			// TODO writePushPop。 pointer セグメントに対応する
+			// TODO writePushPop。 static セグメントに対応する
+			switch (segment) {
+			case "argument":
+			case "local":
+			case "this":
+			case "that":
+				output.write("@" + index);
+				output.newLine();
+				output.write("D=A");
+				output.newLine();
+				output.write("@" + getRamSymbolStr(segment));
+				output.newLine();
+				output.write("A=D+M");
+				output.newLine();
+				output.write("D=M");
+				output.newLine();
+				output.write("@SP");
+				output.newLine();
+				output.write("A=M");
+				output.newLine();
+				output.write("M=D");
+				output.newLine();
+				output.write("@SP");
+				output.newLine();
+				output.write("M=M+1");
+				output.newLine();
+				break;
+			case "constant":
+				output.write("@" + index);
+				output.newLine();
+				output.write("D=A");
+				output.newLine();
+				output.write("@" + getRamSymbolStr(segment));
+				output.newLine();
+				output.write("A=M");
+				output.newLine();
+				output.write("M=D");
+				output.newLine();
+				output.write("@" + getRamSymbolStr(segment));
+				output.newLine();
+				output.write("M=M+1");
+				output.newLine();
+				break;
+			case "temp":
+				// TODO writePushPop。 temp セグメントに対応する。現在は仮の状態。Temp6 のアドレスを直接指定している @11
+				output.write("@11");
+				output.newLine();
+				output.write("D=M");
+				output.newLine();
+				output.write("@SP");
+				output.newLine();
+				output.write("A=M");
+				output.newLine();
+				output.write("M=D");
+				output.newLine();
+				output.write("@SP");
+				output.newLine();
+				output.write("M=M+1");
+				output.newLine();
+				break;
+			default:
+				break;
+			}
+		}
+		else if (commandType.equals(CommandType.C_POP))
+		{
+			// TODO writePushPop。 pop temp
+			output.write("@SP");
+			output.newLine();
+			output.write("M=M-1");
+			output.newLine();
+			output.write("A=M");
+			output.newLine();
+			output.write("D=M");
+			output.newLine();
+			output.write("@" + getRamSymbolStr(segment));
+			output.newLine();
+			// TODO ここ汚いので直す
+			if (!segment.equals("temp"))
+			{
+				output.write("A=M");
+				output.newLine();
+			}
+			// TODO ここ汚いので直す
+			if (!segment.equals("temp"))
+			{
+				for (int ii = 0; ii < index; ii++)
+				{
+					output.write("A=A+1");
+					output.newLine();
+				}
+			}
+			output.write("M=D");
+			output.newLine();
+		}
 	}
 
 	void close() {
@@ -187,5 +270,35 @@ public class CodeWriter {
 		output.newLine();
 		output.write("(COND_END" + condLabelNum + ")");
 		output.newLine();
+	}
+
+	private String getRamSymbolStr(String segment) {
+		String ramSymbolStr = "SP";
+
+		switch (segment) {
+		case "argument":
+			ramSymbolStr = "ARG";
+			break;
+		case "local":
+			ramSymbolStr = "LCL";
+			break;
+		case "this":
+			ramSymbolStr = "THIS";
+			break;
+		case "that":
+			ramSymbolStr = "THAT";
+			break;
+		case "constant":
+			ramSymbolStr = "SP";
+			break;
+		// TODO getRamSymbolStr の temp の部分を直す
+		case "temp":
+			ramSymbolStr = "11";
+			break;
+		default:
+			break;
+		}
+
+		return ramSymbolStr;
 	}
 }
