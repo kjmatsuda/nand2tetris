@@ -7,6 +7,10 @@
     @SP
     M=M+1
     // pop local 0
+    @0
+    D=A
+    @LCL
+    M=M+D
     @SP
     M=M-1
     A=M
@@ -14,6 +18,10 @@
     @LCL
     A=M
     M=D
+    @0
+    D=A
+    @LCL
+    M=M-D
     // push constant 21
     @21
     D=A
@@ -31,24 +39,37 @@
     @SP
     M=M+1
     // pop argument 2
+    @2
+    D=A
+    @ARG
+    M=M+D
     @SP
     M=M-1
     A=M
     D=M
     @ARG
     A=M
-    A=A+1
-    A=A+1
     M=D
+    @2
+    D=A
+    @ARG
+    M=M-D
     // pop argument 1
+    @1
+    D=A
+    @ARG
+    M=M+D
     @SP
     M=M-1
     A=M
     D=M
     @ARG
     A=M
-    A=A+1
     M=D
+    @1
+    D=A
+    @ARG
+    M=M-D
     // push constant 36
     @36
     D=A
@@ -58,19 +79,21 @@
     @SP
     M=M+1
     // pop this 6
+    @6
+    D=A
+    @THIS
+    M=M+D
     @SP
     M=M-1
     A=M
     D=M
     @THIS
     A=M
-    A=A+1
-    A=A+1
-    A=A+1
-    A=A+1
-    A=A+1
-    A=A+1
     M=D
+    @6
+    D=A
+    @THIS
+    M=M-D
     // push constant 42
     @42
     D=A
@@ -88,28 +111,37 @@
     @SP
     M=M+1
     // pop that 5
+    @5
+    D=A
+    @THAT
+    M=M+D
     @SP
     M=M-1
     A=M
     D=M
     @THAT
     A=M
-    A=A+1
-    A=A+1
-    A=A+1
-    A=A+1
-    A=A+1
     M=D
+    @5
+    D=A
+    @THAT
+    M=M-D
     // pop that 2
+    @2
+    D=A
+    @THAT
+    M=M+D
     @SP
     M=M-1
     A=M
     D=M
     @THAT
     A=M
-    A=A+1
-    A=A+1
     M=D
+    @2
+    D=A
+    @THAT
+    M=M-D
     // push constant 510
     @510
     D=A
@@ -226,6 +258,7 @@
     M=M-D
     @SP
     M=M+1
+    // TODO @Temp6 をなんとかする
     // push temp 6
     @11  // @Temp6
     D=M

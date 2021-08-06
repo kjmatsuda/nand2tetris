@@ -141,6 +141,17 @@ public class CodeWriter {
 		else if (commandType.equals(CommandType.C_POP))
 		{
 			// TODO writePushPop。 pop temp
+			if (!segment.equals("temp"))
+			{
+				output.write("@" + index);
+				output.newLine();
+				output.write("D=A");
+				output.newLine();
+				output.write("@" + getRamSymbolStr(segment));
+				output.newLine();
+				output.write("M=M+D");
+				output.newLine();
+			}
 			output.write("@SP");
 			output.newLine();
 			output.write("M=M-1");
@@ -157,17 +168,19 @@ public class CodeWriter {
 				output.write("A=M");
 				output.newLine();
 			}
-			// TODO ここ汚いので直す
-			if (!segment.equals("temp"))
-			{
-				for (int ii = 0; ii < index; ii++)
-				{
-					output.write("A=A+1");
-					output.newLine();
-				}
-			}
 			output.write("M=D");
 			output.newLine();
+			if (!segment.equals("temp"))
+			{
+				output.write("@" + index);
+				output.newLine();
+				output.write("D=A");
+				output.newLine();
+				output.write("@" + getRamSymbolStr(segment));
+				output.newLine();
+				output.write("M=M-D");
+				output.newLine();
+			}
 		}
 	}
 
