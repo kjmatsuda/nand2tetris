@@ -4,6 +4,7 @@ import java.io.IOException;
 public class CodeWriter {
 	private BufferedWriter output;
 	private int condLabelNum = 0;
+	private final int tempBaseAddress = 5;
 
 	CodeWriter(BufferedWriter output) {
 		this.output = output;
@@ -118,8 +119,7 @@ public class CodeWriter {
 				output.newLine();
 				break;
 			case "temp":
-				// TODO writePushPop。 temp セグメントに対応する。現在は仮の状態。Temp6 のアドレスを直接指定している @11
-				output.write("@11");
+				output.write("@R" + (tempBaseAddress + index));
 				output.newLine();
 				output.write("D=M");
 				output.newLine();
@@ -140,8 +140,23 @@ public class CodeWriter {
 		}
 		else if (commandType.equals(CommandType.C_POP))
 		{
-			// TODO writePushPop。 pop temp
-			if (!segment.equals("temp"))
+			if (segment.equals("temp"))
+			{
+				output.write("@SP");
+				output.newLine();
+				output.write("M=M-1");
+				output.newLine();
+				output.write("A=M");
+				output.newLine();
+				output.write("D=M");
+				output.newLine();
+				output.write("@R" + (tempBaseAddress + index));
+				output.newLine();
+
+				output.write("M=D");
+				output.newLine();
+			}
+			else
 			{
 				output.write("@" + index);
 				output.newLine();
@@ -151,27 +166,24 @@ public class CodeWriter {
 				output.newLine();
 				output.write("M=M+D");
 				output.newLine();
-			}
-			output.write("@SP");
-			output.newLine();
-			output.write("M=M-1");
-			output.newLine();
-			output.write("A=M");
-			output.newLine();
-			output.write("D=M");
-			output.newLine();
-			output.write("@" + getRamSymbolStr(segment));
-			output.newLine();
-			// TODO ここ汚いので直す
-			if (!segment.equals("temp"))
-			{
+
+				output.write("@SP");
+				output.newLine();
+				output.write("M=M-1");
+				output.newLine();
 				output.write("A=M");
 				output.newLine();
-			}
-			output.write("M=D");
-			output.newLine();
-			if (!segment.equals("temp"))
-			{
+				output.write("D=M");
+				output.newLine();
+				output.write("@" + getRamSymbolStr(segment));
+				output.newLine();
+
+				output.write("A=M");
+				output.newLine();
+
+				output.write("M=D");
+				output.newLine();
+
 				output.write("@" + index);
 				output.newLine();
 				output.write("D=A");
@@ -303,10 +315,6 @@ public class CodeWriter {
 			break;
 		case "constant":
 			ramSymbolStr = "SP";
-			break;
-		// TODO getRamSymbolStr の temp の部分を直す
-		case "temp":
-			ramSymbolStr = "11";
 			break;
 		default:
 			break;
