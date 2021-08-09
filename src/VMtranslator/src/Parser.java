@@ -32,9 +32,8 @@ public class Parser {
 	}
 
 	public CommandType commandType() {
-		// TODO commandType
 		CommandType type = CommandType.C_ARITHMETIC;
-		
+
 		if (currentCommand.startsWith("push"))
 		{
 			type = CommandType.C_PUSH;
@@ -43,7 +42,7 @@ public class Parser {
 		{
 			type = CommandType.C_POP;
 		}
-		
+
 		return type;
 	}
 
@@ -62,7 +61,7 @@ public class Parser {
 				retString = args[1];
 			}
 		}
-		
+
 		return retString;
 	}
 
@@ -89,10 +88,10 @@ public class Parser {
 		default:
 			break;
 		}
-		
+
 		return retInt;
 	}
-	
+
 	private boolean skipLine(String line) {
 		boolean skip = false;
 		if (line.isEmpty() || line.startsWith("//")) {

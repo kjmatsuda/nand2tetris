@@ -3,6 +3,7 @@ import java.io.IOException;
 
 public class CodeWriter {
 	private BufferedWriter output;
+	private String fileName;
 	private int condLabelNum = 0;
 	private final int tempBaseAddress = 5;
 	private final int pointerBaseAddress = 3;
@@ -12,7 +13,7 @@ public class CodeWriter {
 	}
 
 	void setFileName(String fileName) {
-		// TODO setFileName
+		this.fileName = fileName;
 	}
 
 	void writeArithmetic(String command) throws IOException {
@@ -75,7 +76,6 @@ public class CodeWriter {
 	void writePushPop(CommandType commandType, String segment, int index) throws IOException {
 		if (commandType.equals(CommandType.C_PUSH))
 		{
-			// TODO writePushPop。 static セグメントに対応する
 			switch (segment) {
 			case "argument":
 			case "local":
@@ -85,7 +85,7 @@ public class CodeWriter {
 				output.newLine();
 				output.write("D=A");
 				output.newLine();
-				output.write("@" + getRamSymbolStr(segment));
+				output.write("@" + getRamSymbolStr(segment, index));
 				output.newLine();
 				output.write("A=D+M");
 				output.newLine();
@@ -107,27 +107,21 @@ public class CodeWriter {
 				output.newLine();
 				output.write("D=A");
 				output.newLine();
-				output.write("@" + getRamSymbolStr(segment));
+				output.write("@" + getRamSymbolStr(segment, index));
 				output.newLine();
 				output.write("A=M");
 				output.newLine();
 				output.write("M=D");
 				output.newLine();
-				output.write("@" + getRamSymbolStr(segment));
+				output.write("@" + getRamSymbolStr(segment, index));
 				output.newLine();
 				output.write("M=M+1");
 				output.newLine();
 				break;
 			case "temp":
 			case "pointer":
-				if (segment.equals("temp"))
-				{
-					output.write("@R" + (tempBaseAddress + index));
-				}
-				else
-				{
-					output.write("@R" + (pointerBaseAddress + index));
-				}
+			case "static":
+				output.write("@" + getRamSymbolStr(segment, index));
 				output.newLine();
 				output.write("D=M");
 				output.newLine();
@@ -148,7 +142,9 @@ public class CodeWriter {
 		}
 		else if (commandType.equals(CommandType.C_POP))
 		{
-			if ((segment.equals("temp")) || (segment.equals("pointer")))
+			if ((segment.equals("temp")) ||
+				(segment.equals("pointer")) ||
+				(segment.equals("static")))
 			{
 				output.write("@SP");
 				output.newLine();
@@ -158,14 +154,7 @@ public class CodeWriter {
 				output.newLine();
 				output.write("D=M");
 				output.newLine();
-				if (segment.equals("temp"))
-				{
-					output.write("@R" + (tempBaseAddress + index));
-				}
-				else
-				{
-					output.write("@R" + (pointerBaseAddress + index));
-				}
+				output.write("@" + getRamSymbolStr(segment, index));
 				output.newLine();
 
 				output.write("M=D");
@@ -177,7 +166,7 @@ public class CodeWriter {
 				output.newLine();
 				output.write("D=A");
 				output.newLine();
-				output.write("@" + getRamSymbolStr(segment));
+				output.write("@" + getRamSymbolStr(segment, index));
 				output.newLine();
 				output.write("M=M+D");
 				output.newLine();
@@ -190,7 +179,7 @@ public class CodeWriter {
 				output.newLine();
 				output.write("D=M");
 				output.newLine();
-				output.write("@" + getRamSymbolStr(segment));
+				output.write("@" + getRamSymbolStr(segment, index));
 				output.newLine();
 
 				output.write("A=M");
@@ -203,7 +192,7 @@ public class CodeWriter {
 				output.newLine();
 				output.write("D=A");
 				output.newLine();
-				output.write("@" + getRamSymbolStr(segment));
+				output.write("@" + getRamSymbolStr(segment, index));
 				output.newLine();
 				output.write("M=M-D");
 				output.newLine();
@@ -312,7 +301,7 @@ public class CodeWriter {
 		output.newLine();
 	}
 
-	private String getRamSymbolStr(String segment) {
+	private String getRamSymbolStr(String segment, int index) {
 		String ramSymbolStr = "SP";
 
 		switch (segment) {
@@ -330,6 +319,15 @@ public class CodeWriter {
 			break;
 		case "constant":
 			ramSymbolStr = "SP";
+			break;
+		case "temp":
+			ramSymbolStr = "R" + (tempBaseAddress + index);
+			break;
+		case "pointer":
+			ramSymbolStr = "R" + (pointerBaseAddress + index);
+			break;
+		case "static":
+			ramSymbolStr = fileName + "." + index;
 			break;
 		default:
 			break;
