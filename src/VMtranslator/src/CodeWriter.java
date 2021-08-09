@@ -5,6 +5,7 @@ public class CodeWriter {
 	private BufferedWriter output;
 	private int condLabelNum = 0;
 	private final int tempBaseAddress = 5;
+	private final int pointerBaseAddress = 3;
 
 	CodeWriter(BufferedWriter output) {
 		this.output = output;
@@ -74,7 +75,6 @@ public class CodeWriter {
 	void writePushPop(CommandType commandType, String segment, int index) throws IOException {
 		if (commandType.equals(CommandType.C_PUSH))
 		{
-			// TODO writePushPop。 pointer セグメントに対応する
 			// TODO writePushPop。 static セグメントに対応する
 			switch (segment) {
 			case "argument":
@@ -119,7 +119,15 @@ public class CodeWriter {
 				output.newLine();
 				break;
 			case "temp":
-				output.write("@R" + (tempBaseAddress + index));
+			case "pointer":
+				if (segment.equals("temp"))
+				{
+					output.write("@R" + (tempBaseAddress + index));
+				}
+				else
+				{
+					output.write("@R" + (pointerBaseAddress + index));
+				}
 				output.newLine();
 				output.write("D=M");
 				output.newLine();
@@ -140,7 +148,7 @@ public class CodeWriter {
 		}
 		else if (commandType.equals(CommandType.C_POP))
 		{
-			if (segment.equals("temp"))
+			if ((segment.equals("temp")) || (segment.equals("pointer")))
 			{
 				output.write("@SP");
 				output.newLine();
@@ -150,7 +158,14 @@ public class CodeWriter {
 				output.newLine();
 				output.write("D=M");
 				output.newLine();
-				output.write("@R" + (tempBaseAddress + index));
+				if (segment.equals("temp"))
+				{
+					output.write("@R" + (tempBaseAddress + index));
+				}
+				else
+				{
+					output.write("@R" + (pointerBaseAddress + index));
+				}
 				output.newLine();
 
 				output.write("M=D");
