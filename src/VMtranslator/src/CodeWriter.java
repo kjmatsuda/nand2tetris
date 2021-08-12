@@ -200,6 +200,46 @@ public class CodeWriter {
 		}
 	}
 
+	void writeInit() throws IOException {
+		// TODO writeInit
+	}
+
+	void writeLabel(String label) throws IOException {
+		output.write("(" + label +")");
+		output.newLine();
+	}
+
+	void writeGoto() throws IOException {
+		// TODO writeGoto
+	}
+
+	void writeIf(String label) throws IOException {
+		output.write("@SP");
+		output.newLine();
+		output.write("M=M-1");
+		output.newLine();
+		output.write("A=M");
+		output.newLine();
+		output.write("D=M");
+		output.newLine();
+		output.write("@" + label);
+		output.newLine();
+		output.write("D;JNE");
+		output.newLine();
+	}
+
+	void writeCall(String functionName, int numArgs) throws IOException {
+		// TODO writeCall
+	}
+
+	void writeReturn() throws IOException {
+		// TODO writeReturn
+	}
+
+	void writeFunction(String functionName, int numLocals) throws IOException {
+		// TODO writeFunction
+	}
+
 	void close() {
 		// TODO close
 	}

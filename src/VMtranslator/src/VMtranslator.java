@@ -16,7 +16,6 @@ public class VMtranslator {
 			return;
 		}
 		// TODO ディレクトリ指定で複数のファイルを扱えるようにする
-
 		int extensionIndex = args[0].lastIndexOf(".");
 		String fileNameWithoutExtension = args[0].substring(0, extensionIndex);
 
@@ -42,6 +41,12 @@ public class VMtranslator {
 					break;
 				case C_ARITHMETIC:
 					codeWriter.writeArithmetic(parser.arg1());
+					break;
+				case C_LABEL:
+					codeWriter.writeLabel(parser.arg1());
+					break;
+				case C_IF:
+					codeWriter.writeIf(parser.arg1());
 					break;
 				default:
 					break;

@@ -42,6 +42,14 @@ public class Parser {
 		{
 			type = CommandType.C_POP;
 		}
+		else if (currentCommand.startsWith("label"))
+		{
+			type = CommandType.C_LABEL;
+		}
+		else if (currentCommand.startsWith("if-goto"))
+		{
+			type = CommandType.C_IF;
+		}
 
 		return type;
 	}
