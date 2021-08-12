@@ -212,7 +212,7 @@ public class CodeWriter {
 	void writeGoto(String label) throws IOException {
 		output.write("@" + label);
 		output.newLine();
-		output.write("0;JEQ");
+		output.write("0;JMP");
 		output.newLine();
 	}
 
