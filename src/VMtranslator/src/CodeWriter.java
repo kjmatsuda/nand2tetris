@@ -209,8 +209,11 @@ public class CodeWriter {
 		output.newLine();
 	}
 
-	void writeGoto() throws IOException {
-		// TODO writeGoto
+	void writeGoto(String label) throws IOException {
+		output.write("@" + label);
+		output.newLine();
+		output.write("0;JEQ");
+		output.newLine();
 	}
 
 	void writeIf(String label) throws IOException {

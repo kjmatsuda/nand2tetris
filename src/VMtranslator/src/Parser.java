@@ -50,6 +50,10 @@ public class Parser {
 		{
 			type = CommandType.C_IF;
 		}
+		else if (currentCommand.startsWith("goto"))
+		{
+			type = CommandType.C_GOTO;
+		}
 
 		return type;
 	}
