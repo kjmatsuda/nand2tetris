@@ -236,11 +236,84 @@ public class CodeWriter {
 	}
 
 	void writeReturn() throws IOException {
-		// TODO writeReturn
+		// FRAME = LCL
+		output.write("@LCL");
+		output.newLine();
+		output.write("D=M");
+		output.newLine();
+		output.write("@frame");
+		output.newLine();
+		output.write("M=D");
+		output.newLine();
+
+		// RET = *(FRAME - 5)
+		output.write("@5");
+		output.newLine();
+		output.write("D=A");
+		output.newLine();
+		output.write("@frame");
+		output.newLine();
+		output.write("M=M-D");
+		output.newLine();
+		output.write("A=M");
+		output.newLine();
+		output.write("D=M");
+		output.newLine();
+		output.write("@RET");
+		output.newLine();
+		output.write("M=D");
+		output.newLine();
+		output.write("@5");
+		output.newLine();
+		output.write("D=A");
+		output.newLine();
+		output.write("@frame");
+		output.newLine();
+		output.write("M=M+D");
+		output.newLine();
+
+		// *ARG = pop()
+		writePushPop(CommandType.C_POP, "argument", 0);
+
+		// SP = ARG + 1
+		output.write("@ARG");
+		output.newLine();
+		output.write("D=M+1");
+		output.newLine();
+		output.write("@SP");
+		output.newLine();
+		output.write("M=D");
+		output.newLine();
+
+		// THAT = *(FRAME - 1)
+		writeRestoreCallerEnv("that", 1);
+
+		// THIS = *(FRAME - 2)
+		writeRestoreCallerEnv("this", 2);
+
+		// ARG = *(FRAME - 3)
+		writeRestoreCallerEnv("argument", 3);
+
+		// LCL = *(FRAME - 4)
+		writeRestoreCallerEnv("local", 4);
+
+		// goto RET
+		output.write("@RET");
+		output.newLine();
+		output.write("A=M");
+		output.newLine();
+		output.write("0;JMP");
+		output.newLine();
 	}
 
 	void writeFunction(String functionName, int numLocals) throws IOException {
-		// TODO writeFunction
+		output.write("(" + functionName +")");
+		output.newLine();
+
+		for (int ii = 0; ii < numLocals; ii++)
+		{
+			writePushPop(CommandType.C_PUSH, "constant", 0);
+		}
 	}
 
 	void close() {
@@ -341,6 +414,33 @@ public class CodeWriter {
 		output.write("M=-1");
 		output.newLine();
 		output.write("(COND_END" + condLabelNum + ")");
+		output.newLine();
+	}
+
+	private void writeRestoreCallerEnv(String segment, int offset) throws IOException {
+		output.write("@" + offset);
+		output.newLine();
+		output.write("D=A");
+		output.newLine();
+		output.write("@frame");
+		output.newLine();
+		output.write("M=M-D");
+		output.newLine();
+		output.write("A=M");
+		output.newLine();
+		output.write("D=M");
+		output.newLine();
+		output.write("@" + getRamSymbolStr(segment, 0));
+		output.newLine();
+		output.write("M=D");
+		output.newLine();
+		output.write("@" + offset);
+		output.newLine();
+		output.write("D=A");
+		output.newLine();
+		output.write("@frame");
+		output.newLine();
+		output.write("M=M+D");
 		output.newLine();
 	}
 

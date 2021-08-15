@@ -54,6 +54,18 @@ public class Parser {
 		{
 			type = CommandType.C_GOTO;
 		}
+		else if (currentCommand.startsWith("function"))
+		{
+			type = CommandType.C_FUNCTION;
+		}
+		else if (currentCommand.startsWith("return"))
+		{
+			type = CommandType.C_RETURN;
+		}
+		else if (currentCommand.startsWith("call"))
+		{
+			type = CommandType.C_CALL;
+		}
 
 		return type;
 	}
