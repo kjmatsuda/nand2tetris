@@ -105,14 +105,18 @@
     @frame
     M=D    
     // RET = *(FRAME - 5)
+    @5
+    D=A
     @frame
-    M=M-5
-    A=M    // これで M が *(FRAME - 5) になる
+    M=M-D
+    A=M    // これで M が *(FRAME - 5) を指すようになる
     D=M
     @RET
     M=D    // これで RET に *(FRAME - 5) を設定
+    @5
+    D=A
     @frame
-    M=M+5
+    M=M+D
     // *ARG = pop()    // pop argument 0 と同じ？
     @0
     D=A
@@ -135,41 +139,58 @@
     @SP
     M=D
     // THAT = *(FRAME - 1)
+    @1
+    D=A
     @frame
-    M=M-1
+    M=M-D
     A=M
     D=M
     @THAT
     M=D
+    @1
+    D=A
     @frame
-    M=M+1
+    M=M+D
     // THIS = *(FRAME - 2)
+    @2
+    D=A
     @frame
-    M=M-2
+    M=M-D
     A=M
     D=M
     @THIS
     M=D
+    @2
+    D=A
     @frame
-    M=M+2
+    M=M+D
     // ARG = *(FRAME - 3)
+    @3
+    D=A
     @frame
-    M=M-3
+    M=M-D
     A=M
     D=M
     @ARG
     M=D
+    @3
+    D=A
     @frame
-    M=M+3
+    M=M+D
     // LCL = *(FRAME - 4)
+    @4
+    D=A
     @frame
-    M=M-4
+    M=M-D
     A=M
     D=M
     @LCL
     M=D
+    @4
+    D=A
     @frame
-    M=M+4
+    M=M+D
     // goto RET
     @RET
+    A=M
     0;JMP
