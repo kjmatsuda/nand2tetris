@@ -1,3 +1,12 @@
+    //// ブートストラップ
+    // SP = 256
+    @256
+    D=A
+    @SP
+    M=D
+    //// call Sys.init
+    @Sys.init
+    0;JMP
     //// Sys.vm
     // function Sys.init 0
 (Sys.init)
@@ -9,8 +18,6 @@
     M=D
     @SP
     M=M+1
-    // return-address の重複をなくす
-    // TODO frame の重複をなくす
     //// call Main.fibonacci 1   // computes the 4'th fibonacci element
     // push return-address
     @return-address1
