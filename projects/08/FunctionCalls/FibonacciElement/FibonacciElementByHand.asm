@@ -67,7 +67,7 @@
     M=M+D
     // LCL = SP
     @SP
-    D=A
+    D=M
     @LCL
     M=D
     // goto Sys.init
@@ -139,9 +139,17 @@
     D=M
     @ARG
     M=D
+    @1
+    D=A
+    @SP
+    M=M+D
+    @5
+    D=A
+    @SP
+    M=M+D
     // LCL = SP
     @SP
-    D=A
+    D=M
     @LCL
     M=D
     // goto Main.fibonacci
@@ -404,9 +412,17 @@
     D=M
     @ARG
     M=D
+    @1
+    D=A
+    @SP
+    M=M+D
+    @5
+    D=A
+    @SP
+    M=M+D
     // LCL = SP
     @SP
-    D=A
+    D=M
     @LCL
     M=D
     // goto Main.fibonacci
@@ -497,9 +513,17 @@
     D=M
     @ARG
     M=D
+    @1
+    D=A
+    @SP
+    M=M+D
+    @5
+    D=A
+    @SP
+    M=M+D
     // LCL = SP
     @SP
-    D=A
+    D=M
     @LCL
     M=D
     // goto Main.fibonacci
