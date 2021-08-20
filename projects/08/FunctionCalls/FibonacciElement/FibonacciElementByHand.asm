@@ -5,8 +5,76 @@
     @SP
     M=D
     //// call Sys.init
+    // push return-address
+    @return-address4
+    D=M
+    @SP
+    A=M
+    M=D
+    @SP
+    M=M+1
+    // push LCL
+    @LCL
+    D=M
+    @SP
+    A=M
+    M=D
+    @SP
+    M=M+1
+    // push ARG
+    @ARG
+    D=M
+    @SP
+    A=M
+    M=D
+    @SP
+    M=M+1
+    // push THIS
+    @THIS
+    D=M
+    @SP
+    A=M
+    M=D
+    @SP
+    M=M+1
+    // push THAT
+    @THAT
+    D=M
+    @SP
+    A=M
+    M=D
+    @SP
+    M=M+1
+    // ARG = SP - n - 5
+    @0
+    D=A
+    @SP
+    M=M-D
+    @5
+    D=A
+    @SP
+    M=M-D
+    D=M
+    @ARG
+    M=D
+    @0
+    D=A
+    @SP
+    M=M+D
+    @5
+    D=A
+    @SP
+    M=M+D
+    // LCL = SP
+    @SP
+    D=A
+    @LCL
+    M=D
+    // goto Sys.init
     @Sys.init
     0;JMP
+    // (return-address)
+(return-address4)    
     //// Sys.vm
     // function Sys.init 0
 (Sys.init)
