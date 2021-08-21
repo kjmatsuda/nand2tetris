@@ -7,7 +7,7 @@
     //// call Sys.init
     // push return-address
     @return-address4
-    D=M
+    D=A
     @SP
     A=M
     M=D
@@ -89,7 +89,7 @@
     //// call Main.fibonacci 1   // computes the 4'th fibonacci element
     // push return-address
     @return-address1
-    D=M
+    D=A
     @SP
     A=M
     M=D
@@ -243,7 +243,7 @@
     M=M-D
     A=M    // これで M が *(FRAME - 5) を指すようになる
     D=M
-    @RET
+    @RET1
     M=D    // これで RET に *(FRAME - 5) を設定
     @5
     D=A
@@ -323,7 +323,7 @@
     @frame1
     M=M+D
     // goto RET
-    @RET
+    @RET1
     A=M
     0;JMP
     //// return END
@@ -362,7 +362,7 @@
     //// call Main.fibonacci 1  // computes fib(n-2)
     // push return-address
     @return-address2
-    D=M
+    D=A
     @SP
     A=M
     M=D
@@ -463,7 +463,7 @@
     //// call Main.fibonacci 1  // computes fib(n-1)
     // push return-address
     @return-address3
-    D=M
+    D=A
     @SP
     A=M
     M=D
@@ -555,7 +555,7 @@
     M=M-D
     A=M    // これで M が *(FRAME - 5) を指すようになる
     D=M
-    @RET
+    @RET2
     M=D    // これで RET に *(FRAME - 5) を設定
     @5
     D=A
@@ -635,7 +635,7 @@
     @frame2
     M=M+D
     // goto RET
-    @RET
+    @RET2
     A=M
     0;JMP
     //// return END
