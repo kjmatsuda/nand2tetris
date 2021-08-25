@@ -1,6 +1,10 @@
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+// TODO return-address は重複しないようにする
+// TODO frame は重複しないようにする
+// TODO RET は重複しないようにする
+
 public class CodeWriter {
 	private BufferedWriter output;
 	private String fileName;
@@ -20,43 +24,30 @@ public class CodeWriter {
 		if (isUnaryOperator(command))
 		{
 			// 単項演算子の場合
-			output.write("@SP");
-			output.newLine();
-			output.write("M=M-1");
-			output.newLine();
-			output.write("A=M");
-			output.newLine();
+			writeLine("@SP");
+			writeLine("M=M-1");
+			writeLine("A=M");
 			switch (command) {
 			case "neg":
-				output.write("M=-M");
+				writeLine("M=-M");
 				break;
 			case "not":
-				output.write("M=!M");
+				writeLine("M=!M");
 				break;
 			}
-			output.newLine();
-			output.write("@SP");
-			output.newLine();
-			output.write("M=M+1");
-			output.newLine();
+			writeLine("@SP");
+			writeLine("M=M+1");
 		}
 		else
 		{
 			// 二項演算子の場合
-			output.write("@SP");
-			output.newLine();
-			output.write("M=M-1");
-			output.newLine();
-			output.write("A=M");
-			output.newLine();
-			output.write("D=M");
-			output.newLine();
-			output.write("@SP");
-			output.newLine();
-			output.write("M=M-1");
-			output.newLine();
-			output.write("A=M");
-			output.newLine();
+			writeLine("@SP");
+			writeLine("M=M-1");
+			writeLine("A=M");
+			writeLine("D=M");
+			writeLine("@SP");
+			writeLine("M=M-1");
+			writeLine("A=M");
 
 			if (isBinaryArithmeticOperator(command))
 			{
@@ -66,10 +57,8 @@ public class CodeWriter {
 			{
 				writeBinaryCompareOperator(command);
 			}
-			output.write("@SP");
-			output.newLine();
-			output.write("M=M+1");
-			output.newLine();
+			writeLine("@SP");
+			writeLine("M=M+1");
 		}
 	}
 
@@ -81,60 +70,36 @@ public class CodeWriter {
 			case "local":
 			case "this":
 			case "that":
-				output.write("@" + index);
-				output.newLine();
-				output.write("D=A");
-				output.newLine();
-				output.write("@" + getRamSymbolStr(segment, index));
-				output.newLine();
-				output.write("A=D+M");
-				output.newLine();
-				output.write("D=M");
-				output.newLine();
-				output.write("@SP");
-				output.newLine();
-				output.write("A=M");
-				output.newLine();
-				output.write("M=D");
-				output.newLine();
-				output.write("@SP");
-				output.newLine();
-				output.write("M=M+1");
-				output.newLine();
+				writeLine("@" + index);
+				writeLine("D=A");
+				writeLine("@" + getRamSymbolStr(segment, index));
+				writeLine("A=D+M");
+				writeLine("D=M");
+				writeLine("@SP");
+				writeLine("A=M");
+				writeLine("M=D");
+				writeLine("@SP");
+				writeLine("M=M+1");
 				break;
 			case "constant":
-				output.write("@" + index);
-				output.newLine();
-				output.write("D=A");
-				output.newLine();
-				output.write("@" + getRamSymbolStr(segment, index));
-				output.newLine();
-				output.write("A=M");
-				output.newLine();
-				output.write("M=D");
-				output.newLine();
-				output.write("@" + getRamSymbolStr(segment, index));
-				output.newLine();
-				output.write("M=M+1");
-				output.newLine();
+				writeLine("@" + index);
+				writeLine("D=A");
+				writeLine("@" + getRamSymbolStr(segment, index));
+				writeLine("A=M");
+				writeLine("M=D");
+				writeLine("@" + getRamSymbolStr(segment, index));
+				writeLine("M=M+1");
 				break;
 			case "temp":
 			case "pointer":
 			case "static":
-				output.write("@" + getRamSymbolStr(segment, index));
-				output.newLine();
-				output.write("D=M");
-				output.newLine();
-				output.write("@SP");
-				output.newLine();
-				output.write("A=M");
-				output.newLine();
-				output.write("M=D");
-				output.newLine();
-				output.write("@SP");
-				output.newLine();
-				output.write("M=M+1");
-				output.newLine();
+				writeLine("@" + getRamSymbolStr(segment, index));
+				writeLine("D=M");
+				writeLine("@SP");
+				writeLine("A=M");
+				writeLine("M=D");
+				writeLine("@SP");
+				writeLine("M=M+1");
 				break;
 			default:
 				break;
@@ -146,144 +111,158 @@ public class CodeWriter {
 				(segment.equals("pointer")) ||
 				(segment.equals("static")))
 			{
-				output.write("@SP");
-				output.newLine();
-				output.write("M=M-1");
-				output.newLine();
-				output.write("A=M");
-				output.newLine();
-				output.write("D=M");
-				output.newLine();
-				output.write("@" + getRamSymbolStr(segment, index));
-				output.newLine();
+				writeLine("@SP");
+				writeLine("M=M-1");
+				writeLine("A=M");
+				writeLine("D=M");
+				writeLine("@" + getRamSymbolStr(segment, index));
 
-				output.write("M=D");
-				output.newLine();
+				writeLine("M=D");
 			}
 			else
 			{
-				output.write("@" + index);
-				output.newLine();
-				output.write("D=A");
-				output.newLine();
-				output.write("@" + getRamSymbolStr(segment, index));
-				output.newLine();
-				output.write("M=M+D");
-				output.newLine();
+				writeLine("@" + index);
+				writeLine("D=A");
+				writeLine("@" + getRamSymbolStr(segment, index));
+				writeLine("M=M+D");
 
-				output.write("@SP");
-				output.newLine();
-				output.write("M=M-1");
-				output.newLine();
-				output.write("A=M");
-				output.newLine();
-				output.write("D=M");
-				output.newLine();
-				output.write("@" + getRamSymbolStr(segment, index));
-				output.newLine();
+				writeLine("@SP");
+				writeLine("M=M-1");
+				writeLine("A=M");
+				writeLine("D=M");
+				writeLine("@" + getRamSymbolStr(segment, index));
 
-				output.write("A=M");
-				output.newLine();
+				writeLine("A=M");
 
-				output.write("M=D");
-				output.newLine();
+				writeLine("M=D");
 
-				output.write("@" + index);
-				output.newLine();
-				output.write("D=A");
-				output.newLine();
-				output.write("@" + getRamSymbolStr(segment, index));
-				output.newLine();
-				output.write("M=M-D");
-				output.newLine();
+				writeLine("@" + index);
+				writeLine("D=A");
+				writeLine("@" + getRamSymbolStr(segment, index));
+				writeLine("M=M-D");
 			}
 		}
 	}
 
 	void writeInit() throws IOException {
-		// TODO writeInit
+		writeLine("@256");
+		writeLine("D=A");
+		writeLine("@SP");
+		writeLine("M=D");
+		writeCall("Sys.init", 0);
 	}
 
 	void writeLabel(String label) throws IOException {
-		output.write("(" + label +")");
-		output.newLine();
+		writeLine("(" + label +")");
 	}
 
 	void writeGoto(String label) throws IOException {
-		output.write("@" + label);
-		output.newLine();
-		output.write("0;JMP");
-		output.newLine();
+		writeLine("@" + label);
+		writeLine("0;JMP");
 	}
 
 	void writeIf(String label) throws IOException {
-		output.write("@SP");
-		output.newLine();
-		output.write("M=M-1");
-		output.newLine();
-		output.write("A=M");
-		output.newLine();
-		output.write("D=M");
-		output.newLine();
-		output.write("@" + label);
-		output.newLine();
-		output.write("D;JNE");
-		output.newLine();
+		writeLine("@SP");
+		writeLine("M=M-1");
+		writeLine("A=M");
+		writeLine("D=M");
+		writeLine("@" + label);
+		writeLine("D;JNE");
 	}
 
 	void writeCall(String functionName, int numArgs) throws IOException {
-		// TODO writeCall
+		// TODO push return-address
+		// TODO newLineを入れるメソッドを作る(writeLine)
+		// TODO push LCL
+		writeLine("@LCL");
+		writeLine("D=M");
+		writeLine("@SP");
+		writeLine("A=M");
+		writeLine("M=D");
+		writeLine("@SP");
+		writeLine("M=M+1");
+		// TODO push ARG
+		writeLine("@ARG");
+		writeLine("D=M");
+		writeLine("@SP");
+		writeLine("A=M");
+		writeLine("M=D");
+		writeLine("@SP");
+		writeLine("M=M+1");
+		// TODO push THIS
+		writeLine("@THIS");
+		writeLine("D=M");
+		writeLine("@SP");
+		writeLine("A=M");
+		writeLine("M=D");
+		writeLine("@SP");
+		writeLine("M=M+1");
+		// TODO push THAT
+		writeLine("@THAT");
+		writeLine("D=M");
+		writeLine("@SP");
+		writeLine("A=M");
+		writeLine("M=D");
+		writeLine("@SP");
+		writeLine("M=M+1");
+		// TODO ARG = SP - n - 5
+		writeLine("@0");
+		writeLine("D=A");
+		writeLine("@SP");
+		writeLine("M=M-D");
+		writeLine("@5");
+		writeLine("D=A");
+		writeLine("@SP");
+		writeLine("M=M-D");
+		writeLine("D=M");
+		writeLine("@ARG");
+		writeLine("M=D");
+		writeLine("@0");
+		writeLine("D=A");
+		writeLine("@SP");
+		writeLine("M=M+D");
+		writeLine("@5");
+		writeLine("D=A");
+		writeLine("@SP");
+		writeLine("M=M+D");
+		// TODO LCL = SP
+		writeLine("@SP");
+		writeLine("D=M");
+		writeLine("@LCL");
+		writeLine("M=D");
+		// TODO goto Main.fibonacci
+		// TODO (return-address1)
 	}
 
 	void writeReturn() throws IOException {
 		// FRAME = LCL
-		output.write("@LCL");
-		output.newLine();
-		output.write("D=M");
-		output.newLine();
-		output.write("@frame");
-		output.newLine();
-		output.write("M=D");
-		output.newLine();
+		writeLine("@LCL");
+		writeLine("D=M");
+		writeLine("@frame");
+		writeLine("M=D");
 
 		// RET = *(FRAME - 5)
-		output.write("@5");
-		output.newLine();
-		output.write("D=A");
-		output.newLine();
-		output.write("@frame");
-		output.newLine();
-		output.write("M=M-D");
-		output.newLine();
-		output.write("A=M");
-		output.newLine();
-		output.write("D=M");
-		output.newLine();
-		output.write("@RET");
-		output.newLine();
-		output.write("M=D");
-		output.newLine();
-		output.write("@5");
-		output.newLine();
-		output.write("D=A");
-		output.newLine();
-		output.write("@frame");
-		output.newLine();
-		output.write("M=M+D");
-		output.newLine();
+		writeLine("@5");
+		writeLine("D=A");
+		writeLine("@frame");
+		writeLine("M=M-D");
+		writeLine("A=M");
+		writeLine("D=M");
+		writeLine("@RET");
+		writeLine("M=D");
+		writeLine("@5");
+		writeLine("D=A");
+		writeLine("@frame");
+		writeLine("M=M+D");
 
 		// *ARG = pop()
 		writePushPop(CommandType.C_POP, "argument", 0);
 
 		// SP = ARG + 1
-		output.write("@ARG");
-		output.newLine();
-		output.write("D=M+1");
-		output.newLine();
-		output.write("@SP");
-		output.newLine();
-		output.write("M=D");
-		output.newLine();
+		writeLine("@ARG");
+		writeLine("D=M+1");
+		writeLine("@SP");
+		writeLine("M=D");
 
 		// THAT = *(FRAME - 1)
 		writeRestoreCallerEnv("that", 1);
@@ -298,17 +277,13 @@ public class CodeWriter {
 		writeRestoreCallerEnv("local", 4);
 
 		// goto RET
-		output.write("@RET");
-		output.newLine();
-		output.write("A=M");
-		output.newLine();
-		output.write("0;JMP");
-		output.newLine();
+		writeLine("@RET");
+		writeLine("A=M");
+		writeLine("0;JMP");
 	}
 
 	void writeFunction(String functionName, int numLocals) throws IOException {
-		output.write("(" + functionName +")");
-		output.newLine();
+		writeLine("(" + functionName +")");
 
 		for (int ii = 0; ii < numLocals; ii++)
 		{
@@ -316,8 +291,8 @@ public class CodeWriter {
 		}
 	}
 
-	void close() {
-		// TODO close
+	void close() throws IOException {
+		output.close();
 	}
 
 	private boolean isUnaryOperator(String command) {
@@ -355,93 +330,67 @@ public class CodeWriter {
 	private void writeBinaryArithmeticOperator(String command) throws IOException {
 		switch (command) {
 		case "add":
-			output.write("M=D+M");
+			writeLine("M=D+M");
 			break;
 		case "sub":
-			output.write("M=M-D");
+			writeLine("M=M-D");
 			break;
 		case "and":
-			output.write("M=M&D");
+			writeLine("M=M&D");
 			break;
 		case "or":
-			output.write("M=M|D");
+			writeLine("M=M|D");
 			break;
 		default:
 			break;
 		}
-		output.newLine();
 	}
 
 	private void writeBinaryCompareOperator(String command) throws IOException {
 		this.condLabelNum++;
 
-		output.write("D=M-D");
-		output.newLine();
-		output.write("@COND_SATISFIED" + condLabelNum);
-		output.newLine();
+		writeLine("D=M-D");
+		writeLine("@COND_SATISFIED" + condLabelNum);
 
 		switch (command) {
 		case "eq":
-			output.write("D;JEQ");
+			writeLine("D;JEQ");
 			break;
 		case "lt":
-			output.write("D;JLT");
+			writeLine("D;JLT");
 			break;
 		case "gt":
-			output.write("D;JGT");
+			writeLine("D;JGT");
 			break;
 		default:
 			break;
 		}
 
-		output.newLine();
-		output.write("@SP");
-		output.newLine();
-		output.write("A=M");
-		output.newLine();
-		output.write("M=0");
-		output.newLine();
-		output.write("@COND_END" + condLabelNum);
-		output.newLine();
-		output.write("0;JEQ");
-		output.newLine();
-		output.write("(COND_SATISFIED" + condLabelNum + ")");
-		output.newLine();
-		output.write("@SP");
-		output.newLine();
-		output.write("A=M");
-		output.newLine();
-		output.write("M=-1");
-		output.newLine();
-		output.write("(COND_END" + condLabelNum + ")");
-		output.newLine();
+		writeLine("@SP");
+		writeLine("A=M");
+		writeLine("M=0");
+		writeLine("@COND_END" + condLabelNum);
+		writeLine("0;JEQ");
+		writeLine("(COND_SATISFIED" + condLabelNum + ")");
+		writeLine("@SP");
+		writeLine("A=M");
+		writeLine("M=-1");
+		writeLine("(COND_END" + condLabelNum + ")");
 	}
 
 	private void writeRestoreCallerEnv(String segment, int offset) throws IOException {
-		output.write("@" + offset);
-		output.newLine();
-		output.write("D=A");
-		output.newLine();
-		output.write("@frame");
-		output.newLine();
-		output.write("M=M-D");
-		output.newLine();
-		output.write("A=M");
-		output.newLine();
-		output.write("D=M");
-		output.newLine();
-		output.write("@" + getRamSymbolStr(segment, 0));
-		output.newLine();
-		output.write("M=D");
-		output.newLine();
-		output.write("@" + offset);
-		output.newLine();
-		output.write("D=A");
-		output.newLine();
-		output.write("@frame");
-		output.newLine();
-		output.write("M=M+D");
-		output.newLine();
+		writeLine("@" + offset);
+		writeLine("D=A");
+		writeLine("@frame");
+		writeLine("M=M-D");
+		writeLine("A=M");
+		writeLine("D=M");
+		writeLine("@" + getRamSymbolStr(segment, 0));
+		writeLine("M=D");
+		writeLine("@" + offset);
+		writeLine("D=A");
+		writeLine("@frame");
+		writeLine("M=M+D");
 	}
 
 	private String getRamSymbolStr(String segment, int index) {
@@ -477,5 +426,10 @@ public class CodeWriter {
 		}
 
 		return ramSymbolStr;
+	}
+
+	private void writeLine(String str) throws IOException {
+		output.write(str);
+		output.newLine();
 	}
 }
