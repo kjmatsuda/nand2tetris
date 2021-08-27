@@ -1,7 +1,6 @@
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-// TODO return-address は重複しないようにする
 // TODO frame は重複しないようにする
 // TODO RET は重複しないようにする
 
@@ -171,9 +170,17 @@ public class CodeWriter {
 	}
 
 	void writeCall(String functionName, int numArgs) throws IOException {
-		// TODO push return-address
-		// TODO newLineを入れるメソッドを作る(writeLine)
-		// TODO push LCL
+		String returnAddress = functionName + "$" + "return-address";
+
+		// push return-address
+		writeLine("@" + returnAddress);
+		writeLine("D=A");
+		writeLine("@SP");
+		writeLine("A=M");
+		writeLine("M=D");
+		writeLine("@SP");
+		writeLine("M=M+1");
+		// push LCL
 		writeLine("@LCL");
 		writeLine("D=M");
 		writeLine("@SP");
@@ -181,7 +188,7 @@ public class CodeWriter {
 		writeLine("M=D");
 		writeLine("@SP");
 		writeLine("M=M+1");
-		// TODO push ARG
+		// push ARG
 		writeLine("@ARG");
 		writeLine("D=M");
 		writeLine("@SP");
@@ -189,7 +196,7 @@ public class CodeWriter {
 		writeLine("M=D");
 		writeLine("@SP");
 		writeLine("M=M+1");
-		// TODO push THIS
+		// push THIS
 		writeLine("@THIS");
 		writeLine("D=M");
 		writeLine("@SP");
@@ -197,7 +204,7 @@ public class CodeWriter {
 		writeLine("M=D");
 		writeLine("@SP");
 		writeLine("M=M+1");
-		// TODO push THAT
+		// push THAT
 		writeLine("@THAT");
 		writeLine("D=M");
 		writeLine("@SP");
@@ -205,7 +212,7 @@ public class CodeWriter {
 		writeLine("M=D");
 		writeLine("@SP");
 		writeLine("M=M+1");
-		// TODO ARG = SP - n - 5
+		// ARG = SP - n - 5
 		writeLine("@0");
 		writeLine("D=A");
 		writeLine("@SP");
@@ -225,13 +232,15 @@ public class CodeWriter {
 		writeLine("D=A");
 		writeLine("@SP");
 		writeLine("M=M+D");
-		// TODO LCL = SP
+		// LCL = SP
 		writeLine("@SP");
 		writeLine("D=M");
 		writeLine("@LCL");
 		writeLine("M=D");
-		// TODO goto Main.fibonacci
-		// TODO (return-address1)
+		// goto Function
+		writeGoto(functionName);
+		// (return-address)
+		writeLabel(returnAddress);
 	}
 
 	void writeReturn() throws IOException {
