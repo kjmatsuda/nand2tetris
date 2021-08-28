@@ -2,10 +2,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,7 +56,8 @@ public class VMtranslator {
 
 		try {
 			File outputFile = new File(outputFileNameWithoutExtension + ".asm");
-			output = new BufferedWriter(new FileWriter(outputFile));
+			OutputStreamWriter  osw = new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8");
+			output = new BufferedWriter(osw);
 
 			CodeWriter codeWriter = new CodeWriter(output);
 			codeWriter.setFileName(outputFileNameWithoutExtension);

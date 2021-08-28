@@ -7,6 +7,7 @@ public class CodeWriter {
 	private int condLabelNum = 0;
 	private int frameNum = 0;
 	private int retNum = 0;
+	private int returnAddressNum = 0;
 	private final int tempBaseAddress = 5;
 	private final int pointerBaseAddress = 3;
 
@@ -170,7 +171,8 @@ public class CodeWriter {
 	}
 
 	void writeCall(String functionName, int numArgs) throws IOException {
-		String returnAddress = functionName + "$" + "return-address";
+		this.returnAddressNum++;
+		String returnAddress = "return-address" + this.returnAddressNum;
 
 		// push return-address
 		writeLine("@" + returnAddress);
@@ -213,7 +215,7 @@ public class CodeWriter {
 		writeLine("@SP");
 		writeLine("M=M+1");
 		// ARG = SP - n - 5
-		writeLine("@0");
+		writeLine("@" + numArgs);
 		writeLine("D=A");
 		writeLine("@SP");
 		writeLine("M=M-D");
@@ -224,7 +226,7 @@ public class CodeWriter {
 		writeLine("D=M");
 		writeLine("@ARG");
 		writeLine("M=D");
-		writeLine("@0");
+		writeLine("@" + numArgs);
 		writeLine("D=A");
 		writeLine("@SP");
 		writeLine("M=M+D");

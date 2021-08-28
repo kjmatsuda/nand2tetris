@@ -2,7 +2,7 @@
 D=A
 @SP
 M=D
-@Sys.init$return-address
+@return-address1
 D=A
 @SP
 A=M
@@ -62,7 +62,7 @@ D=M
 M=D
 @Sys.init
 0;JMP
-(Sys.init$return-address)
+(return-address1)
 (Main.fibonacci)
 @0
 D=A
@@ -236,7 +236,7 @@ A=M
 M=M-D
 @SP
 M=M+1
-@Main.fibonacci$return-address
+@return-address2
 D=A
 @SP
 A=M
@@ -271,7 +271,7 @@ A=M
 M=D
 @SP
 M=M+1
-@0
+@1
 D=A
 @SP
 M=M-D
@@ -282,7 +282,7 @@ M=M-D
 D=M
 @ARG
 M=D
-@0
+@1
 D=A
 @SP
 M=M+D
@@ -296,7 +296,7 @@ D=M
 M=D
 @Main.fibonacci
 0;JMP
-(Main.fibonacci$return-address)
+(return-address2)
 @0
 D=A
 @ARG
@@ -324,7 +324,7 @@ A=M
 M=M-D
 @SP
 M=M+1
-@Main.fibonacci$return-address
+@return-address3
 D=A
 @SP
 A=M
@@ -359,7 +359,7 @@ A=M
 M=D
 @SP
 M=M+1
-@0
+@1
 D=A
 @SP
 M=M-D
@@ -370,7 +370,7 @@ M=M-D
 D=M
 @ARG
 M=D
-@0
+@1
 D=A
 @SP
 M=M+D
@@ -384,7 +384,7 @@ D=M
 M=D
 @Main.fibonacci
 0;JMP
-(Main.fibonacci$return-address)
+(return-address3)
 @SP
 M=M-1
 A=M
@@ -489,7 +489,7 @@ A=M
 M=D
 @SP
 M=M+1
-@Main.fibonacci$return-address
+@return-address4
 D=A
 @SP
 A=M
@@ -524,7 +524,7 @@ A=M
 M=D
 @SP
 M=M+1
-@0
+@1
 D=A
 @SP
 M=M-D
@@ -535,7 +535,7 @@ M=M-D
 D=M
 @ARG
 M=D
-@0
+@1
 D=A
 @SP
 M=M+D
@@ -549,7 +549,7 @@ D=M
 M=D
 @Main.fibonacci
 0;JMP
-(Main.fibonacci$return-address)
+(return-address4)
 (WHILE)
 @WHILE
 0;JMP

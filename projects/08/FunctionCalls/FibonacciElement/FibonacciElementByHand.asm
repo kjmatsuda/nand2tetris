@@ -1,4 +1,4 @@
-    //// ブートストラップ
+    //// ブートストラップ START ////
     // SP = 256
     @256
     D=A
@@ -75,7 +75,8 @@
     0;JMP
     // (return-address)
 (return-address4)    
-    //// Sys.vm
+    //// ブートストラップ END ////
+    //// Sys.vm START ////
     // function Sys.init 0
 (Sys.init)
     // push constant 4
@@ -162,7 +163,8 @@
     // goto WHILE              // loops infinitely
     @WHILE
     0;JMP
-    //// Main.vm
+    //// Sys.vm END ////
+    //// Main.vm START ////
     // function Main.fibonacci 0
 (Main.fibonacci)    
     // push argument 0
@@ -639,3 +641,4 @@
     A=M
     0;JMP
     //// return END
+    //// Main.vm END ////
