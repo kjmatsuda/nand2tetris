@@ -1,15 +1,15 @@
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-// TODO frame は重複しないようにする
-// TODO RET は重複しないようにする
-
 public class CodeWriter {
 	private BufferedWriter output;
 	private String fileName;
 	private int condLabelNum = 0;
+	private int frameNum = 0;
+	private int retNum = 0;
 	private final int tempBaseAddress = 5;
 	private final int pointerBaseAddress = 3;
+
 
 	CodeWriter(BufferedWriter output) {
 		this.output = output;
@@ -244,24 +244,30 @@ public class CodeWriter {
 	}
 
 	void writeReturn() throws IOException {
+		this.frameNum++;
+		this.retNum++;
+
+		String frame = "frame" + this.frameNum;
+		String ret = "RET" + this.retNum;
+
 		// FRAME = LCL
 		writeLine("@LCL");
 		writeLine("D=M");
-		writeLine("@frame");
+		writeLine("@" + frame);
 		writeLine("M=D");
 
 		// RET = *(FRAME - 5)
 		writeLine("@5");
 		writeLine("D=A");
-		writeLine("@frame");
+		writeLine("@" + frame);
 		writeLine("M=M-D");
 		writeLine("A=M");
 		writeLine("D=M");
-		writeLine("@RET");
+		writeLine("@" + ret);
 		writeLine("M=D");
 		writeLine("@5");
 		writeLine("D=A");
-		writeLine("@frame");
+		writeLine("@" + frame);
 		writeLine("M=M+D");
 
 		// *ARG = pop()
@@ -286,7 +292,7 @@ public class CodeWriter {
 		writeRestoreCallerEnv("local", 4);
 
 		// goto RET
-		writeLine("@RET");
+		writeLine("@" + ret);
 		writeLine("A=M");
 		writeLine("0;JMP");
 	}
@@ -388,9 +394,11 @@ public class CodeWriter {
 	}
 
 	private void writeRestoreCallerEnv(String segment, int offset) throws IOException {
+		String frame = "frame" + this.frameNum;
+
 		writeLine("@" + offset);
 		writeLine("D=A");
-		writeLine("@frame");
+		writeLine("@" + frame);
 		writeLine("M=M-D");
 		writeLine("A=M");
 		writeLine("D=M");
@@ -398,7 +406,7 @@ public class CodeWriter {
 		writeLine("M=D");
 		writeLine("@" + offset);
 		writeLine("D=A");
-		writeLine("@frame");
+		writeLine("@" + frame);
 		writeLine("M=M+D");
 	}
 
