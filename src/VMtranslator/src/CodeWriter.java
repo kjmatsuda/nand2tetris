@@ -438,7 +438,7 @@ public class CodeWriter {
 			ramSymbolStr = "R" + (pointerBaseAddress + index);
 			break;
 		case "static":
-			ramSymbolStr = fileName + "." + index;
+			ramSymbolStr = this.fileName + "." + index;
 			break;
 		default:
 			break;

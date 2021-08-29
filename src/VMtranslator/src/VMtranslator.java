@@ -51,7 +51,7 @@ public class VMtranslator {
 			files = new File[1];
 			files[0] = new File(args[0]);
 
-			outputFileNameWithoutExtension = files[0].getName().substring(0, files[0].getName().lastIndexOf("."));
+			outputFileNameWithoutExtension = getFileNameWithoutExtension(files[0].getName());
 		}
 
 		try {
@@ -60,11 +60,12 @@ public class VMtranslator {
 			output = new BufferedWriter(osw);
 
 			CodeWriter codeWriter = new CodeWriter(output);
-			codeWriter.setFileName(outputFileNameWithoutExtension);
 			codeWriter.writeInit();
 
 			for (File inputFile: files)
 			{
+				codeWriter.setFileName(getFileNameWithoutExtension(inputFile.getName()));
+
 				reader = new BufferedReader(new FileReader(inputFile));
 
 				Parser parser = new Parser(reader);
@@ -122,5 +123,8 @@ public class VMtranslator {
 				e.printStackTrace();
 			}
 		}
+	}
+	private static String getFileNameWithoutExtension(String fileName) {
+		return fileName.substring(0, fileName.lastIndexOf("."));
 	}
 }
