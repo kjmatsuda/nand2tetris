@@ -1,16 +1,10 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/09/Square/Square.jack
+class Snake {
 
-/** Implements a graphical square. */
-class Square {
+   field int x, y;
+   field int size;
 
-   field int x, y; // screen location of the square's top-left corner
-   field int size; // length of this square, in pixels
-
-   /** Constructs a new square with a given location and size. */
-   constructor Square new(int Ax, int Ay, int Asize) {
+   /** Constructs a new snake with a given location and size. */
+   constructor Snake new(int Ax, int Ay, int Asize) {
       let x = Ax;
       let y = Ay;
       let size = Asize;
@@ -18,27 +12,27 @@ class Square {
       return this;
    }
 
-   /** Disposes this square. */
+   /** Disposes this snake. */
    method void dispose() {
       do Memory.deAlloc(this);
       return;
    }
 
-   /** Draws the square on the screen. */
+   /** Draws the snake on the screen. */
    method void draw() {
       do Screen.setColor(true);
       do Screen.drawRectangle(x, y, x + size, y + size);
       return;
    }
 
-   /** Erases the square from the screen. */
+   /** Erases the snake from the screen. */
    method void erase() {
       do Screen.setColor(false);
       do Screen.drawRectangle(x, y, x + size, y + size);
       return;
    }
 
-    /** Increments the square size by 2 pixels. */
+    /** Increments the snake size by 2 pixels. */
    method void incSize() {
       if (((y + size) < 254) & ((x + size) < 510)) {
          do erase();
@@ -48,7 +42,7 @@ class Square {
       return;
    }
 
-   /** Decrements the square size by 2 pixels. */
+   /** Decrements the snake size by 2 pixels. */
    method void decSize() {
       if (size > 2) {
          do erase();
@@ -58,7 +52,7 @@ class Square {
       return;
    }
 
-   /** Moves the square up by 2 pixels. */
+   /** Moves the snake up by 2 pixels. */
    method void moveUp() {
       if (y > 1) {
          do Screen.setColor(false);
@@ -70,7 +64,7 @@ class Square {
       return;
    }
 
-   /** Moves the square down by 2 pixels. */
+   /** Moves the snake down by 2 pixels. */
    method void moveDown() {
       if ((y + size) < 254) {
          do Screen.setColor(false);
@@ -82,7 +76,7 @@ class Square {
       return;
    }
 
-   /** Moves the square left by 2 pixels. */
+   /** Moves the snake left by 2 pixels. */
    method void moveLeft() {
       if (x > 1) {
          do Screen.setColor(false);
@@ -94,7 +88,7 @@ class Square {
       return;
    }
 
-   /** Moves the square right by 2 pixels. */
+   /** Moves the snake right by 2 pixels. */
    method void moveRight() {
       if ((x + size) < 510) {
          do Screen.setColor(false);
