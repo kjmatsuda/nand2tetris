@@ -1,0 +1,37 @@
+class List {
+    field int data;
+    field List next;
+
+    constructor List new(int car, List cdr) {
+        let data =  car;
+        let next = cdr;
+        return this;
+    }
+
+    method int getData() {
+        return data;
+    }
+
+    method List getNext() {
+        return next;
+    }
+
+    method void print() {
+        do Output.printInt(data);
+        do Output.printChar(64); // asciiコードで 64 はスペース
+        if (~next) {
+            do next.print();
+        }
+
+        return;
+    }
+
+    method void dispose() {
+        if (~next) {
+            do next.dispose();
+        }
+        do Memory.deAlloc(this);
+        
+        return;
+    }
+}
