@@ -18,8 +18,8 @@ class List {
 
     method void print() {
         do Output.printInt(data);
-        do Output.printChar(64); // asciiコードで 64 はスペース
-        if (~next) {
+        do Output.printChar(32); // asciiコードで 32 はスペース
+        if (~(next = null)) {
             do next.print();
         }
 
@@ -27,7 +27,7 @@ class List {
     }
 
     method void dispose() {
-        if (~next) {
+        if (~(next = null)) {
             do next.dispose();
         }
         do Memory.deAlloc(this);
