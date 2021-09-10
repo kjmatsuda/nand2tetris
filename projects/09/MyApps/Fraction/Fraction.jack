@@ -1,0 +1,66 @@
+class Fraction {
+    field int numerator;
+    field int denominator;
+    
+    constructor Fraction new(int numeratorArg, int denominatorArg) {
+        let numerator =  numeratorArg;
+        let denominator =  denominatorArg;
+        do reduce();
+        return this;
+    }
+
+    method void reduce() {
+        var int gcd;
+        let gcd = Fraction.gcd(numerator, denominator);
+
+        if (gcd > 1) {
+            let numerator = numerator / gcd;
+            let denominator = denominator / gcd;
+        }
+        return;
+    }
+    
+    method int getNumerator() {
+        return numerator;
+    }
+
+    method int getDenominator() {
+        return denominator;
+    }
+
+    method Fraction plus(Fraction other) {
+        var int resultNumerator;
+        var int resultDenominator;
+        var Fraction resultFraction;
+
+        let resultNumerator = getNumerator() * other.getDenominator() + getDenominator() * other.getNumerator();
+        
+        let resultDenominator = getDenominator() * other.getDenominator();
+
+        let resultFraction = Fraction.new(resultNumerator, resultDenominator);
+
+        return resultFraction;
+    }
+    
+    method void print() {
+        do Output.printInt(numerator);
+        do Output.printChar(47); // asciiコードで / 
+        do Output.printInt(denominator);
+        
+        return;
+    }
+
+   method void dispose() {
+      do Memory.deAlloc(this);  // uses an OS routine to recycle the memory held by the object
+      return;
+   }
+    
+    function int gcd(int a, int b) {
+        var int r;
+        while (~(b = 0)) {             // applies Euclid's algorithm
+            let r = a - (b * (a / b));  // r = remainder of the integer division a/b
+            let a = b; let b = r;
+        }
+        return a;
+   }    
+}

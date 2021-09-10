@@ -1,0 +1,25 @@
+class Main {
+    function void main() {
+        var Fraction f1;
+        var Fraction f2;
+        var Fraction f3;
+
+        let f1 = Fraction.new(4, 5);
+        let f2 = Fraction.new(1, 12);
+
+        do Output.printString("f1=");
+        do f1.print();
+        do Output.println();
+
+        do Output.printString("f2=");
+        do f2.print();
+        do Output.println();
+
+        let f3 = f1.plus(f2);
+        do Output.printString("f1+f2=");
+        do f3.print();
+        do Output.println();
+
+        return;
+    }
+}
