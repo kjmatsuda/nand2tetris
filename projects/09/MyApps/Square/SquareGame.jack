@@ -1,0 +1,85 @@
+class SquareGame {
+    field Square square;
+    field int direction;
+
+    constructor SquareGame new() {
+        let square = Square.new(0, 0, 30);
+        let direction = 0;
+        return this;
+    }
+
+    method void dispose() {
+        do square.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void moveSquare() {
+        if (~(direction = 0)) {
+            do square.erase();
+        }
+
+        if (direction = 1) {
+            // up arrow
+            do square.moveUp();
+        }
+        if (direction = 2) {
+            // right arrow
+            do square.moveRight();
+        }
+        if (direction = 3) {
+            // down arrow
+            do square.moveDown();
+        }
+        if (direction = 4) {
+            // left arrow
+            do square.moveLeft();
+        }
+        
+        if (~(direction = 0)) {
+            do square.draw();
+        }
+
+        do Sys.wait(5);
+        
+        return;
+    }
+
+    method void run() {
+        var char key;
+
+        do square.draw();
+
+        while (~(key = 81)) {
+            let key = Keyboard.keyPressed();
+
+            if (key = 90) {
+                // z 
+                do square.decSize();
+            }
+            if (key = 88) {
+                // x 
+                do square.incSize();
+            }
+            if (key = 131) {
+                // up arrow
+                let direction = 1;
+            }
+            if (key = 132) {
+                // right arrow
+                let direction = 2;
+            }
+            if (key = 133) {
+                // down arrow
+                let direction = 3;
+            }
+            if (key = 130) {
+                // left arrow
+                let direction = 4;
+            }
+            do moveSquare();
+        }
+        
+        return;
+    }
+}
