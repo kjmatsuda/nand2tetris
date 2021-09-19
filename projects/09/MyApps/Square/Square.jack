@@ -1,6 +1,6 @@
 class Square {
     field int x, y, size;
-    
+
     constructor Square new(int argX, int argY, int argSize) {
         let x = argX;
         let y = argY;
@@ -26,12 +26,16 @@ class Square {
     }
 
     method void incSize() {
-        let size = size + 2;
+        if ((y + size + 2) < 256 & ((x + size + 2) < 512)) {
+            let size = size + 2;
+        }
         return;
     }
 
     method void decSize() {
-        let size = size - 2;
+        if ((size - 2) > 0) {
+            let size = size - 2;
+        }
         return;
     }
 
@@ -48,7 +52,7 @@ class Square {
         }
         return;
     }
-    
+
     method void moveLeft() {
         if ((x - 2) > -1) {
             let x = x - 2;
