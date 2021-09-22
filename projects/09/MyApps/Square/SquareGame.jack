@@ -15,10 +15,6 @@ class SquareGame {
     }
 
     method void moveSquare() {
-        if (~(direction = 0)) {
-            do square.erase();
-        }
-
         if (direction = 1) {
             // up arrow
             do square.moveUp();
@@ -36,9 +32,6 @@ class SquareGame {
             do square.moveLeft();
         }
 
-        if (~(direction = 0)) {
-            do square.draw();
-        }
 
         do Sys.wait(5);
 
@@ -49,22 +42,16 @@ class SquareGame {
         var char key;
         var char prevKey;
 
-        do square.draw();
-
         while (~(key = 81)) {
             let key = Keyboard.keyPressed();
 
             if ((key = 90) & ~(key = prevKey)) {
                 // z
-                do square.erase();
                 do square.decSize();
-                do square.draw();
             }
             if ((key = 88) & ~(key = prevKey)) {
                 // x
-                do square.erase();
                 do square.incSize();
-                do square.draw();
             }
             if (key = 131) {
                 // up arrow
