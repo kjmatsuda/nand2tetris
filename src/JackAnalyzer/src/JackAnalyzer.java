@@ -25,7 +25,7 @@ public class JackAnalyzer {
 	};
 
 	public static void main(String[] args) {
-		BufferedReader reader = null;
+		BufferedReader input = null;
 		BufferedWriter output = null;
 
 		if (args.length != 1)
@@ -36,85 +36,68 @@ public class JackAnalyzer {
 
 		Path path = Paths.get(args[0]);
 		File[] files;
-		String outputFileNameWithoutExtension = "";
+		String dirName = ".";
 		if (Files.isDirectory(path))
 		{
 			// 引数がディレクトリの場合
+			dirName = args[0];
 			File dir = new File(args[0]);
 			files = dir.listFiles(filterJack);
-
-			outputFileNameWithoutExtension = dir.getName();
 		}
 		else
 		{
 			// 引数がファイルの場合
 			files = new File[1];
 			files[0] = new File(args[0]);
-
-			outputFileNameWithoutExtension = getFileNameWithoutExtension(files[0].getName());
 		}
 
 		try {
-			File outputFile = new File(outputFileNameWithoutExtension + ".xml");
-			OutputStreamWriter  osw = new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8");
-			output = new BufferedWriter(osw);
-
-			CodeWriter codeWriter = new CodeWriter(output);
-			codeWriter.writeInit();
-
 			for (File inputFile: files)
 			{
-				codeWriter.setFileName(getFileNameWithoutExtension(inputFile.getName()));
+				input = new BufferedReader(new FileReader(inputFile));
+				File outputFile = new File(dirName + "/" + getFileNameWithoutExtension(inputFile.getName()) + "T.xml");
+				OutputStreamWriter  osw = new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8");
+				output = new BufferedWriter(osw);
 
-				reader = new BufferedReader(new FileReader(inputFile));
+				CompilationEngine engine = new CompilationEngine(input, output);
+				engine.compileClass();
 
-				JackTokenizer tokenizer = new JackTokenizer(reader);
+				JackTokenizer tokenizer = new JackTokenizer(input);
 
-				while (tokenizer.hasMoreCommands())
+				while (tokenizer.hasMoreTokens())
 				{
 					tokenizer.advance();
-					CommandType commandType = tokenizer.commandType();
-					switch (commandType) {
-					case C_PUSH:
-					case C_POP:
-						codeWriter.writePushPop(commandType, tokenizer.arg1(), tokenizer.arg2());
+					TokenType tokenType = tokenizer.tokenType();
+					switch (tokenType) {
+					case TOKEN_KEYWORD:
+						// TODO
 						break;
-					case C_ARITHMETIC:
-						codeWriter.writeArithmetic(tokenizer.arg1());
+					case TOKEN_SYMBOL:
+						// TODO
 						break;
-					case C_LABEL:
-						codeWriter.writeLabel(tokenizer.arg1());
+					case TOKEN_IDENTIFIER:
+						// TODO
 						break;
-					case C_IF:
-						codeWriter.writeIf(tokenizer.arg1());
+					case TOKEN_INT_CONST:
+						// TODO
 						break;
-					case C_GOTO:
-						codeWriter.writeGoto(tokenizer.arg1());
-						break;
-					case C_FUNCTION:
-						codeWriter.writeFunction(tokenizer.arg1(), tokenizer.arg2());
-						break;
-					case C_RETURN:
-						codeWriter.writeReturn();
-						break;
-					case C_CALL:
-						codeWriter.writeCall(tokenizer.arg1(), tokenizer.arg2());
+					case TOKEN_STRING_CONST:
+						// TODO
 						break;
 					default:
 						break;
 					}
 				}
-				reader.close();
+				input.close();
 			}
-			codeWriter.close();
 		} catch(FileNotFoundException e) {
 			System.out.println(e);
 		} catch(IOException e) {
 			System.out.println(e);
 		} finally {
 			try {
-				if (reader != null) {
-					reader.close();
+				if (input != null) {
+					input.close();
 				}
 				if (output != null) {
 					output.close();
