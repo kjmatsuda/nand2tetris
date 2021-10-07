@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 public class JackAnalyzer {
 
@@ -59,35 +60,37 @@ public class JackAnalyzer {
 				OutputStreamWriter  osw = new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8");
 				output = new BufferedWriter(osw);
 
-				CompilationEngine engine = new CompilationEngine(input, output);
-				engine.compileClass();
+				// TODO CompilationEngine engine = new CompilationEngine(input, output);
+				// TODO engine.compileClass();
 
 				JackTokenizer tokenizer = new JackTokenizer(input);
 
+				writeLine(output, "<tokens>");
 				while (tokenizer.hasMoreTokens())
 				{
 					tokenizer.advance();
 					TokenType tokenType = tokenizer.tokenType();
 					switch (tokenType) {
 					case TOKEN_KEYWORD:
-						// TODO
+						writeLine(output, "<keyword> " + tokenizer.keyWord() + " </keyword>");
 						break;
 					case TOKEN_SYMBOL:
-						// TODO
+						writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 						break;
 					case TOKEN_IDENTIFIER:
-						// TODO
+						writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 						break;
 					case TOKEN_INT_CONST:
-						// TODO
+						writeLine(output, "<integerConstant> " + tokenizer.intVal() + " </integerConstant>");
 						break;
 					case TOKEN_STRING_CONST:
-						// TODO
+						writeLine(output, "<stringConstant> " + tokenizer.stringVal() + " </stringConstant>");
 						break;
 					default:
 						break;
 					}
 				}
+				writeLine(output, "</tokens>");
 				input.close();
 			}
 		} catch(FileNotFoundException e) {
@@ -111,5 +114,8 @@ public class JackAnalyzer {
 	private static String getFileNameWithoutExtension(String fileName) {
 		return fileName.substring(0, fileName.lastIndexOf("."));
 	}
-
+	private static void writeLine(BufferedWriter output, String str) throws IOException {
+		output.write(str);
+		output.newLine();
+	}
 }

@@ -5,10 +5,16 @@ import java.util.regex.Pattern;
 
 public class JackTokenizer {
 	private BufferedReader input;
+	private String currentLine;
+	private int tokenStartIdx;
+	private int tokenEndIdx;
 	private String currentToken;
 
 	JackTokenizer(BufferedReader input) {
 		this.input = input;
+		this.currentLine = "";
+		this.tokenStartIdx = -1;
+		this.tokenEndIdx = -1;
 	}
 
 	public void setReader(BufferedReader input) {
@@ -16,6 +22,7 @@ public class JackTokenizer {
 	}
 
 	public boolean hasMoreTokens() throws IOException {
+		// TODO hasMoreTokens の修正必要
 		boolean hasMore = false;
 		input.mark(256);
 		hasMore = (input.readLine() != null);
@@ -24,13 +31,44 @@ public class JackTokenizer {
 	}
 
 	public void advance() throws IOException {
-		currentToken = input.readLine();
-		while (skipLine(currentToken))
+		// TODO advance の修正必要
+		if (currentLine.isEmpty() || (tokenEndIdx >= currentLine.length() - 1))
 		{
-			currentToken = input.readLine();
+			// 次の行に進む
+			currentLine = input.readLine();
+			while (skipLine(currentLine))
+			{
+				currentLine = input.readLine();
+			}
+			// コメントは削除
+			currentLine = currentLine.replaceAll("//.*", "");
+			tokenStartIdx = 0;
+			tokenEndIdx = 1;
 		}
-		// コメントは削除
-		currentToken = currentToken.replaceAll("//.*", "");
+		//// 開始インデックスを決める
+		// スペースかタブの場合はスキップする
+		while (isSpaceOrTab(currentLine.substring(tokenStartIdx, tokenStartIdx + 1)))
+		{
+			tokenStartIdx++;
+		}
+		tokenEndIdx = tokenStartIdx + 1;
+
+		if (isSymbol(currentLine.substring(tokenStartIdx, tokenEndIdx)))
+		{
+			currentToken = currentLine.substring(tokenStartIdx, tokenEndIdx);
+			tokenStartIdx++;
+			tokenEndIdx++;
+			return;
+		}
+
+		//// 終了インデックスを決める
+		while (!isSpaceOrTab(currentLine.substring(tokenEndIdx, tokenEndIdx + 1)) && !isSymbol(currentLine.substring(tokenEndIdx, tokenEndIdx + 1)))
+		{
+			tokenEndIdx++;
+		}
+		currentToken = currentLine.substring(tokenStartIdx, tokenEndIdx);
+		tokenStartIdx = tokenEndIdx;
+		tokenEndIdx = tokenStartIdx + 1;
 	}
 
 	public TokenType tokenType() {
@@ -60,77 +98,77 @@ public class JackTokenizer {
 		return type;
 	}
 
-	public KeyWord keyWord() {
-		KeyWord keyword = KeyWord.KEYWORD_CLASS;
-		switch (currentToken) {
-		case "class":
-			keyword = KeyWord.KEYWORD_CLASS;
-			break;
-		case "constructor":
-			keyword = KeyWord.KEYWORD_CONSTRUCTOR;
-			break;
-		case "function":
-			keyword = KeyWord.KEYWORD_FUNCTION;
-			break;
-		case "method":
-			keyword = KeyWord.KEYWORD_METHOD;
-			break;
-		case "field":
-			keyword = KeyWord.KEYWORD_FIELD;
-			break;
-		case "static":
-			keyword = KeyWord.KEYWORD_STATIC;
-			break;
-		case "var":
-			keyword = KeyWord.KEYWORD_VAR;
-			break;
-		case "int":
-			keyword = KeyWord.KEYWORD_INT;
-			break;
-		case "char":
-			keyword = KeyWord.KEYWORD_CHAR;
-			break;
-		case "boolean":
-			keyword = KeyWord.KEYWORD_BOOLEAN;
-			break;
-		case "void":
-			keyword = KeyWord.KEYWORD_VOID;
-			break;
-		case "true":
-			keyword = KeyWord.KEYWORD_TRUE;
-			break;
-		case "false":
-			keyword = KeyWord.KEYWORD_FALSE;
-			break;
-		case "null":
-			keyword = KeyWord.KEYWORD_NULL;
-			break;
-		case "this":
-			keyword = KeyWord.KEYWORD_THIS;
-			break;
-		case "let":
-			keyword = KeyWord.KEYWORD_LET;
-			break;
-		case "do":
-			keyword = KeyWord.KEYWORD_DO;
-			break;
-		case "if":
-			keyword = KeyWord.KEYWORD_IF;
-			break;
-		case "else":
-			keyword = KeyWord.KEYWORD_ELSE;
-			break;
-		case "while":
-			keyword = KeyWord.KEYWORD_WHILE;
-			break;
-		case "return":
-			keyword = KeyWord.KEYWORD_RETURN;
-			break;
-		default:
-			break;
-		}
+	public String keyWord() {
+//		KeyWord keyword = KeyWord.KEYWORD_CLASS;
+//		switch (currentToken) {
+//		case "class":
+//			keyword = KeyWord.KEYWORD_CLASS;
+//			break;
+//		case "constructor":
+//			keyword = KeyWord.KEYWORD_CONSTRUCTOR;
+//			break;
+//		case "function":
+//			keyword = KeyWord.KEYWORD_FUNCTION;
+//			break;
+//		case "method":
+//			keyword = KeyWord.KEYWORD_METHOD;
+//			break;
+//		case "field":
+//			keyword = KeyWord.KEYWORD_FIELD;
+//			break;
+//		case "static":
+//			keyword = KeyWord.KEYWORD_STATIC;
+//			break;
+//		case "var":
+//			keyword = KeyWord.KEYWORD_VAR;
+//			break;
+//		case "int":
+//			keyword = KeyWord.KEYWORD_INT;
+//			break;
+//		case "char":
+//			keyword = KeyWord.KEYWORD_CHAR;
+//			break;
+//		case "boolean":
+//			keyword = KeyWord.KEYWORD_BOOLEAN;
+//			break;
+//		case "void":
+//			keyword = KeyWord.KEYWORD_VOID;
+//			break;
+//		case "true":
+//			keyword = KeyWord.KEYWORD_TRUE;
+//			break;
+//		case "false":
+//			keyword = KeyWord.KEYWORD_FALSE;
+//			break;
+//		case "null":
+//			keyword = KeyWord.KEYWORD_NULL;
+//			break;
+//		case "this":
+//			keyword = KeyWord.KEYWORD_THIS;
+//			break;
+//		case "let":
+//			keyword = KeyWord.KEYWORD_LET;
+//			break;
+//		case "do":
+//			keyword = KeyWord.KEYWORD_DO;
+//			break;
+//		case "if":
+//			keyword = KeyWord.KEYWORD_IF;
+//			break;
+//		case "else":
+//			keyword = KeyWord.KEYWORD_ELSE;
+//			break;
+//		case "while":
+//			keyword = KeyWord.KEYWORD_WHILE;
+//			break;
+//		case "return":
+//			keyword = KeyWord.KEYWORD_RETURN;
+//			break;
+//		default:
+//			break;
+//		}
 
-		return keyword;
+		return currentToken;
 	}
 
 	public char symbol() {
@@ -283,4 +321,20 @@ public class JackTokenizer {
 
 		return is;
 	}
+
+	private boolean isSpaceOrTab(String token) {
+		boolean is = false;
+
+		switch (token) {
+		case " ":
+		case "\t":
+			is = true;
+			break;
+		default:
+			break;
+		}
+
+		return is;
+	}
+
 }

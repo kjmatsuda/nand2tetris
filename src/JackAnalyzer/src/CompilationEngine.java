@@ -13,7 +13,6 @@ public class CompilationEngine {
 
 	public void compileClass() throws IOException {
 		// TODO compileClass
-		writeLine("<tokens></tokens>");
 	}
 
 	public void compileClassVarDec(){
@@ -66,10 +65,5 @@ public class CompilationEngine {
 
 	public void compileExpressionList(){
 		// TODO compileExpressionList
-	}
-
-	private void writeLine(String str) throws IOException {
-		output.write(str);
-		output.newLine();
 	}
 }
