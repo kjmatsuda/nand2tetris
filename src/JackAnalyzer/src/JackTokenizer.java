@@ -32,7 +32,7 @@ public class JackTokenizer {
 
 	public void advance() throws IOException {
 		// TODO advance の修正必要
-		if (currentLine.isEmpty() || (tokenEndIdx >= currentLine.length() - 1))
+		if (currentLine.isEmpty() || (tokenEndIdx > currentLine.length() - 1))
 		{
 			// 次の行に進む
 			currentLine = input.readLine();
@@ -201,6 +201,16 @@ public class JackTokenizer {
 		if (line.isEmpty() || line.startsWith("//")) {
 			skip = true;
 		}
+
+		String regexExceptSpace = "\\S";		// 空白以外
+		Pattern pattern = Pattern.compile(regexExceptSpace);
+		Matcher matcher = pattern.matcher(line);
+		if (!matcher.find())
+		{
+			// 空白しか含まない場合
+			skip = true;
+		}
+
 		return skip;
 	}
 
