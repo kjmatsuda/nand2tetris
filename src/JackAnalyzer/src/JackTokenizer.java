@@ -31,8 +31,7 @@ public class JackTokenizer {
 	}
 
 	public void advance() throws IOException {
-		// TODO advance の修正必要
-		if (currentLine.isEmpty() || (tokenEndIdx > currentLine.length() - 1))
+		if (currentLine.isEmpty() || (tokenEndIdx > currentLine.length()))
 		{
 			// 次の行に進む
 			currentLine = input.readLine();
