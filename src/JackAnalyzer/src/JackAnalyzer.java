@@ -75,7 +75,7 @@ public class JackAnalyzer {
 						writeLine(output, "<keyword> " + tokenizer.keyWord() + " </keyword>");
 						break;
 					case TOKEN_SYMBOL:
-						writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+						writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 						break;
 					case TOKEN_IDENTIFIER:
 						writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -117,5 +117,25 @@ public class JackAnalyzer {
 	private static void writeLine(BufferedWriter output, String str) throws IOException {
 		output.write(str);
 		output.newLine();
+	}
+	private static String convertSymbolToXmlElement(char symbol) {
+		String symbolStr = String.valueOf(symbol);
+
+		switch (symbolStr) {
+		case "<":
+			symbolStr = "&lt;";
+			break;
+		case ">":
+			symbolStr = "&gt;";
+			break;
+		case "&":
+			symbolStr = "&amp;";
+			break;
+		default:
+			break;
+		}
+
+
+		return symbolStr;
 	}
 }

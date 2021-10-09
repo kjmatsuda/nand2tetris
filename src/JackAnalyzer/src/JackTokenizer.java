@@ -22,7 +22,6 @@ public class JackTokenizer {
 	}
 
 	public boolean hasMoreTokens() throws IOException {
-		// TODO hasMoreTokens の修正必要
 		boolean hasMore = false;
 		input.mark(256);
 		hasMore = (input.readLine() != null);
