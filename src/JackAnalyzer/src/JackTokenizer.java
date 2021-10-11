@@ -59,12 +59,32 @@ public class JackTokenizer {
 			return;
 		}
 
+		boolean isStringConstant = isDoubleQuotation(currentLine.substring(tokenStartIdx, tokenEndIdx));
+
 		//// 終了インデックスを決める
-		while (!isSpaceOrTab(currentLine.substring(tokenEndIdx, tokenEndIdx + 1)) && !isSymbol(currentLine.substring(tokenEndIdx, tokenEndIdx + 1)))
+		boolean meetsContinueCondition = true;
+		while (meetsContinueCondition)
 		{
+			if (isStringConstant)
+			{
+				meetsContinueCondition = !isDoubleQuotation(currentLine.substring(tokenEndIdx, tokenEndIdx + 1));
+			}
+			else
+			{
+				meetsContinueCondition = !isSpaceOrTab(currentLine.substring(tokenEndIdx, tokenEndIdx + 1)) && !isSymbol(currentLine.substring(tokenEndIdx, tokenEndIdx + 1));
+			}
+
 			tokenEndIdx++;
 		}
-		currentToken = currentLine.substring(tokenStartIdx, tokenEndIdx);
+		if (isStringConstant)
+		{
+			// 最初と最後のダブルクォーテーションを飛ばす
+			currentToken = currentLine.substring(tokenStartIdx + 1, tokenEndIdx - 1);
+		}
+		else
+		{
+			currentToken = currentLine.substring(tokenStartIdx, tokenEndIdx);
+		}
 		tokenStartIdx = tokenEndIdx;
 		tokenEndIdx = tokenStartIdx + 1;
 	}
@@ -345,4 +365,17 @@ public class JackTokenizer {
 		return is;
 	}
 
+	private boolean isDoubleQuotation(String token) {
+		boolean is = false;
+
+		switch (token) {
+		case "\"":
+			is = true;
+			break;
+		default:
+			break;
+		}
+
+		return is;
+	}
 }
