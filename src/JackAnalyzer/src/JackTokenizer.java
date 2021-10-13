@@ -73,8 +73,11 @@ public class JackTokenizer {
 			{
 				meetsContinueCondition = !isSpaceOrTab(currentLine.substring(tokenEndIdx, tokenEndIdx + 1)) && !isSymbol(currentLine.substring(tokenEndIdx, tokenEndIdx + 1));
 			}
-
-			tokenEndIdx++;
+			if (meetsContinueCondition || isStringConstant)
+			{
+				// 文字列のときは閉じるダブルクォーテーションをスキップするためにインデックスを進める
+				tokenEndIdx++;
+			}
 		}
 		if (isStringConstant)
 		{
