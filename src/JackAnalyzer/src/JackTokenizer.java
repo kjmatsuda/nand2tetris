@@ -45,11 +45,37 @@ public class JackTokenizer {
 		}
 		//// 開始インデックスを決める
 		// スペースかタブの場合はスキップする
-		while (isSpaceOrTab(currentLine.substring(tokenStartIdx, tokenStartIdx + 1)))
+		boolean isInCommentBlock = false;
+		if (isCommentBlockStart(currentLine, tokenStartIdx))
+		{
+			isInCommentBlock = true;
+		}
+		while (isSpaceOrTab(currentLine, tokenStartIdx) || isInCommentBlock)
 		{
 			tokenStartIdx++;
+
+			if (isCommentBlockEnd(currentLine, tokenStartIdx))
+			{
+				isInCommentBlock = false;
+				// */ をスキップする
+				tokenStartIdx = tokenStartIdx + 2;
+			}
 		}
 		tokenEndIdx = tokenStartIdx + 1;
+		// TODO このブロックは advance の冒頭と重複するので修正
+		if (currentLine.isEmpty() || (tokenEndIdx > currentLine.length()))
+		{
+			// 次の行に進む
+			currentLine = input.readLine();
+			while (skipLine(currentLine))
+			{
+				currentLine = input.readLine();
+			}
+			// コメントは削除
+			currentLine = currentLine.replaceAll("//.*", "");
+			tokenStartIdx = 0;
+			tokenEndIdx = 1;
+		}
 
 		if (isSymbol(currentLine.substring(tokenStartIdx, tokenEndIdx)))
 		{
@@ -71,7 +97,7 @@ public class JackTokenizer {
 			}
 			else
 			{
-				meetsContinueCondition = !isSpaceOrTab(currentLine.substring(tokenEndIdx, tokenEndIdx + 1)) && !isSymbol(currentLine.substring(tokenEndIdx, tokenEndIdx + 1));
+				meetsContinueCondition = !isSpaceOrTab(currentLine, tokenEndIdx) && !isSymbol(currentLine.substring(tokenEndIdx, tokenEndIdx + 1));
 			}
 			if (meetsContinueCondition || isStringConstant)
 			{
@@ -353,16 +379,21 @@ public class JackTokenizer {
 		return is;
 	}
 
-	private boolean isSpaceOrTab(String token) {
+	private boolean isSpaceOrTab(String line, int startIdx) {
 		boolean is = false;
 
-		switch (token) {
-		case " ":
-		case "\t":
-			is = true;
-			break;
-		default:
-			break;
+		int endIdx = startIdx + 1;
+
+		if (endIdx <= line.length())
+		{
+			switch (line.substring(startIdx, endIdx)) {
+			case " ":
+			case "\t":
+				is = true;
+				break;
+			default:
+				break;
+			}
 		}
 
 		return is;
@@ -377,6 +408,44 @@ public class JackTokenizer {
 			break;
 		default:
 			break;
+		}
+
+		return is;
+	}
+
+	private boolean isCommentBlockStart(String line, int startIdx) {
+		boolean is = false;
+
+		int endIdx = startIdx + 3;
+
+		if (endIdx <= line.length())
+		{
+			switch (line.substring(startIdx, endIdx)) {
+			case "/**":
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
+	private boolean isCommentBlockEnd(String line, int startIdx) {
+		boolean is = false;
+
+		int endIdx = startIdx + 2;
+
+		if (endIdx <= line.length())
+		{
+			switch (line.substring(startIdx, endIdx)) {
+			case "*/":
+				is = true;
+				break;
+			default:
+				break;
+			}
 		}
 
 		return is;
