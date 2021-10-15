@@ -30,19 +30,8 @@ public class JackTokenizer {
 	}
 
 	public void advance() throws IOException {
-		if (currentLine.isEmpty() || (tokenEndIdx > currentLine.length()))
-		{
-			// 次の行に進む
-			currentLine = input.readLine();
-			while (skipLine(currentLine))
-			{
-				currentLine = input.readLine();
-			}
-			// コメントは削除
-			currentLine = currentLine.replaceAll("//.*", "");
-			tokenStartIdx = 0;
-			tokenEndIdx = 1;
-		}
+		advanceCurrentLineIfNeeded();
+
 		//// 開始インデックスを決める
 		// スペースかタブの場合はスキップする
 		boolean isInCommentBlock = false;
@@ -62,20 +51,7 @@ public class JackTokenizer {
 			}
 		}
 		tokenEndIdx = tokenStartIdx + 1;
-		// TODO このブロックは advance の冒頭と重複するので修正
-		if (currentLine.isEmpty() || (tokenEndIdx > currentLine.length()))
-		{
-			// 次の行に進む
-			currentLine = input.readLine();
-			while (skipLine(currentLine))
-			{
-				currentLine = input.readLine();
-			}
-			// コメントは削除
-			currentLine = currentLine.replaceAll("//.*", "");
-			tokenStartIdx = 0;
-			tokenEndIdx = 1;
-		}
+		advanceCurrentLineIfNeeded();
 
 		if (isSymbol(currentLine.substring(tokenStartIdx, tokenEndIdx)))
 		{
@@ -118,6 +94,21 @@ public class JackTokenizer {
 		tokenEndIdx = tokenStartIdx + 1;
 	}
 
+	private void advanceCurrentLineIfNeeded() throws IOException {
+		if (currentLine.isEmpty() || (tokenEndIdx > currentLine.length()))
+		{
+			// 次の行に進む
+			currentLine = input.readLine();
+			while (skipLine(currentLine))
+			{
+				currentLine = input.readLine();
+			}
+			// コメントは削除
+			currentLine = currentLine.replaceAll("//.*", "");
+			tokenStartIdx = 0;
+			tokenEndIdx = 1;
+		}
+	}
 	public TokenType tokenType() {
 		TokenType type = TokenType.TOKEN_KEYWORD;
 
