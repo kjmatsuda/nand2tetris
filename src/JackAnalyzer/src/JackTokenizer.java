@@ -42,8 +42,11 @@ public class JackTokenizer {
 		while (isSpaceOrTab(currentLine, tokenStartIdx) || isInCommentBlock)
 		{
 			tokenStartIdx++;
-
-			if (isCommentBlockEnd(currentLine, tokenStartIdx))
+			if (isCommentBlockStart(currentLine, tokenStartIdx))
+			{
+				isInCommentBlock = true;
+			}
+			else if (isCommentBlockEnd(currentLine, tokenStartIdx))
 			{
 				isInCommentBlock = false;
 				// */ をスキップする

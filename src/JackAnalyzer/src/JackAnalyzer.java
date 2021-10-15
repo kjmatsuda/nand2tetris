@@ -91,6 +91,7 @@ public class JackAnalyzer {
 					}
 				}
 				writeLine(output, "</tokens>");
+				output.close();
 				input.close();
 			}
 		} catch(FileNotFoundException e) {
