@@ -30,7 +30,11 @@ public class JackTokenizer {
 	}
 
 	public void advance() throws IOException {
-		advanceCurrentLineIfNeeded();
+
+		while (isLineEnd())
+		{
+			advanceCurrentLine();
+		}
 
 		//// 開始インデックスを決める
 		// スペースかタブの場合はスキップする
@@ -39,22 +43,28 @@ public class JackTokenizer {
 		{
 			isInCommentBlock = true;
 		}
-		while (isSpaceOrTab(currentLine, tokenStartIdx) || isInCommentBlock)
+		while (isSpaceOrTab(currentLine, tokenStartIdx) || isInCommentBlock || isLineEnd())
 		{
-			tokenStartIdx++;
-			if (isCommentBlockStart(currentLine, tokenStartIdx))
+			if (isLineEnd())
 			{
-				isInCommentBlock = true;
+				advanceCurrentLine();
 			}
-			else if (isCommentBlockEnd(currentLine, tokenStartIdx))
+			else
 			{
-				isInCommentBlock = false;
-				// */ をスキップする
-				tokenStartIdx = tokenStartIdx + 2;
+				tokenStartIdx++;
+				if (isCommentBlockStart(currentLine, tokenStartIdx))
+				{
+					isInCommentBlock = true;
+				}
+				else if (isCommentBlockEnd(currentLine, tokenStartIdx))
+				{
+					isInCommentBlock = false;
+					// */ をスキップする
+					tokenStartIdx = tokenStartIdx + 2;
+				}
 			}
 		}
 		tokenEndIdx = tokenStartIdx + 1;
-		advanceCurrentLineIfNeeded();
 
 		if (isSymbol(currentLine.substring(tokenStartIdx, tokenEndIdx)))
 		{
@@ -97,21 +107,21 @@ public class JackTokenizer {
 		tokenEndIdx = tokenStartIdx + 1;
 	}
 
-	private void advanceCurrentLineIfNeeded() throws IOException {
-		if (currentLine.isEmpty() || (tokenEndIdx > currentLine.length()))
+	private boolean isLineEnd() {
+		boolean is = false;
+		if (currentLine == null || currentLine.isEmpty() || isLineComment(currentLine, tokenStartIdx) || (tokenStartIdx >= currentLine.length()))
 		{
-			// 次の行に進む
-			currentLine = input.readLine();
-			while (skipLine(currentLine))
-			{
-				currentLine = input.readLine();
-			}
-			// コメントは削除
-			currentLine = currentLine.replaceAll("//.*", "");
-			tokenStartIdx = 0;
-			tokenEndIdx = 1;
+			is = true;
 		}
+		return is;
 	}
+
+	private void advanceCurrentLine() throws IOException {
+		currentLine = input.readLine();
+		tokenStartIdx = 0;
+		tokenEndIdx = 1;
+	}
+
 	public TokenType tokenType() {
 		TokenType type = TokenType.TOKEN_KEYWORD;
 
@@ -235,24 +245,6 @@ public class JackTokenizer {
 
 	public String stringVal() {
 		return currentToken;
-	}
-
-	private boolean skipLine(String line) {
-		boolean skip = false;
-		if (line.isEmpty() || line.startsWith("//")) {
-			skip = true;
-		}
-
-		String regexExceptSpace = "\\S";		// 空白以外
-		Pattern pattern = Pattern.compile(regexExceptSpace);
-		Matcher matcher = pattern.matcher(line);
-		if (!matcher.find())
-		{
-			// 空白しか含まない場合
-			skip = true;
-		}
-
-		return skip;
 	}
 
 	private boolean isKeyword(String token) {
@@ -402,6 +394,25 @@ public class JackTokenizer {
 			break;
 		default:
 			break;
+		}
+
+		return is;
+	}
+
+	private boolean isLineComment(String line, int startIdx) {
+		boolean is = false;
+
+		int endIdx = startIdx + 2;
+
+		if (endIdx <= line.length())
+		{
+			switch (line.substring(startIdx, endIdx)) {
+			case "//":
+				is = true;
+				break;
+			default:
+				break;
+			}
 		}
 
 		return is;
