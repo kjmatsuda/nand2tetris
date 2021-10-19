@@ -24,7 +24,23 @@ public class JackTokenizer {
 	public boolean hasMoreTokens() throws IOException {
 		boolean hasMore = false;
 		input.mark(256);
-		hasMore = (input.readLine() != null);
+		String line = input.readLine();
+		if (line != null)
+		{
+			while (line.isEmpty())
+			{
+				line = input.readLine();
+				if (line == null)
+				{
+					break;
+				}
+			}
+			hasMore = (line != null);
+		}
+		else
+		{
+			// 無処理
+		}
 		input.reset();
 		return hasMore;
 	}
