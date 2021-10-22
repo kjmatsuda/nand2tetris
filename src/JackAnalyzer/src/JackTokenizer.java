@@ -165,77 +165,77 @@ public class JackTokenizer {
 		return type;
 	}
 
-	public String keyWord() {
-//		KeyWord keyword = KeyWord.KEYWORD_CLASS;
-//		switch (currentToken) {
-//		case "class":
-//			keyword = KeyWord.KEYWORD_CLASS;
-//			break;
-//		case "constructor":
-//			keyword = KeyWord.KEYWORD_CONSTRUCTOR;
-//			break;
-//		case "function":
-//			keyword = KeyWord.KEYWORD_FUNCTION;
-//			break;
-//		case "method":
-//			keyword = KeyWord.KEYWORD_METHOD;
-//			break;
-//		case "field":
-//			keyword = KeyWord.KEYWORD_FIELD;
-//			break;
-//		case "static":
-//			keyword = KeyWord.KEYWORD_STATIC;
-//			break;
-//		case "var":
-//			keyword = KeyWord.KEYWORD_VAR;
-//			break;
-//		case "int":
-//			keyword = KeyWord.KEYWORD_INT;
-//			break;
-//		case "char":
-//			keyword = KeyWord.KEYWORD_CHAR;
-//			break;
-//		case "boolean":
-//			keyword = KeyWord.KEYWORD_BOOLEAN;
-//			break;
-//		case "void":
-//			keyword = KeyWord.KEYWORD_VOID;
-//			break;
-//		case "true":
-//			keyword = KeyWord.KEYWORD_TRUE;
-//			break;
-//		case "false":
-//			keyword = KeyWord.KEYWORD_FALSE;
-//			break;
-//		case "null":
-//			keyword = KeyWord.KEYWORD_NULL;
-//			break;
-//		case "this":
-//			keyword = KeyWord.KEYWORD_THIS;
-//			break;
-//		case "let":
-//			keyword = KeyWord.KEYWORD_LET;
-//			break;
-//		case "do":
-//			keyword = KeyWord.KEYWORD_DO;
-//			break;
-//		case "if":
-//			keyword = KeyWord.KEYWORD_IF;
-//			break;
-//		case "else":
-//			keyword = KeyWord.KEYWORD_ELSE;
-//			break;
-//		case "while":
-//			keyword = KeyWord.KEYWORD_WHILE;
-//			break;
-//		case "return":
-//			keyword = KeyWord.KEYWORD_RETURN;
-//			break;
-//		default:
-//			break;
-//		}
+	public KeyWord keyWord() {
+		KeyWord keyword = KeyWord.KEYWORD_CLASS;
+		switch (currentToken) {
+		case "class":
+			keyword = KeyWord.KEYWORD_CLASS;
+			break;
+		case "constructor":
+			keyword = KeyWord.KEYWORD_CONSTRUCTOR;
+			break;
+		case "function":
+			keyword = KeyWord.KEYWORD_FUNCTION;
+			break;
+		case "method":
+			keyword = KeyWord.KEYWORD_METHOD;
+			break;
+		case "field":
+			keyword = KeyWord.KEYWORD_FIELD;
+			break;
+		case "static":
+			keyword = KeyWord.KEYWORD_STATIC;
+			break;
+		case "var":
+			keyword = KeyWord.KEYWORD_VAR;
+			break;
+		case "int":
+			keyword = KeyWord.KEYWORD_INT;
+			break;
+		case "char":
+			keyword = KeyWord.KEYWORD_CHAR;
+			break;
+		case "boolean":
+			keyword = KeyWord.KEYWORD_BOOLEAN;
+			break;
+		case "void":
+			keyword = KeyWord.KEYWORD_VOID;
+			break;
+		case "true":
+			keyword = KeyWord.KEYWORD_TRUE;
+			break;
+		case "false":
+			keyword = KeyWord.KEYWORD_FALSE;
+			break;
+		case "null":
+			keyword = KeyWord.KEYWORD_NULL;
+			break;
+		case "this":
+			keyword = KeyWord.KEYWORD_THIS;
+			break;
+		case "let":
+			keyword = KeyWord.KEYWORD_LET;
+			break;
+		case "do":
+			keyword = KeyWord.KEYWORD_DO;
+			break;
+		case "if":
+			keyword = KeyWord.KEYWORD_IF;
+			break;
+		case "else":
+			keyword = KeyWord.KEYWORD_ELSE;
+			break;
+		case "while":
+			keyword = KeyWord.KEYWORD_WHILE;
+			break;
+		case "return":
+			keyword = KeyWord.KEYWORD_RETURN;
+			break;
+		default:
+			break;
+		}
 
-		return currentToken;
+		return keyword;
 	}
 
 	public char symbol() {

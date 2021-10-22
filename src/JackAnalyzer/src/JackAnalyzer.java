@@ -56,41 +56,14 @@ public class JackAnalyzer {
 			for (File inputFile: files)
 			{
 				input = new BufferedReader(new FileReader(inputFile));
-				File outputFile = new File(dirName + "/" + getFileNameWithoutExtension(inputFile.getName()) + "T.xml");
+				File outputFile = new File(dirName + "/" + getFileNameWithoutExtension(inputFile.getName()) + ".xml");
 				OutputStreamWriter  osw = new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8");
 				output = new BufferedWriter(osw);
 
-				// TODO CompilationEngine engine = new CompilationEngine(input, output);
-				// TODO engine.compileClass();
-
 				JackTokenizer tokenizer = new JackTokenizer(input);
+				CompilationEngine engine = new CompilationEngine(tokenizer, output);
+				engine.compileClass();
 
-				writeLine(output, "<tokens>");
-				while (tokenizer.hasMoreTokens())
-				{
-					tokenizer.advance();
-					TokenType tokenType = tokenizer.tokenType();
-					switch (tokenType) {
-					case TOKEN_KEYWORD:
-						writeLine(output, "<keyword> " + tokenizer.keyWord() + " </keyword>");
-						break;
-					case TOKEN_SYMBOL:
-						writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
-						break;
-					case TOKEN_IDENTIFIER:
-						writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
-						break;
-					case TOKEN_INT_CONST:
-						writeLine(output, "<integerConstant> " + tokenizer.intVal() + " </integerConstant>");
-						break;
-					case TOKEN_STRING_CONST:
-						writeLine(output, "<stringConstant> " + tokenizer.stringVal() + " </stringConstant>");
-						break;
-					default:
-						break;
-					}
-				}
-				writeLine(output, "</tokens>");
 				output.close();
 				input.close();
 			}
@@ -114,29 +87,5 @@ public class JackAnalyzer {
 	}
 	private static String getFileNameWithoutExtension(String fileName) {
 		return fileName.substring(0, fileName.lastIndexOf("."));
-	}
-	private static void writeLine(BufferedWriter output, String str) throws IOException {
-		output.write(str);
-		output.newLine();
-	}
-	private static String convertSymbolToXmlElement(char symbol) {
-		String symbolStr = String.valueOf(symbol);
-
-		switch (symbolStr) {
-		case "<":
-			symbolStr = "&lt;";
-			break;
-		case ">":
-			symbolStr = "&gt;";
-			break;
-		case "&":
-			symbolStr = "&amp;";
-			break;
-		default:
-			break;
-		}
-
-
-		return symbolStr;
 	}
 }
