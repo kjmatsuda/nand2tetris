@@ -53,10 +53,10 @@ public class CompilationEngine {
 		}
 
 		// subroutineDec*
-//		while (isSubroutineDec())
-//		{
-//			compileSubroutine();
-//		}
+		while (isSubroutineDec())
+		{
+			compileSubroutine();
+		}
 
 		// SYMBOL の '}'
 		if (!isCloseCurlyBracket())
@@ -73,7 +73,7 @@ public class CompilationEngine {
 	public void compileClassVarDec() throws IOException{
 		writeLine(output, "<classVarDec>");
 		indentLevelDown();
-		// KEYWORD の'static' もしくは 'field'(呼び出し元でチェックしているからここではしない)
+		// KEYWORD の'static', 'field'(呼び出し元でチェックしているからここではしない)
 		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
 		// KEYWORD の type
@@ -83,7 +83,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
+		writeLineType();
 
 		// IDENTIFIER の varName
 		tokenizer.advance();
@@ -123,9 +123,54 @@ public class CompilationEngine {
 	}
 
 	public void compileSubroutine() throws IOException{
-		// TODO compileSubroutine
 		writeLine(output, "<subroutineDec>");
 		indentLevelDown();
+
+		// KEYWORD の'constructor', 'function', 'method'(呼び出し元でチェックしているからここではしない)
+		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
+
+		// KEYWORD の type
+		tokenizer.advance();
+		if (!isType())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLineType();
+
+		// IDENTIFIER の subroutineName
+		tokenizer.advance();
+		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+
+		// SYMBOL の '('
+		tokenizer.advance();
+		if (!isOpenBracket())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		// parameterList
+		tokenizer.advance();
+		compileParameterList();
+
+		// SYMBOL の ')'
+		tokenizer.advance();
+		if (!isCloseBracket())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		// TODO subroutineBody
+
 		writeLine(output, "</subroutineDec>");
 		indentLevelUp();
 	}
@@ -265,6 +310,17 @@ public class CompilationEngine {
 		output.newLine();
 	}
 
+	private void writeLineType() throws IOException {
+		if (tokenizer.tokenType() == TokenType.TOKEN_KEYWORD)
+		{
+			writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
+		}
+		else
+		{
+			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+		}
+	}
+
 	private String convertSymbolToXmlElement(char symbol) {
 		String symbolStr = String.valueOf(symbol);
 
@@ -309,6 +365,40 @@ public class CompilationEngine {
 		{
 			switch (tokenizer.symbol()) {
 			case '}':
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
+	private boolean isOpenBracket() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_SYMBOL)
+		{
+			switch (tokenizer.symbol()) {
+			case '(':
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
+	private boolean isCloseBracket() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_SYMBOL)
+		{
+			switch (tokenizer.symbol()) {
+			case ')':
 				is = true;
 				break;
 			default:
