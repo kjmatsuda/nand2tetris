@@ -156,12 +156,10 @@ public class CompilationEngine {
 		}
 		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 
-		// parameterList
 		tokenizer.advance();
 		compileParameterList();
 
 		// SYMBOL の ')'
-		tokenizer.advance();
 		if (!isCloseBracket())
 		{
 			// 構文エラー
@@ -171,12 +169,42 @@ public class CompilationEngine {
 
 		// TODO subroutineBody
 
-		writeLine(output, "</subroutineDec>");
 		indentLevelUp();
+		writeLine(output, "</subroutineDec>");
 	}
 
-	public void compileParameterList(){
-		// TODO compileParameterList
+	public void compileParameterList() throws IOException{
+		writeLine(output, "<parameterList>");
+		indentLevelDown();
+
+		while (!isCloseBracket())
+		{
+			// type
+			if (!isType())
+			{
+				// 構文エラー
+				return;
+			}
+			writeLineType();
+
+			// IDENTIFIER の varName
+			tokenizer.advance();
+			if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
+			{
+				// 構文エラー
+				return;
+			}
+			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+
+			tokenizer.advance();
+			if (isComma())
+			{
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				tokenizer.advance();
+			}
+		}
+		indentLevelUp();
+		writeLine(output, "</parameterList>");
 	}
 
 	public void compileVarDec(){
