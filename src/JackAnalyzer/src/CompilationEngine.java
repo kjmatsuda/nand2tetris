@@ -228,9 +228,16 @@ public class CompilationEngine {
 			tokenizer.advance();
 		}
 
-		// TODO statements
+		// statements
+		compileStatements();
 
-		// TODO }
+		// SYMBOL の '}'
+		if (!isCloseCurlyBracket())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 
 		indentLevelUp();
 		writeLine(output, "</subroutineBody>");
@@ -289,8 +296,38 @@ public class CompilationEngine {
 		writeLine(output, "</varDec>");
 	}
 
-	public void compileStatements(){
-		// TODO compileStatements
+	public void compileStatements() throws IOException{
+		writeLine(output, "<statements>");
+		indentLevelDown();
+
+		while (isStatement())
+		{
+			// statement*
+			if (isLetStatement())
+			{
+				compileLet();
+			}
+			else if (isIfStatement())
+			{
+				compileIf();
+			}
+			else if (isWhileStatement())
+			{
+				compileWhile();
+			}
+			else if (isDoStatement())
+			{
+				compileDo();
+			}
+			else if (isReturnStatement())
+			{
+				compileReturn();
+			}
+			tokenizer.advance();
+		}
+
+		indentLevelUp();
+		writeLine(output, "</statements>");
 	}
 
 	public void compileDo(){
@@ -622,6 +659,108 @@ public class CompilationEngine {
 		else if (tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER)
 		{
 			is = true;
+		}
+
+		return is;
+	}
+
+	private boolean isStatement() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_KEYWORD)
+		{
+			switch (tokenizer.keyWord()) {
+			case KEYWORD_LET:
+			case KEYWORD_IF:
+			case KEYWORD_WHILE:
+			case KEYWORD_DO:
+			case KEYWORD_RETURN:
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
+	private boolean isLetStatement() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_KEYWORD)
+		{
+			switch (tokenizer.keyWord()) {
+			case KEYWORD_LET:
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+	private boolean isIfStatement() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_KEYWORD)
+		{
+			switch (tokenizer.keyWord()) {
+			case KEYWORD_IF:
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+	private boolean isWhileStatement() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_KEYWORD)
+		{
+			switch (tokenizer.keyWord()) {
+			case KEYWORD_WHILE:
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+	private boolean isDoStatement() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_KEYWORD)
+		{
+			switch (tokenizer.keyWord()) {
+			case KEYWORD_DO:
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+	private boolean isReturnStatement() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_KEYWORD)
+		{
+			switch (tokenizer.keyWord()) {
+			case KEYWORD_RETURN:
+				is = true;
+				break;
+			default:
+				break;
+			}
 		}
 
 		return is;
