@@ -330,24 +330,194 @@ public class CompilationEngine {
 		writeLine(output, "</statements>");
 	}
 
-	public void compileDo(){
-		// TODO compileDo
+	public void compileDo() throws IOException{
+		writeLine(output, "<doStatement>");
+		indentLevelDown();
+
+		// KEYWORD の'do'(呼び出し元でチェックしているからここではしない)
+		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
+
+		// TODO subroutineCall
+
+		// ';'
+		if (!isSemicolon())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		indentLevelUp();
+		writeLine(output, "</doStatement>");
 	}
 
-	public void compileLet(){
-		// TODO compileLet
+	public void compileLet() throws IOException{
+		writeLine(output, "<letStatement>");
+		indentLevelDown();
+
+		// KEYWORD の'let'(呼び出し元でチェックしているからここではしない)
+		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
+
+		// varName
+		tokenizer.advance();
+		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+
+		// TODO ('[' expression ']')?
+
+		// '='
+		tokenizer.advance();
+		if (!isEqual())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		// TODO expression
+
+		// ';'
+		if (!isSemicolon())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		indentLevelUp();
+		writeLine(output, "</letStatement>");
 	}
 
-	public void compileWhile(){
-		// TODO compileWhile
+	public void compileWhile() throws IOException{
+		writeLine(output, "<whileStatement>");
+		indentLevelDown();
+
+		// KEYWORD の'while'(呼び出し元でチェックしているからここではしない)
+		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
+
+		// '('
+		tokenizer.advance();
+		if (!isOpenBracket())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		// expression
+		compileExpression();
+
+		// ')'
+		tokenizer.advance();
+		if (!isCloseBracket())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		// '{'
+		tokenizer.advance();
+		if (!isOpenCurlyBracket())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		compileStatements();
+
+		// '}'
+		tokenizer.advance();
+		if (!isCloseCurlyBracket())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		indentLevelUp();
+		writeLine(output, "</whileStatement>");
 	}
 
-	public void compileReturn(){
-		// TODO compileReturn
+	public void compileReturn() throws IOException{
+		writeLine(output, "<returnStatement>");
+		indentLevelDown();
+
+		// KEYWORD の'return'(呼び出し元でチェックしているからここではしない)
+		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
+
+		// TODO expression?
+
+		// ';'
+		if (!isSemicolon())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		indentLevelUp();
+		writeLine(output, "</returnStatement>");
 	}
 
-	public void compileIf(){
+	public void compileIf() throws IOException{
 		// TODO compileIf
+		writeLine(output, "<ifStatement>");
+		indentLevelDown();
+
+		// KEYWORD の'if'(呼び出し元でチェックしているからここではしない)
+		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
+
+		// '('
+		tokenizer.advance();
+		if (!isOpenBracket())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		// expression
+		compileExpression();
+
+		// ')'
+		tokenizer.advance();
+		if (!isCloseBracket())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		// '{'
+		tokenizer.advance();
+		if (!isOpenCurlyBracket())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		compileStatements();
+
+		// '}'
+		tokenizer.advance();
+		if (!isCloseCurlyBracket())
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+		// TODO ('else' '{' statements '}')?
+
+		indentLevelUp();
+		writeLine(output, "</ifStatement>");
 	}
 
 	public void compileExpression(){
@@ -576,6 +746,23 @@ public class CompilationEngine {
 		{
 			switch (tokenizer.symbol()) {
 			case ',':
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
+	private boolean isEqual() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_SYMBOL)
+		{
+			switch (tokenizer.symbol()) {
+			case '=':
 				is = true;
 				break;
 			default:
