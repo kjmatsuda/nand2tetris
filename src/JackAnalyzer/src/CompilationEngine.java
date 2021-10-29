@@ -543,8 +543,24 @@ public class CompilationEngine {
 		// TODO compileTerm
 	}
 
-	public void compileExpressionList(){
-		// TODO compileExpressionList
+	public void compileExpressionList() throws IOException{
+		writeLine(output, "<expressionList>");
+		indentLevelDown();
+
+		while (!isCloseBracket())
+		{
+			compileExpression();
+
+			tokenizer.advance();
+			if (isComma())
+			{
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				tokenizer.advance();
+			}
+		}
+
+		indentLevelUp();
+		writeLine(output, "</expressionList>");
 	}
 
 	private String keyWordToString(KeyWord keyword) {
