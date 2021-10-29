@@ -520,8 +520,23 @@ public class CompilationEngine {
 		writeLine(output, "</ifStatement>");
 	}
 
-	public void compileExpression(){
-		// TODO compileExpression
+	public void compileExpression() throws IOException{
+		writeLine(output, "<expression>");
+		indentLevelDown();
+
+		// term
+		compileTerm();
+
+		// (op term)*
+		while (isOperator())
+		{
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			compileTerm();
+			tokenizer.advance();
+		}
+
+		indentLevelUp();
+		writeLine(output, "</expression>");
 	}
 
 	public void compileTerm(){
@@ -943,6 +958,31 @@ public class CompilationEngine {
 		{
 			switch (tokenizer.keyWord()) {
 			case KEYWORD_RETURN:
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
+	private boolean isOperator() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_SYMBOL)
+		{
+			switch (tokenizer.symbol()) {
+			case '+':
+			case '-':
+			case '*':
+			case '/':
+			case '&':
+			case '|':
+			case '<':
+			case '>':
+			case '=':
 				is = true;
 				break;
 			default:
