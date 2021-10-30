@@ -367,7 +367,22 @@ public class CompilationEngine {
 		}
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
-		// TODO ('[' expression ']')?
+		// ('[' expression ']')?
+		if (isOpenSquareBracket())
+		{
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			tokenizer.advance();
+
+			compileExpression();
+
+			if (!isCloseSquareBracket())
+			{
+				// 構文エラー
+				return;
+			}
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			tokenizer.advance();
+		}
 
 		// '='
 		tokenizer.advance();
@@ -378,7 +393,8 @@ public class CompilationEngine {
 		}
 		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 
-		// TODO expression
+		// expression
+		compileExpression();
 
 		// ';'
 		if (!isSemicolon())
@@ -451,7 +467,8 @@ public class CompilationEngine {
 		// KEYWORD の'return'(呼び出し元でチェックしているからここではしない)
 		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
-		// TODO expression?
+		// expression?
+		compileExpression();
 
 		// ';'
 		if (!isSemicolon())
@@ -466,7 +483,6 @@ public class CompilationEngine {
 	}
 
 	public void compileIf() throws IOException{
-		// TODO compileIf
 		writeLine(output, "<ifStatement>");
 		indentLevelDown();
 
@@ -514,7 +530,28 @@ public class CompilationEngine {
 		}
 		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 
-		// TODO ('else' '{' statements '}')?
+		// ('else' '{' statements '}')?
+		tokenizer.advance();
+		if (isElse())
+		{
+			tokenizer.advance();
+			if (!isOpenCurlyBracket())
+			{
+				// 構文エラー
+				return;
+			}
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+			compileStatements();
+
+			tokenizer.advance();
+			if (!isCloseCurlyBracket())
+			{
+				// 構文エラー
+				return;
+			}
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		}
 
 		indentLevelUp();
 		writeLine(output, "</ifStatement>");
@@ -541,6 +578,7 @@ public class CompilationEngine {
 
 	public void compileTerm(){
 		// TODO compileTerm
+
 	}
 
 	public void compileExpressionList() throws IOException{
@@ -709,6 +747,40 @@ public class CompilationEngine {
 		{
 			switch (tokenizer.symbol()) {
 			case '}':
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
+	private boolean isOpenSquareBracket() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_SYMBOL)
+		{
+			switch (tokenizer.symbol()) {
+			case '[':
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
+	private boolean isCloseSquareBracket() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_SYMBOL)
+		{
+			switch (tokenizer.symbol()) {
+			case ']':
 				is = true;
 				break;
 			default:
@@ -999,6 +1071,23 @@ public class CompilationEngine {
 			case '<':
 			case '>':
 			case '=':
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
+	private boolean isElse() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_KEYWORD)
+		{
+			switch (tokenizer.keyWord()) {
+			case KEYWORD_ELSE:
 				is = true;
 				break;
 			default:
