@@ -337,7 +337,8 @@ public class CompilationEngine {
 		// KEYWORD の'do'(呼び出し元でチェックしているからここではしない)
 		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
-		// TODO subroutineCall
+		// subroutineCall
+		compileSubroutineCall();
 
 		// ';'
 		if (!isSemicolon())
@@ -576,9 +577,82 @@ public class CompilationEngine {
 		writeLine(output, "</expression>");
 	}
 
-	public void compileTerm(){
-		// TODO compileTerm
+	public void compileTerm() throws IOException{
+		writeLine(output, "<term>");
+		indentLevelDown();
 
+		tokenizer.advance();
+		switch (tokenizer.tokenType()) {
+		case TOKEN_INT_CONST:
+			writeLine(output, "<integerConstant> " + tokenizer.intVal() + " </integerConstant>");
+			break;
+		case TOKEN_STRING_CONST:
+			writeLine(output, "<stringConstant> " + tokenizer.stringVal() + " </stringConstant>");
+			break;
+		case TOKEN_KEYWORD:
+			if (!isKeywordConstant())
+			{
+				// 構文エラー
+				return;
+			}
+			writeLine(output, "<keyword> " + tokenizer.keyWord() + " </keyword>");
+			break;
+		case TOKEN_IDENTIFIER:
+			// TODO '(' か '.' なら subroutineCall、そうでなければ varName
+			// varName or subroutineCall
+			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+
+			// ('[' expression ']')?
+			if (isOpenSquareBracket())
+			{
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				tokenizer.advance();
+
+				compileExpression();
+
+				if (!isCloseSquareBracket())
+				{
+					// 構文エラー
+					return;
+				}
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				tokenizer.advance();
+			}
+			break;
+		case TOKEN_SYMBOL:
+			if (isUnaryOperator())
+			{
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				compileTerm();
+			}
+			else if (isOpenBracket())
+			{
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				tokenizer.advance();
+
+				compileExpression();
+
+				if (!isCloseBracket())
+				{
+					// 構文エラー
+					return;
+				}
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				tokenizer.advance();
+			}
+			else
+			{
+				// 構文エラー
+				return;
+			}
+
+			break;
+		default:
+			break;
+		}
+
+		indentLevelUp();
+		writeLine(output, "</term>");
 	}
 
 	public void compileExpressionList() throws IOException{
@@ -599,6 +673,75 @@ public class CompilationEngine {
 
 		indentLevelUp();
 		writeLine(output, "</expressionList>");
+	}
+
+	public void compileSubroutineCall() throws IOException{
+		// 1つ目は identifier
+		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
+		{
+			// 構文エラー
+			return;
+		}
+		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+
+		tokenizer.advance();
+
+		if (isOpenBracket())
+		{
+			// 2つ目が '(' の場合
+			// '(' expressionList ')'
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			tokenizer.advance();
+
+			compileExpressionList();
+
+			if (!isCloseBracket())
+			{
+				// 構文エラー
+				return;
+			}
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			tokenizer.advance();
+		}
+		else if (isDot())
+		{
+			// 2つ目が '.' の場合
+			// '.'
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			tokenizer.advance();
+
+			// subroutineName
+			if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
+			{
+				// 構文エラー
+				return;
+			}
+			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+
+			// '(' expressionList ')'
+			if (!isOpenBracket())
+			{
+				// 構文エラー
+				return;
+			}
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			tokenizer.advance();
+
+			compileExpressionList();
+
+			if (!isCloseBracket())
+			{
+				// 構文エラー
+				return;
+			}
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			tokenizer.advance();
+		}
+		else
+		{
+			// 構文エラー
+			return;
+		}
 	}
 
 	private String keyWordToString(KeyWord keyword) {
@@ -876,6 +1019,23 @@ public class CompilationEngine {
 		return is;
 	}
 
+	private boolean isDot() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_SYMBOL)
+		{
+			switch (tokenizer.symbol()) {
+			case '.':
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
 	private boolean isClassVarDec() {
 		boolean is = false;
 
@@ -1056,6 +1216,26 @@ public class CompilationEngine {
 		return is;
 	}
 
+	private boolean isKeywordConstant() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_KEYWORD)
+		{
+			switch (tokenizer.keyWord()) {
+			case KEYWORD_TRUE:
+			case KEYWORD_FALSE:
+			case KEYWORD_NULL:
+			case KEYWORD_THIS:
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
 	private boolean isOperator() {
 		boolean is = false;
 
@@ -1071,6 +1251,24 @@ public class CompilationEngine {
 			case '<':
 			case '>':
 			case '=':
+				is = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return is;
+	}
+
+	private boolean isUnaryOperator() {
+		boolean is = false;
+
+		if (tokenizer.tokenType() == TokenType.TOKEN_SYMBOL)
+		{
+			switch (tokenizer.symbol()) {
+			case '-':
+			case '~':
 				is = true;
 				break;
 			default:
