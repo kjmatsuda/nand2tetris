@@ -398,6 +398,7 @@ public class CompilationEngine {
 		compileExpression();
 
 		// ';'
+		tokenizer.advance();
 		if (!isSemicolon())
 		{
 			// 構文エラー
