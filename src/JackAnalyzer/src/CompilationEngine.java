@@ -470,16 +470,23 @@ public class CompilationEngine {
 		// KEYWORD の'return'(呼び出し元でチェックしているからここではしない)
 		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
-		// expression?
-		compileExpression();
-
-		// ';'
-		if (!isSemicolon())
+		tokenizer.advance();
+		if (isSemicolon())
 		{
-			// 構文エラー
-			return;
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		else
+		{
+			// expression?
+			compileExpression();
+
+			// ';'
+			if (!isSemicolon())
+			{
+				// 構文エラー
+				return;
+			}
+		}
 
 		indentLevelUp();
 		writeLine(output, "</returnStatement>");
