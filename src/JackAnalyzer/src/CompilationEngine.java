@@ -56,6 +56,7 @@ public class CompilationEngine {
 		while (isSubroutineDec())
 		{
 			compileSubroutine();
+			tokenizer.advance();
 		}
 
 		// SYMBOL の '}'
