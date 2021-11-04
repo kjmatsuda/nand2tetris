@@ -338,6 +338,7 @@ public class CompilationEngine {
 		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
 		// subroutineCall
+		tokenizer.advance();
 		compileSubroutineCall();
 
 		// ';'
@@ -686,7 +687,6 @@ public class CompilationEngine {
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 		tokenizer.advance();
-
 		if (isOpenBracket())
 		{
 			// 2つ目が '(' の場合
@@ -720,6 +720,7 @@ public class CompilationEngine {
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 			// '(' expressionList ')'
+			tokenizer.advance();
 			if (!isOpenBracket())
 			{
 				// 構文エラー
