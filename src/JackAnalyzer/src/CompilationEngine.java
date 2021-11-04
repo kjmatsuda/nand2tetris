@@ -545,6 +545,8 @@ public class CompilationEngine {
 		tokenizer.advance();
 		if (isElse())
 		{
+			writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
+
 			tokenizer.advance();
 			if (!isOpenCurlyBracket())
 			{
