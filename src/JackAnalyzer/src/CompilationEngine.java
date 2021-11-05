@@ -374,8 +374,8 @@ public class CompilationEngine {
 		if (isOpenSquareBracket())
 		{
 			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
-			tokenizer.advance();
 
+			tokenizer.advance();
 			compileExpression();
 
 			if (!isCloseSquareBracket())
@@ -397,6 +397,7 @@ public class CompilationEngine {
 		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 
 		// expression
+		tokenizer.advance();
 		compileExpression();
 
 		// ';'
@@ -482,11 +483,13 @@ public class CompilationEngine {
 			compileExpression();
 
 			// ';'
+			tokenizer.advance();
 			if (!isSemicolon())
 			{
 				// 構文エラー
 				return;
 			}
+			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 		}
 
 		indentLevelUp();
@@ -510,6 +513,7 @@ public class CompilationEngine {
 		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 
 		// expression
+		tokenizer.advance();
 		compileExpression();
 
 		// ')'
@@ -593,7 +597,6 @@ public class CompilationEngine {
 		writeLine(output, "<term>");
 		indentLevelDown();
 
-		tokenizer.advance();
 		switch (tokenizer.tokenType()) {
 		case TOKEN_INT_CONST:
 			writeLine(output, "<integerConstant> " + tokenizer.intVal() + " </integerConstant>");
