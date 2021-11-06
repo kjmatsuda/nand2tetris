@@ -534,10 +534,10 @@ public class CompilationEngine {
 		}
 		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 
+		tokenizer.advance();
 		compileStatements();
 
 		// '}'
-		tokenizer.advance();
 		if (!isCloseCurlyBracket())
 		{
 			// 構文エラー
