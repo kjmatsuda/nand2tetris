@@ -307,6 +307,7 @@ public class CompilationEngine {
 			if (isLetStatement())
 			{
 				compileLet();
+				tokenizer.advance();
 			}
 			else if (isIfStatement())
 			{
@@ -315,16 +316,18 @@ public class CompilationEngine {
 			else if (isWhileStatement())
 			{
 				compileWhile();
+				tokenizer.advance();
 			}
 			else if (isDoStatement())
 			{
 				compileDo();
+				tokenizer.advance();
 			}
 			else if (isReturnStatement())
 			{
 				compileReturn();
+				tokenizer.advance();
 			}
-			tokenizer.advance();
 		}
 
 		indentLevelUp();
