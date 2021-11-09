@@ -458,7 +458,6 @@ public class CompilationEngine {
 		compileStatements();
 
 		// '}'
-		tokenizer.advance();
 		if (!isCloseCurlyBracket())
 		{
 			// 構文エラー
