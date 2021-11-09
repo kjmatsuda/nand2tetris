@@ -433,6 +433,7 @@ public class CompilationEngine {
 		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 
 		// expression
+		tokenizer.advance();
 		compileExpression();
 
 		// ')'
@@ -453,6 +454,7 @@ public class CompilationEngine {
 		}
 		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 
+		tokenizer.advance();
 		compileStatements();
 
 		// '}'
@@ -571,6 +573,8 @@ public class CompilationEngine {
 				return;
 			}
 			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+
+			tokenizer.advance();
 		}
 
 		indentLevelUp();
