@@ -616,7 +616,7 @@ public class CompilationEngine {
 				// 構文エラー
 				return;
 			}
-			writeLine(output, "<keyword> " + tokenizer.keyWord() + " </keyword>");
+			writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 			break;
 		case TOKEN_IDENTIFIER:
 			// TODO '(' か '.' なら subroutineCall、そうでなければ varName
