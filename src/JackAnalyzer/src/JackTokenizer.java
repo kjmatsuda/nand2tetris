@@ -9,12 +9,14 @@ public class JackTokenizer {
 	private int tokenStartIdx;
 	private int tokenEndIdx;
 	private String currentToken;
+	private boolean preloaded;
 
 	JackTokenizer(BufferedReader input) {
 		this.input = input;
 		this.currentLine = "";
 		this.tokenStartIdx = -1;
 		this.tokenEndIdx = -1;
+		this.preloaded = false;
 	}
 
 	public void setReader(BufferedReader input) {
@@ -45,7 +47,16 @@ public class JackTokenizer {
 		return hasMore;
 	}
 
+	public void setPreload() {
+		this.preloaded = true;
+	}
+
 	public void advance() throws IOException {
+		if (preloaded)
+		{
+			preloaded = false;
+			return;
+		}
 
 		while (isLineEnd())
 		{

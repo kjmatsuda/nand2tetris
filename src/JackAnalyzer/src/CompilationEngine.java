@@ -42,7 +42,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		// classVarDec*
 		tokenizer.advance();
@@ -65,7 +65,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		indentLevelUp();
 		writeLine(output, "</class>");
@@ -100,7 +100,7 @@ public class CompilationEngine {
 		tokenizer.advance();
 		while (isComma())
 		{
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			// varName
 			tokenizer.advance();
 			if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
@@ -118,7 +118,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		indentLevelUp();
 		writeLine(output, "</classVarDec>");
@@ -156,7 +156,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		tokenizer.advance();
 		compileParameterList();
@@ -167,7 +167,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		tokenizer.advance();
 		compileSubroutineBody();
@@ -202,7 +202,7 @@ public class CompilationEngine {
 			tokenizer.advance();
 			if (isComma())
 			{
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 			}
 		}
@@ -219,7 +219,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		// varDec*
 		tokenizer.advance();
@@ -238,7 +238,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		indentLevelUp();
 		writeLine(output, "</subroutineBody>");
@@ -273,7 +273,7 @@ public class CompilationEngine {
 		tokenizer.advance();
 		while (isComma())
 		{
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			// varName
 			tokenizer.advance();
 			if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
@@ -291,7 +291,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		indentLevelUp();
 		writeLine(output, "</varDec>");
@@ -351,7 +351,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		indentLevelUp();
 		writeLine(output, "</doStatement>");
@@ -376,7 +376,7 @@ public class CompilationEngine {
 		// ('[' expression ']')?
 		if (isOpenSquareBracket())
 		{
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 			tokenizer.advance();
 			compileExpression();
@@ -386,7 +386,7 @@ public class CompilationEngine {
 				// 構文エラー
 				return;
 			}
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 		}
 
@@ -397,7 +397,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		// expression
 		tokenizer.advance();
@@ -410,7 +410,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		indentLevelUp();
 		writeLine(output, "</letStatement>");
@@ -430,7 +430,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		// expression
 		tokenizer.advance();
@@ -443,7 +443,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		// '{'
 		tokenizer.advance();
@@ -452,7 +452,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		tokenizer.advance();
 		compileStatements();
@@ -463,7 +463,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		indentLevelUp();
 		writeLine(output, "</whileStatement>");
@@ -479,7 +479,7 @@ public class CompilationEngine {
 		tokenizer.advance();
 		if (isSemicolon())
 		{
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 		}
 		else
 		{
@@ -493,7 +493,7 @@ public class CompilationEngine {
 				// 構文エラー
 				return;
 			}
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 		}
 
 		indentLevelUp();
@@ -514,7 +514,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		// expression
 		tokenizer.advance();
@@ -527,7 +527,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		// '{'
 		tokenizer.advance();
@@ -536,7 +536,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		tokenizer.advance();
 		compileStatements();
@@ -547,7 +547,7 @@ public class CompilationEngine {
 			// 構文エラー
 			return;
 		}
-		writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		// ('else' '{' statements '}')?
 		tokenizer.advance();
@@ -561,7 +561,7 @@ public class CompilationEngine {
 				// 構文エラー
 				return;
 			}
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 			compileStatements();
 
@@ -571,7 +571,7 @@ public class CompilationEngine {
 				// 構文エラー
 				return;
 			}
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 			tokenizer.advance();
 		}
@@ -590,7 +590,7 @@ public class CompilationEngine {
 		// (op term)*
 		while (isOperator())
 		{
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			compileTerm();
 			tokenizer.advance();
 		}
@@ -628,7 +628,7 @@ public class CompilationEngine {
 			if (isOpenSquareBracket())
 			{
 				// varName の後に続く'['だった場合
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
 				compileExpression();
@@ -638,7 +638,7 @@ public class CompilationEngine {
 					// 構文エラー
 					return;
 				}
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 			}
 			// TODO この部分 compileSubroutineCall とかぶってるから何とかしたい
@@ -646,7 +646,7 @@ public class CompilationEngine {
 			{
 				// subroutineName の後に続く'('だった場合
 				// '(' expressionList ')'
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
 				compileExpressionList();
@@ -656,7 +656,7 @@ public class CompilationEngine {
 					// 構文エラー
 					return;
 				}
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				// ArrayTest の「let length = Keyboard.readInt("HOW MANY NUMBERS? ");」をうまく処理するためにコメントアウト
 				// tokenizer.advance();
 			}
@@ -664,7 +664,7 @@ public class CompilationEngine {
 			{
 				// '.'だった場合
 				// '.'
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
 				// subroutineName
@@ -682,7 +682,7 @@ public class CompilationEngine {
 					// 構文エラー
 					return;
 				}
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
 				compileExpressionList();
@@ -692,25 +692,25 @@ public class CompilationEngine {
 					// 構文エラー
 					return;
 				}
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				// ArrayTest の「let length = Keyboard.readInt("HOW MANY NUMBERS? ");」をうまく処理するためにコメントアウト
 				// tokenizer.advance();
 			}
 			else
 			{
-				// 構文エラー
-				return;
+				// 無処理、varName だけだった場合はここにくる
+				tokenizer.setPreload();
 			}
 			break;
 		case TOKEN_SYMBOL:
 			if (isUnaryOperator())
 			{
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				compileTerm();
 			}
 			else if (isOpenBracket())
 			{
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
 				compileExpression();
@@ -720,7 +720,7 @@ public class CompilationEngine {
 					// 構文エラー
 					return;
 				}
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 			}
 			else
@@ -749,7 +749,7 @@ public class CompilationEngine {
 			tokenizer.advance();
 			if (isComma())
 			{
-				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 			}
 		}
@@ -772,7 +772,7 @@ public class CompilationEngine {
 		{
 			// 2つ目が '(' の場合
 			// '(' expressionList ')'
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 
 			compileExpressionList();
@@ -782,14 +782,14 @@ public class CompilationEngine {
 				// 構文エラー
 				return;
 			}
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 		}
 		else if (isDot())
 		{
 			// 2つ目が '.' の場合
 			// '.'
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 
 			// subroutineName
@@ -807,7 +807,7 @@ public class CompilationEngine {
 				// 構文エラー
 				return;
 			}
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 
 			compileExpressionList();
@@ -817,7 +817,7 @@ public class CompilationEngine {
 				// 構文エラー
 				return;
 			}
-			writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 		}
 		else
