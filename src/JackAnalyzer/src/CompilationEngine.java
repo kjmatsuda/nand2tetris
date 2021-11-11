@@ -624,8 +624,10 @@ public class CompilationEngine {
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 			// ('[' expression ']')?
+			tokenizer.advance();
 			if (isOpenSquareBracket())
 			{
+				// varName の後に続く'['だった場合
 				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 				tokenizer.advance();
 
@@ -638,6 +640,66 @@ public class CompilationEngine {
 				}
 				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
 				tokenizer.advance();
+			}
+			// TODO この部分 compileSubroutineCall とかぶってるから何とかしたい
+			else if (isOpenBracket())
+			{
+				// subroutineName の後に続く'('だった場合
+				// '(' expressionList ')'
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				tokenizer.advance();
+
+				compileExpressionList();
+
+				if (!isCloseBracket())
+				{
+					// 構文エラー
+					return;
+				}
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				// ArrayTest の「let length = Keyboard.readInt("HOW MANY NUMBERS? ");」をうまく処理するためにコメントアウト
+				// tokenizer.advance();
+			}
+			else if (isDot())
+			{
+				// '.'だった場合
+				// '.'
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				tokenizer.advance();
+
+				// subroutineName
+				if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
+				{
+					// 構文エラー
+					return;
+				}
+				writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+
+				// '(' expressionList ')'
+				tokenizer.advance();
+				if (!isOpenBracket())
+				{
+					// 構文エラー
+					return;
+				}
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				tokenizer.advance();
+
+				compileExpressionList();
+
+				if (!isCloseBracket())
+				{
+					// 構文エラー
+					return;
+				}
+				writeLine(output, "<symbol> " + tokenizer.symbol() + " </symbol>");
+				// ArrayTest の「let length = Keyboard.readInt("HOW MANY NUMBERS? ");」をうまく処理するためにコメントアウト
+				// tokenizer.advance();
+			}
+			else
+			{
+				// 構文エラー
+				return;
 			}
 			break;
 		case TOKEN_SYMBOL:
