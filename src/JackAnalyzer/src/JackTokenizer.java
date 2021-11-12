@@ -47,8 +47,8 @@ public class JackTokenizer {
 		return hasMore;
 	}
 
-	public void setPreload() {
-		this.preloaded = true;
+	public void setPreloaded(boolean preloaded) {
+		this.preloaded = preloaded;
 	}
 
 	public void advance() throws IOException {

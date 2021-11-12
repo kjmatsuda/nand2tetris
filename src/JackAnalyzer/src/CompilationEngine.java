@@ -627,10 +627,13 @@ public class CompilationEngine {
 		// (op term)*
 		while (isOperator())
 		{
+			// while (i < length) のカッコ内をうまく処理できてないので、ここでは先読みを無効化する
+			tokenizer.setPreloaded(false);
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 			compileTerm();
-			tokenizer.advance();
+			// ここで advance しないといけないケースあると思うが、コメントアウトすることで ArrayTest/Main.jack のコンパイルが通った
+			//tokenizer.advance();
 		}
 
 		indentLevelUp();
@@ -743,7 +746,7 @@ public class CompilationEngine {
 			else
 			{
 				// 無処理、varName だけだった場合はここにくる
-				tokenizer.setPreload();
+				tokenizer.setPreloaded(true);
 			}
 			break;
 		case TOKEN_SYMBOL:
