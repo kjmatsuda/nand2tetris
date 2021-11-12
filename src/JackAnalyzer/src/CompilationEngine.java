@@ -21,6 +21,7 @@ public class CompilationEngine {
 		if (!(tokenizer.tokenType() == TokenType.TOKEN_KEYWORD && tokenizer.keyWord() == KeyWord.KEYWORD_CLASS))
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: class, actual: " + tokenizer.stringVal());
 			return;
 		}
 
@@ -31,6 +32,7 @@ public class CompilationEngine {
 		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: className, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -40,6 +42,7 @@ public class CompilationEngine {
 		if (!isOpenCurlyBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: {, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -63,6 +66,7 @@ public class CompilationEngine {
 		if (!isCloseCurlyBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: }, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -83,6 +87,7 @@ public class CompilationEngine {
 		if (!isType())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: type, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLineType();
@@ -92,6 +97,7 @@ public class CompilationEngine {
 		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -106,6 +112,7 @@ public class CompilationEngine {
 			if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -116,6 +123,7 @@ public class CompilationEngine {
 		if (!isSemicolon())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ;, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -136,6 +144,7 @@ public class CompilationEngine {
 		if (!isType())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: type, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLineType();
@@ -145,6 +154,7 @@ public class CompilationEngine {
 		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -154,6 +164,7 @@ public class CompilationEngine {
 		if (!isOpenBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: (, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -165,6 +176,7 @@ public class CompilationEngine {
 		if (!isCloseBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ), actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -186,6 +198,7 @@ public class CompilationEngine {
 			if (!isType())
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: type, actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLineType();
@@ -195,6 +208,7 @@ public class CompilationEngine {
 			if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -217,6 +231,7 @@ public class CompilationEngine {
 		if (!isOpenCurlyBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: {, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -236,6 +251,7 @@ public class CompilationEngine {
 		if (!isCloseCurlyBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: }, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -256,6 +272,7 @@ public class CompilationEngine {
 		if (!isType())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: type, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLineType();
@@ -265,6 +282,7 @@ public class CompilationEngine {
 		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -279,6 +297,7 @@ public class CompilationEngine {
 			if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -289,6 +308,7 @@ public class CompilationEngine {
 		if (!isSemicolon())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ;, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -349,6 +369,7 @@ public class CompilationEngine {
 		if (!isSemicolon())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ;, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -369,11 +390,13 @@ public class CompilationEngine {
 		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 		// ('[' expression ']')?
+		tokenizer.advance();
 		if (isOpenSquareBracket())
 		{
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -381,9 +404,11 @@ public class CompilationEngine {
 			tokenizer.advance();
 			compileExpression();
 
+			tokenizer.advance();
 			if (!isCloseSquareBracket())
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ], actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -391,10 +416,10 @@ public class CompilationEngine {
 		}
 
 		// '='
-		tokenizer.advance();
 		if (!isEqual())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: =, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -408,6 +433,7 @@ public class CompilationEngine {
 		if (!isSemicolon())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ;, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -428,6 +454,7 @@ public class CompilationEngine {
 		if (!isOpenBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: (, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -441,6 +468,7 @@ public class CompilationEngine {
 		if (!isCloseBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ), actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -450,6 +478,7 @@ public class CompilationEngine {
 		if (!isOpenCurlyBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: {, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -461,6 +490,7 @@ public class CompilationEngine {
 		if (!isCloseCurlyBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: }, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -491,6 +521,7 @@ public class CompilationEngine {
 			if (!isSemicolon())
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ;, actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -512,6 +543,7 @@ public class CompilationEngine {
 		if (!isOpenBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: (, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -525,6 +557,7 @@ public class CompilationEngine {
 		if (!isCloseBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ), actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -534,6 +567,7 @@ public class CompilationEngine {
 		if (!isOpenCurlyBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: {, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -545,6 +579,7 @@ public class CompilationEngine {
 		if (!isCloseCurlyBracket())
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: }, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -559,6 +594,7 @@ public class CompilationEngine {
 			if (!isOpenCurlyBracket())
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: {, actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -569,6 +605,7 @@ public class CompilationEngine {
 			if (!isCloseCurlyBracket())
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: }, actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -591,6 +628,7 @@ public class CompilationEngine {
 		while (isOperator())
 		{
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
+			tokenizer.advance();
 			compileTerm();
 			tokenizer.advance();
 		}
@@ -614,6 +652,7 @@ public class CompilationEngine {
 			if (!isKeywordConstant())
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: keywordConstant, actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
@@ -636,6 +675,7 @@ public class CompilationEngine {
 				if (!isCloseSquareBracket())
 				{
 					// 構文エラー
+					writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ], actual: " + tokenizer.stringVal());
 					return;
 				}
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -654,6 +694,7 @@ public class CompilationEngine {
 				if (!isCloseBracket())
 				{
 					// 構文エラー
+					writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ), actual: " + tokenizer.stringVal());
 					return;
 				}
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -671,6 +712,7 @@ public class CompilationEngine {
 				if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 				{
 					// 構文エラー
+					writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName, actual: " + tokenizer.stringVal());
 					return;
 				}
 				writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -680,6 +722,7 @@ public class CompilationEngine {
 				if (!isOpenBracket())
 				{
 					// 構文エラー
+					writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: (, actual: " + tokenizer.stringVal());
 					return;
 				}
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -690,6 +733,7 @@ public class CompilationEngine {
 				if (!isCloseBracket())
 				{
 					// 構文エラー
+					writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ), actual: " + tokenizer.stringVal());
 					return;
 				}
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -718,6 +762,7 @@ public class CompilationEngine {
 				if (!isCloseBracket())
 				{
 					// 構文エラー
+					writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ), actual: " + tokenizer.stringVal());
 					return;
 				}
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -726,6 +771,7 @@ public class CompilationEngine {
 			else
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: unaryOp or (, actual: " + tokenizer.stringVal());
 				return;
 			}
 
@@ -763,6 +809,7 @@ public class CompilationEngine {
 		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName or className or varName, actual: " + tokenizer.stringVal());
 			return;
 		}
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -780,6 +827,7 @@ public class CompilationEngine {
 			if (!isCloseBracket())
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ), actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -796,6 +844,7 @@ public class CompilationEngine {
 			if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName, actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -805,6 +854,7 @@ public class CompilationEngine {
 			if (!isOpenBracket())
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: (, actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -815,6 +865,7 @@ public class CompilationEngine {
 			if (!isCloseBracket())
 			{
 				// 構文エラー
+				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ), actual: " + tokenizer.stringVal());
 				return;
 			}
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -823,6 +874,7 @@ public class CompilationEngine {
 		else
 		{
 			// 構文エラー
+			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ( or ., actual: " + tokenizer.stringVal());
 			return;
 		}
 	}
