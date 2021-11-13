@@ -599,9 +599,10 @@ public class CompilationEngine {
 			}
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
+			tokenizer.advance();
 			compileStatements();
 
-			tokenizer.advance();
+			//tokenizer.advance();
 			if (!isCloseCurlyBracket())
 			{
 				// 構文エラー
@@ -661,7 +662,7 @@ public class CompilationEngine {
 			writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 			break;
 		case TOKEN_IDENTIFIER:
-			// TODO '(' か '.' なら subroutineCall、そうでなければ varName
+			// '(' か '.' なら subroutineCall、そうでなければ varName
 			// varName or subroutineCall
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
@@ -671,10 +672,11 @@ public class CompilationEngine {
 			{
 				// varName の後に続く'['だった場合
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
-				tokenizer.advance();
 
+				tokenizer.advance();
 				compileExpression();
 
+				tokenizer.advance();
 				if (!isCloseSquareBracket())
 				{
 					// 構文エラー
@@ -682,7 +684,7 @@ public class CompilationEngine {
 					return;
 				}
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
-				tokenizer.advance();
+				//tokenizer.advance();
 			}
 			// TODO この部分 compileSubroutineCall とかぶってるから何とかしたい
 			else if (isOpenBracket())
@@ -753,6 +755,7 @@ public class CompilationEngine {
 			if (isUnaryOperator())
 			{
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
+				tokenizer.advance();
 				compileTerm();
 			}
 			else if (isOpenBracket())
@@ -762,6 +765,8 @@ public class CompilationEngine {
 
 				compileExpression();
 
+				// ここで tokenizer.advance(); すると 「let i = i * (-j);」がうまくいかない。しないと、「let j = j / (-2);」がうまくいかない
+				// tokenizer.advance();
 				if (!isCloseBracket())
 				{
 					// 構文エラー
