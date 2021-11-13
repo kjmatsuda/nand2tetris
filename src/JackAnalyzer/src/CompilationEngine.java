@@ -765,8 +765,7 @@ public class CompilationEngine {
 
 				compileExpression();
 
-				// ここで tokenizer.advance(); すると 「let i = i * (-j);」がうまくいかない。しないと、「let j = j / (-2);」がうまくいかない
-				// tokenizer.advance();
+				tokenizer.advance();
 				if (!isCloseBracket())
 				{
 					// 構文エラー
@@ -774,7 +773,7 @@ public class CompilationEngine {
 					return;
 				}
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
-				tokenizer.advance();
+				//tokenizer.advance();
 			}
 			else
 			{
