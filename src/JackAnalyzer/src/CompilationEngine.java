@@ -813,7 +813,7 @@ public class CompilationEngine {
 		{
 			compileExpression();
 
-			// tokenizer.advance();
+			tokenizer.advance();
 			if (isComma())
 			{
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
