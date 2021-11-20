@@ -366,6 +366,8 @@ public class CompilationEngine {
 		compileSubroutineCall();
 
 		// ';'
+		tokenizer.setPreloaded(false);
+		tokenizer.advance();
 		if (!isSemicolon())
 		{
 			// 構文エラー
@@ -553,6 +555,7 @@ public class CompilationEngine {
 		compileExpression();
 
 		// ')'
+		// TODO Square/Square.jack のif ((y + size) < 254) { を通すにはここのコメントアウトを外す。だがそうすると if (false) { でこける
 		tokenizer.advance();
 		if (!isCloseBracket())
 		{
@@ -626,15 +629,24 @@ public class CompilationEngine {
 		compileTerm();
 
 		// (op term)*
-		while (isOperator())
+		// if ((y + size) < 254) をうまく扱えるように以下の advance を追加した
+		tokenizer.advance();
+		if (!isOperator())
 		{
-			// while (i < length) のカッコ内をうまく処理できてないので、ここでは先読みを無効化する
-			tokenizer.setPreloaded(false);
-			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
-			tokenizer.advance();
-			compileTerm();
-			// ここで advance しないといけないケースあると思うが、コメントアウトすることで ArrayTest/Main.jack のコンパイルが通った
-			//tokenizer.advance();
+			tokenizer.setPreloaded(true);
+		}
+		else
+		{
+			while (isOperator())
+			{
+				// while (i < length) のカッコ内をうまく処理できてないので、ここでは先読みを無効化する
+				tokenizer.setPreloaded(false);
+				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
+				tokenizer.advance();
+				compileTerm();
+				// ここで advance しないといけないケースあると思うが、コメントアウトすることで ArrayTest/Main.jack のコンパイルが通った
+				//tokenizer.advance();
+			}
 		}
 
 		indentLevelUp();
@@ -773,7 +785,9 @@ public class CompilationEngine {
 					return;
 				}
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
-				//tokenizer.advance();
+				// TODO ここに tokenizer.advance(); を入れると Square/Square.jack のコンパイルは少し進むが、Square/Main.jack のコンパイルに失敗するようになる
+				// Square/Main.jack, Square/SquareGame.jack のコンパイルを通すにはここはコメントアウト
+				// tokenizer.advance();
 			}
 			else
 			{
@@ -799,7 +813,7 @@ public class CompilationEngine {
 		{
 			compileExpression();
 
-			tokenizer.advance();
+			// tokenizer.advance();
 			if (isComma())
 			{
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
@@ -876,7 +890,8 @@ public class CompilationEngine {
 				return;
 			}
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
-			tokenizer.advance();
+			// TODO ここで advance したら、「do Screen.setColor(false);」は通るが「do game.run();」は通らない
+			// tokenizer.advance();
 		}
 		else
 		{
