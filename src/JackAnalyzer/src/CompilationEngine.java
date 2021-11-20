@@ -852,7 +852,7 @@ public class CompilationEngine {
 				return;
 			}
 			writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
-			tokenizer.advance();
+			// tokenizer.advance();
 		}
 		else if (isDot())
 		{
