@@ -1,4 +1,3 @@
-// TODO もしかしたら KeyWord いらないかも
 public enum KeyWord {
 	KEYWORD_CLASS,
 	KEYWORD_METHOD,
