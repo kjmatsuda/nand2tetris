@@ -9,6 +9,10 @@ public class SymbolTable {
 		subroutineScopeHash = new HashMap<>();
 	}
 
+	public void startSubroutine() {
+		this.subroutineScopeHash.clear();
+	}
+
 	public void define(String name, String type, SymbolKind kind) {
 		SymbolProperty prop = new SymbolProperty(type, kind, this.varCount(kind));
 
