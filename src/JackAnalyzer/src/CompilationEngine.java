@@ -3,12 +3,14 @@ import java.io.IOException;
 
 public class CompilationEngine {
 	private JackTokenizer tokenizer;
+	private SymbolTable symbolTable;
 	private BufferedWriter output;
 	private int indentLevel = 0;
 
 	CompilationEngine(JackTokenizer tokenizer, BufferedWriter output) {
 		this.tokenizer = tokenizer;
 		this.output = output;
+		this.symbolTable = new SymbolTable();
 	}
 
 	public void compileClass() throws IOException {
@@ -35,6 +37,7 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: className, actual: " + tokenizer.stringVal());
 			return;
 		}
+		// identifier
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 		// SYMBOL の '{'
@@ -80,9 +83,11 @@ public class CompilationEngine {
 		indentLevelDown();
 
 		// KEYWORD の'static', 'field'(呼び出し元でチェックしているからここではしない)
+		SymbolKind kind = convertKeyWordToSymbolKind(tokenizer.keyWord());
 		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
 		// KEYWORD の type
+		String type = "";
 		tokenizer.advance();
 		if (!isType())
 		{
@@ -90,6 +95,7 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: type, actual: " + tokenizer.stringVal());
 			return;
 		}
+		type = getType();
 		writeLineType();
 
 		// IDENTIFIER の varName
@@ -100,7 +106,10 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 			return;
 		}
-		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+		// TODO identifier
+		String name = tokenizer.identifier();
+		this.symbolTable.define(name, type, kind);
+		writeLine(output, getIdentifierOpenTag(name) + name + " </identifier>");
 
 		// (',' varName)*
 		tokenizer.advance();
@@ -115,6 +124,7 @@ public class CompilationEngine {
 				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 				return;
 			}
+			// TODO identifier
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 			tokenizer.advance();
 		}
@@ -157,6 +167,7 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName, actual: " + tokenizer.stringVal());
 			return;
 		}
+		// TODO identifier
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 		// SYMBOL の '('
@@ -211,6 +222,7 @@ public class CompilationEngine {
 				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 				return;
 			}
+			// TODO identifier
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 			tokenizer.advance();
@@ -285,6 +297,7 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 			return;
 		}
+		// TODO identifier
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 		// (',' varName)*
@@ -300,6 +313,7 @@ public class CompilationEngine {
 				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 				return;
 			}
+			// TODO identifier
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 			tokenizer.advance();
 		}
@@ -395,6 +409,7 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 			return;
 		}
+		// TODO identifier
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 		// ('[' expression ']')?
@@ -675,6 +690,7 @@ public class CompilationEngine {
 		case TOKEN_IDENTIFIER:
 			// '(' か '.' なら subroutineCall、そうでなければ varName
 			// varName or subroutineCall
+			// TODO identifier
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 			// ('[' expression ']')?
@@ -731,6 +747,7 @@ public class CompilationEngine {
 					writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName, actual: " + tokenizer.stringVal());
 					return;
 				}
+				// TODO identifier
 				writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 				// '(' expressionList ')'
@@ -831,6 +848,7 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName or className or varName, actual: " + tokenizer.stringVal());
 			return;
 		}
+		// TODO identifier
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 		tokenizer.advance();
@@ -866,6 +884,7 @@ public class CompilationEngine {
 				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName, actual: " + tokenizer.stringVal());
 				return;
 			}
+			// TODO identifier
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 			// '(' expressionList ')'
@@ -996,6 +1015,7 @@ public class CompilationEngine {
 		}
 		else
 		{
+			// TODO identifier
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 		}
 	}
@@ -1449,4 +1469,93 @@ public class CompilationEngine {
 
 		return is;
 	}
+
+	private String getType() {
+		String retType = "xxx";
+		if (tokenizer.tokenType() == TokenType.TOKEN_KEYWORD)
+		{
+			retType = keyWordToString(tokenizer.keyWord());
+		}
+		else
+		{
+			retType = tokenizer.identifier();
+		}
+		return retType;
+	}
+
+	private SymbolKind convertKeyWordToSymbolKind(KeyWord keyWord) {
+		SymbolKind retKind = SymbolKind.KIND_NONE;
+
+		switch (keyWord) {
+		case KEYWORD_STATIC:
+			retKind = SymbolKind.KIND_STATIC;
+			break;
+		case KEYWORD_FIELD:
+			retKind = SymbolKind.KIND_FIELD;
+			break;
+		case KEYWORD_VAR:
+			retKind = SymbolKind.KIND_VAR;
+			break;
+		default:
+			break;
+		}
+		return retKind;
+	}
+
+	private String getSymbolCategory(SymbolKind kind) {
+		String retCategory = "class";
+
+		switch (kind) {
+		case KIND_STATIC:
+		case KIND_FIELD:
+			retCategory = "class";
+			break;
+		case KIND_VAR:
+		case KIND_ARG:
+			retCategory = "subroutine";
+			break;
+		default:
+			break;
+		}
+		return retCategory;
+	}
+
+	private String getIdentifierOpenTag(String name) {
+		// TODO getIdentifierOpenTag "defined" と "used" を分ける
+		String retTagStr = "<identifier>";
+
+		String category = getSymbolCategory(this.symbolTable.kindOf(name));
+		String context = "defined";
+
+		retTagStr = "<identifier category=\"" + category + "\" context=\"" + context
+						+ "\" kind=\"" + kindToString(this.symbolTable.kindOf(name)) + "\" index=\"" + this.symbolTable.indexOf(name) + "\">";
+
+		return retTagStr;
+	}
+
+	private String kindToString(SymbolKind kind) {
+		String kindStr = "none";
+		switch (kind) {
+		case KIND_NONE:
+			kindStr = "none";
+			break;
+		case KIND_STATIC:
+			kindStr = "static";
+			break;
+		case KIND_FIELD:
+			kindStr = "field";
+			break;
+		case KIND_ARG:
+			kindStr = "argument";
+			break;
+		case KIND_VAR:
+			kindStr = "var";
+			break;
+		default:
+			break;
+		}
+
+		return kindStr;
+	}
+
 }
