@@ -106,10 +106,10 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 			return;
 		}
-		// TODO identifier
+		// identifier
 		String name = tokenizer.identifier();
 		this.symbolTable.define(name, type, kind);
-		writeLine(output, getIdentifierOpenTag(name) + name + " </identifier>");
+		writeLine(output, getIdentifierOpenTag(name, true) + name + " </identifier>");
 
 		// (',' varName)*
 		tokenizer.advance();
@@ -124,8 +124,10 @@ public class CompilationEngine {
 				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 				return;
 			}
-			// TODO identifier
-			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+			// identifier
+			name = tokenizer.identifier();
+			this.symbolTable.define(name, type, kind);
+			writeLine(output, getIdentifierOpenTag(name, true) + name + " </identifier>");
 			tokenizer.advance();
 		}
 
@@ -167,7 +169,7 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName, actual: " + tokenizer.stringVal());
 			return;
 		}
-		// TODO identifier
+		// identifier
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 		// SYMBOL の '('
@@ -1520,12 +1522,16 @@ public class CompilationEngine {
 		return retCategory;
 	}
 
-	private String getIdentifierOpenTag(String name) {
-		// TODO getIdentifierOpenTag "defined" と "used" を分ける
+	private String getIdentifierOpenTag(String name, boolean defined) {
 		String retTagStr = "<identifier>";
 
 		String category = getSymbolCategory(this.symbolTable.kindOf(name));
 		String context = "defined";
+
+		if (!defined)
+		{
+			context = "used";
+		}
 
 		retTagStr = "<identifier category=\"" + category + "\" context=\"" + context
 						+ "\" kind=\"" + kindToString(this.symbolTable.kindOf(name)) + "\" index=\"" + this.symbolTable.indexOf(name) + "\">";
