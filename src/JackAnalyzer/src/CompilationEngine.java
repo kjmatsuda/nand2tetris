@@ -208,12 +208,14 @@ public class CompilationEngine {
 		while (!isCloseBracket())
 		{
 			// type
+			String type = "";
 			if (!isType())
 			{
 				// 構文エラー
 				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: type, actual: " + tokenizer.stringVal());
 				return;
 			}
+			type = getType();
 			writeLineType();
 
 			// IDENTIFIER の varName
@@ -224,8 +226,10 @@ public class CompilationEngine {
 				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 				return;
 			}
-			// TODO identifier
-			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+			// identifier
+			String name = tokenizer.identifier();
+			this.symbolTable.define(name, type,  SymbolKind.KIND_ARG);
+			writeLine(output, getIdentifierOpenTag(name, true) + name + " </identifier>");
 
 			tokenizer.advance();
 			if (isComma())
@@ -282,6 +286,7 @@ public class CompilationEngine {
 		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
 		// KEYWORD の type
+		String type = "";
 		tokenizer.advance();
 		if (!isType())
 		{
@@ -289,6 +294,7 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: type, actual: " + tokenizer.stringVal());
 			return;
 		}
+		type = getType();
 		writeLineType();
 
 		// IDENTIFIER の varName
@@ -299,8 +305,10 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 			return;
 		}
-		// TODO identifier
-		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+		// identifier
+		String name = tokenizer.identifier();
+		this.symbolTable.define(name, type, SymbolKind.KIND_VAR);
+		writeLine(output, getIdentifierOpenTag(name, true) + name + " </identifier>");
 
 		// (',' varName)*
 		tokenizer.advance();
@@ -315,8 +323,10 @@ public class CompilationEngine {
 				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 				return;
 			}
-			// TODO identifier
-			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+			// identifier
+			name = tokenizer.identifier();
+			this.symbolTable.define(name, type, SymbolKind.KIND_VAR);
+			writeLine(output, getIdentifierOpenTag(name, true) + name + " </identifier>");
 			tokenizer.advance();
 		}
 
@@ -411,8 +421,9 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: varName, actual: " + tokenizer.stringVal());
 			return;
 		}
-		// TODO identifier
-		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+		// identifier
+		String name = tokenizer.identifier();
+		writeLine(output, getIdentifierOpenTag(name, false) + name + " </identifier>");
 
 		// ('[' expression ']')?
 		tokenizer.advance();
