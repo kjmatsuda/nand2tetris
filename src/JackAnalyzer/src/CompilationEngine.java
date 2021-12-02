@@ -703,14 +703,15 @@ public class CompilationEngine {
 		case TOKEN_IDENTIFIER:
 			// '(' か '.' なら subroutineCall、そうでなければ varName
 			// varName or subroutineCall
-			// TODO identifier
-			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+			String name = tokenizer.identifier();
 
 			// ('[' expression ']')?
 			tokenizer.advance();
 			if (isOpenSquareBracket())
 			{
 				// varName の後に続く'['だった場合
+				writeLine(output, getIdentifierOpenTag(name, false) + name + " </identifier>");
+
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 				tokenizer.advance();
@@ -730,6 +731,7 @@ public class CompilationEngine {
 			else if (isOpenBracket())
 			{
 				// subroutineName の後に続く'('だった場合
+				writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 				// '(' expressionList ')'
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
@@ -749,6 +751,8 @@ public class CompilationEngine {
 			else if (isDot())
 			{
 				// '.'だった場合
+				writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
+
 				// '.'
 				writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
@@ -760,7 +764,7 @@ public class CompilationEngine {
 					writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName, actual: " + tokenizer.stringVal());
 					return;
 				}
-				// TODO identifier
+				// identifier
 				writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 				// '(' expressionList ')'
@@ -789,6 +793,8 @@ public class CompilationEngine {
 			else
 			{
 				// 無処理、varName だけだった場合はここにくる
+				writeLine(output, getIdentifierOpenTag(name, false) + name + " </identifier>");
+
 				tokenizer.setPreloaded(true);
 			}
 			break;
@@ -861,7 +867,7 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName or className or varName, actual: " + tokenizer.stringVal());
 			return;
 		}
-		// TODO identifier
+		// identifier
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 		tokenizer.advance();
@@ -897,7 +903,7 @@ public class CompilationEngine {
 				writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: subroutineName, actual: " + tokenizer.stringVal());
 				return;
 			}
-			// TODO identifier
+			// identifier
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 			// '(' expressionList ')'
@@ -1028,7 +1034,7 @@ public class CompilationEngine {
 		}
 		else
 		{
-			// TODO identifier
+			// identifier
 			writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 		}
 	}
