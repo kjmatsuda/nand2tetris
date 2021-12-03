@@ -61,6 +61,7 @@ public class CompilationEngine {
 		// subroutineDec*
 		while (isSubroutineDec())
 		{
+			this.symbolTable.startSubroutine();
 			compileSubroutine();
 			tokenizer.advance();
 		}
@@ -1551,7 +1552,7 @@ public class CompilationEngine {
 		}
 
 		retTagStr = "<identifier category=\"" + category + "\" context=\"" + context
-						+ "\" kind=\"" + kindToString(this.symbolTable.kindOf(name)) + "\" index=\"" + this.symbolTable.indexOf(name) + "\">";
+						+ "\" kind=\"" + kindToString(this.symbolTable.kindOf(name)) + "\" index=\"" + this.symbolTable.indexOf(name) + "\"> ";
 
 		return retTagStr;
 	}
