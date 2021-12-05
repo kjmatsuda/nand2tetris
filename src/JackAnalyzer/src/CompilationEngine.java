@@ -6,6 +6,7 @@ public class CompilationEngine {
 	private SymbolTable symbolTable;
 	private BufferedWriter output;
 	private int indentLevel = 0;
+	private String className = "";
 
 	CompilationEngine(JackTokenizer tokenizer, BufferedWriter output) {
 		this.tokenizer = tokenizer;
@@ -37,6 +38,7 @@ public class CompilationEngine {
 			writeLine(output, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: className, actual: " + tokenizer.stringVal());
 			return;
 		}
+		this.className = tokenizer.identifier();
 		// identifier
 		writeLine(output, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
@@ -149,6 +151,8 @@ public class CompilationEngine {
 		writeLine(output, "<subroutineDec>");
 		indentLevelDown();
 
+		KeyWord subroutineType = tokenizer.keyWord();
+
 		// KEYWORD の'constructor', 'function', 'method'(呼び出し元でチェックしているからここではしない)
 		writeLine(output, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
@@ -196,7 +200,7 @@ public class CompilationEngine {
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		tokenizer.advance();
-		compileSubroutineBody();
+		compileSubroutineBody(subroutineType);
 
 		indentLevelUp();
 		writeLine(output, "</subroutineDec>");
@@ -243,7 +247,7 @@ public class CompilationEngine {
 		writeLine(output, "</parameterList>");
 	}
 
-	public void compileSubroutineBody() throws IOException{
+	public void compileSubroutineBody(KeyWord subroutineType) throws IOException{
 		writeLine(output, "<subroutineBody>");
 		indentLevelDown();
 
@@ -254,6 +258,12 @@ public class CompilationEngine {
 			return;
 		}
 		writeLine(output, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
+
+
+		if (subroutineType == KeyWord.KEYWORD_METHOD)
+		{
+			this.symbolTable.define("this", this.className, SymbolKind.KIND_ARG);
+		}
 
 		// varDec*
 		tokenizer.advance();
