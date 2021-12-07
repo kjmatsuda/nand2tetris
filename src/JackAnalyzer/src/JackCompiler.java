@@ -51,7 +51,7 @@ public class JackCompiler {
 			for (File inputFile: files)
 			{
 				input = new BufferedReader(new FileReader(inputFile));
-				File outputFile = new File(dirName + "/" + getFileNameWithoutExtension(inputFile.getName()) + ".xml");
+				File outputFile = new File(dirName + "/" + getFileNameWithoutExtension(inputFile.getName()) + ".vm");
 				OutputStreamWriter  osw = new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8");
 				output = new BufferedWriter(osw);
 

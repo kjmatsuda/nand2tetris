@@ -4,6 +4,7 @@ import java.io.IOException;
 public class CompilationEngine {
 	private JackTokenizer tokenizer;
 	private SymbolTable symbolTable;
+	private VMWriter vmWriter;
 	private BufferedWriter output;
 	private int indentLevel = 0;
 	private String className = "";
@@ -12,6 +13,7 @@ public class CompilationEngine {
 		this.tokenizer = tokenizer;
 		this.output = output;
 		this.symbolTable = new SymbolTable();
+		this.vmWriter = new VMWriter(output);
 	}
 
 	public void compileClass() throws IOException {
