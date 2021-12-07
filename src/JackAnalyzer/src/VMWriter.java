@@ -13,7 +13,7 @@ public class VMWriter {
 	}
 
 	public void writePop(Segment segment, int index) throws IOException {
-		// TODO writePop
+		writeLine(output, "pop " + segmentToString(segment) + " " + index);
 	}
 
 	public void writeArithmetic(Command command) throws IOException {
