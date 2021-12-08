@@ -18,18 +18,19 @@ public class VMWriter {
 
 	public void writeArithmetic(Command command) throws IOException {
 		// TODO writeArithmetic
+		writeLine(output, commandToString(command));
 	}
 
 	public void writeLabel(String label) throws IOException {
-		// TODO writeLabel
+		writeLine(output, "label " + label);
 	}
 
 	public void writeGoto(String label) throws IOException {
-		// TODO writeGoto
+		writeLine(output, "goto " + label);
 	}
 
 	public void writeIf(String label) throws IOException {
-		// TODO writeIf
+		writeLine(output, "if-goto " + label);
 	}
 
 	public void writeCall(String name, int nArgs) throws IOException {
@@ -91,6 +92,43 @@ public class VMWriter {
 		}
 
 		return segmentStr;
+	}
+
+	private String commandToString(Command command) {
+		String commandStr = "add";
+		switch (command) {
+		case COMMAND_ADD:
+			commandStr = "add";
+			break;
+		case COMMAND_SUB:
+			commandStr = "sub";
+			break;
+		case COMMAND_NEG:
+			commandStr = "neg";
+			break;
+		case COMMAND_EQ:
+			commandStr = "eq";
+			break;
+		case COMMAND_GT:
+			commandStr = "gt";
+			break;
+		case COMMAND_LT:
+			commandStr = "lt";
+			break;
+		case COMMAND_AND:
+			commandStr = "and";
+			break;
+		case COMMAND_OR:
+			commandStr = "or";
+			break;
+		case COMMAND_NOT:
+			commandStr = "not";
+			break;
+		default:
+			break;
+		}
+
+		return commandStr;
 	}
 
 }
