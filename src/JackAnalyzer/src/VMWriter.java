@@ -37,11 +37,11 @@ public class VMWriter {
 	}
 
 	public void writeFunction(String name, int nLocals) throws IOException {
-		// TODO writeFunction
+		writeLine(output, "function " + name + " " + nLocals);
 	}
 
 	public void writeReturn() throws IOException {
-		// TODO writeReturn
+		writeLine(output, "return");
 	}
 
 	public void close() {
