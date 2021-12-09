@@ -17,7 +17,6 @@ public class VMWriter {
 	}
 
 	public void writeArithmetic(Command command) throws IOException {
-		// TODO writeArithmetic
 		writeLine(output, commandToString(command));
 	}
 
@@ -34,7 +33,7 @@ public class VMWriter {
 	}
 
 	public void writeCall(String name, int nArgs) throws IOException {
-		// TODO writeCall
+		writeLine(output, "call " + name + " " + nArgs);
 	}
 
 	public void writeFunction(String name, int nLocals) throws IOException {
