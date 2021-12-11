@@ -82,7 +82,6 @@ public class VMWriter {
 		case SEGMENT_POINTER:
 			segmentStr = "pointer";
 			break;
-		// TODO temp の push ってこれでよかったっけ？
 		case SEGMENT_TEMP:
 			segmentStr = "temp";
 			break;
