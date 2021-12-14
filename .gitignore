@@ -3,3 +3,8 @@ qui*.hack
 *.hack
 *.dat
 *.settings
+src/JackAnalyzer/Seven/
+src/JackAnalyzer/ConvertToBin/
+src/JackAnalyzer/Square/
+src/JackAnalyzer/Average/
+src/JackAnalyzer/ComplexArrays/

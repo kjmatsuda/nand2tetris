@@ -58,7 +58,7 @@ public class JackCompiler {
 				JackTokenizer tokenizer = new JackTokenizer(input);
 				CompilationEngine engine = new CompilationEngine(tokenizer, output);
 				engine.compileClass();
-
+				System.out.println("comipilation done.");
 				output.close();
 				input.close();
 			}
