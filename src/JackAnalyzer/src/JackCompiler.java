@@ -28,7 +28,8 @@ public class JackCompiler {
 
 	public void compile(String source) {
 		BufferedReader input = null;
-		BufferedWriter output = null;
+		BufferedWriter outputXml = null;
+		BufferedWriter outputVm = null;
 
 		Path path = Paths.get(source);
 		File[] files;
@@ -51,15 +52,20 @@ public class JackCompiler {
 			for (File inputFile: files)
 			{
 				input = new BufferedReader(new FileReader(inputFile));
-				File outputFile = new File(dirName + "/" + getFileNameWithoutExtension(inputFile.getName()) + ".vm");
-				OutputStreamWriter  osw = new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8");
-				output = new BufferedWriter(osw);
+
+				File outputFileNameXml = new File(dirName + "/" + getFileNameWithoutExtension(inputFile.getName()) + ".xml");
+				OutputStreamWriter  oswXml = new OutputStreamWriter(new FileOutputStream(outputFileNameXml), "UTF-8");
+				outputXml = new BufferedWriter(oswXml);
+
+				File outputFileNameVm = new File(dirName + "/" + getFileNameWithoutExtension(inputFile.getName()) + ".vm");
+				OutputStreamWriter  oswVm = new OutputStreamWriter(new FileOutputStream(outputFileNameVm), "UTF-8");
+				outputVm = new BufferedWriter(oswVm);
 
 				JackTokenizer tokenizer = new JackTokenizer(input);
-				CompilationEngine engine = new CompilationEngine(tokenizer, output);
+				CompilationEngine engine = new CompilationEngine(tokenizer, outputXml, outputVm);
 				engine.compileClass();
 				System.out.println("comipilation done.");
-				output.close();
+				outputXml.close();
 				input.close();
 			}
 		} catch(FileNotFoundException e) {
@@ -71,8 +77,11 @@ public class JackCompiler {
 				if (input != null) {
 					input.close();
 				}
-				if (output != null) {
-					output.close();
+				if (outputXml != null) {
+					outputXml.close();
+				}
+				if (outputVm != null) {
+					outputVm.close();
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

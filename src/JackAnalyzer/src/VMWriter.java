@@ -49,12 +49,7 @@ public class VMWriter {
 	}
 
 	private void writeLine(BufferedWriter output, String str) throws IOException {
-		String indentStr = "    ";
-//		if (indentLevel > 0)
-//		{
-//			indentStr = String.format("%" + indentLevel + "s", "");
-//		}
-		output.write(indentStr + str);
+		output.write(str);
 		output.newLine();
 	}
 
