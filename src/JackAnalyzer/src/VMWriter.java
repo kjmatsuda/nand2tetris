@@ -3,21 +3,22 @@ import java.io.IOException;
 
 public class VMWriter {
 	private BufferedWriter output;
+	private final String indentStr = "    ";
 
 	VMWriter(BufferedWriter output) {
 		this.output = output;
 	}
 
 	public void writePush(Segment segment, int index) throws IOException {
-		writeLine(output, "push " + segmentToString(segment) + " " + index);
+		writeLine(output, indentStr + "push " + segmentToString(segment) + " " + index);
 	}
 
 	public void writePop(Segment segment, int index) throws IOException {
-		writeLine(output, "pop " + segmentToString(segment) + " " + index);
+		writeLine(output, indentStr + "pop " + segmentToString(segment) + " " + index);
 	}
 
 	public void writeArithmetic(Command command) throws IOException {
-		writeLine(output, commandToString(command));
+		writeLine(output, indentStr + commandToString(command));
 	}
 
 	public void writeLabel(String label) throws IOException {
@@ -25,15 +26,15 @@ public class VMWriter {
 	}
 
 	public void writeGoto(String label) throws IOException {
-		writeLine(output, "goto " + label);
+		writeLine(output, indentStr + "goto " + label);
 	}
 
 	public void writeIf(String label) throws IOException {
-		writeLine(output, "if-goto " + label);
+		writeLine(output, indentStr + "if-goto " + label);
 	}
 
 	public void writeCall(String name, int nArgs) throws IOException {
-		writeLine(output, "call " + name + " " + nArgs);
+		writeLine(output, indentStr + "call " + name + " " + nArgs);
 	}
 
 	public void writeFunction(String name, int nLocals) throws IOException {
@@ -41,7 +42,7 @@ public class VMWriter {
 	}
 
 	public void writeReturn() throws IOException {
-		writeLine(output, "return");
+		writeLine(output, indentStr + "return");
 	}
 
 	public void close() {
