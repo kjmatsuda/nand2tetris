@@ -178,6 +178,7 @@ public class CompilationEngine {
 		}
 		// identifier
 		writeLine(outputXml, "<identifier> " + tokenizer.identifier() + " </identifier>");
+		vmWriter.writeFunction(className + "." + tokenizer.identifier(), symbolTable.varCount(SymbolKind.KIND_VAR));
 
 		// SYMBOL の '('
 		tokenizer.advance();
@@ -549,6 +550,9 @@ public class CompilationEngine {
 		// KEYWORD の'return'(呼び出し元でチェックしているからここではしない)
 		writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
+		vmWriter.writePush(Segment.SEGMENT_CONST, 0);
+		vmWriter.writeReturn();
+
 		tokenizer.advance();
 		if (isSemicolon())
 		{
@@ -700,6 +704,7 @@ public class CompilationEngine {
 		switch (tokenizer.tokenType()) {
 		case TOKEN_INT_CONST:
 			writeLine(outputXml, "<integerConstant> " + tokenizer.intVal() + " </integerConstant>");
+			vmWriter.writePush(Segment.SEGMENT_CONST, tokenizer.intVal());
 			break;
 		case TOKEN_STRING_CONST:
 			writeLine(outputXml, "<stringConstant> " + tokenizer.stringVal() + " </stringConstant>");
@@ -882,6 +887,7 @@ public class CompilationEngine {
 		}
 		// identifier
 		writeLine(outputXml, "<identifier> " + tokenizer.identifier() + " </identifier>");
+		String subroutineName = tokenizer.identifier();
 
 		tokenizer.advance();
 		if (isOpenBracket())
@@ -918,6 +924,10 @@ public class CompilationEngine {
 			}
 			// identifier
 			writeLine(outputXml, "<identifier> " + tokenizer.identifier() + " </identifier>");
+
+			// TODO call 呼び出し時は引数の数を指定する
+			subroutineName = subroutineName + "." + tokenizer.identifier();
+			vmWriter.writeCall(subroutineName, 0);
 
 			// '(' expressionList ')'
 			tokenizer.advance();
