@@ -1,5 +1,12 @@
 import java.io.BufferedWriter;
 import java.io.IOException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class CompilationEngine {
 	private JackTokenizer tokenizer;
@@ -8,12 +15,28 @@ public class CompilationEngine {
 	private BufferedWriter outputXml;
 	private int indentLevel = 0;
 	private String className = "";
+	Document expressionTree;
 
 	CompilationEngine(JackTokenizer tokenizer, BufferedWriter outputXml, BufferedWriter outputVm) {
 		this.tokenizer = tokenizer;
 		this.outputXml = outputXml;
 		this.symbolTable = new SymbolTable();
 		this.vmWriter = new VMWriter(outputVm);
+		this.expressionTree = getNewDocument();
+	}
+
+	private static Document getNewDocument() {
+		Document newDocument = null;
+		DocumentBuilder builder = null;
+
+		try {
+			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			newDocument = builder.newDocument();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+
+		return newDocument;
 	}
 
 	public void compileClass() throws IOException {
@@ -446,7 +469,9 @@ public class CompilationEngine {
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 			tokenizer.advance();
-			compileExpression();
+			this.expressionTree = getNewDocument();
+			compileExpression(this.expressionTree);
+			writeExpressionVMCode(this.expressionTree);
 
 			tokenizer.advance();
 			if (!isCloseSquareBracket())
@@ -470,7 +495,9 @@ public class CompilationEngine {
 
 		// expression
 		tokenizer.advance();
-		compileExpression();
+		this.expressionTree = getNewDocument();
+		compileExpression(this.expressionTree);
+		writeExpressionVMCode(this.expressionTree);
 
 		// ';'
 		tokenizer.advance();
@@ -505,7 +532,9 @@ public class CompilationEngine {
 
 		// expression
 		tokenizer.advance();
-		compileExpression();
+		this.expressionTree = getNewDocument();
+		compileExpression(this.expressionTree);
+		writeExpressionVMCode(this.expressionTree);
 
 		// ')'
 		tokenizer.advance();
@@ -561,7 +590,9 @@ public class CompilationEngine {
 		else
 		{
 			// expression?
-			compileExpression();
+			this.expressionTree = getNewDocument();
+			compileExpression(this.expressionTree);
+			writeExpressionVMCode(this.expressionTree);
 
 			// ';'
 			tokenizer.advance();
@@ -597,7 +628,9 @@ public class CompilationEngine {
 
 		// expression
 		tokenizer.advance();
-		compileExpression();
+		this.expressionTree = getNewDocument();
+		compileExpression(this.expressionTree);
+		writeExpressionVMCode(this.expressionTree);
 
 		// ')'
 		tokenizer.advance();
@@ -665,12 +698,15 @@ public class CompilationEngine {
 		writeLine(outputXml, "</ifStatement>");
 	}
 
-	public void compileExpression() throws IOException{
+	public void compileExpression(Node expressionRoot) throws IOException{
 		writeLine(outputXml, "<expression>");
+		Element expression = expressionTree.createElement("expression");
+		expressionRoot.appendChild(expression);
+
 		indentLevelDown();
 
 		// term
-		compileTerm();
+		compileTerm(expression);
 
 		// (op term)*
 		// if ((y + size) < 254) をうまく扱えるように以下の advance を追加した
@@ -686,8 +722,13 @@ public class CompilationEngine {
 				// while (i < length) のカッコ内をうまく処理できてないので、ここでは先読みを無効化する
 				tokenizer.setPreloaded(false);
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
+
+				Element operator = expressionTree.createElement("operator");
+				operator.setTextContent(convertSymbolToString(tokenizer.symbol()));
+				expression.appendChild(operator);
+
 				tokenizer.advance();
-				compileTerm();
+				compileTerm(expression);
 				// ここで advance しないといけないケースあると思うが、コメントアウトすることで ArrayTest/Main.jack のコンパイルが通った
 				//tokenizer.advance();
 			}
@@ -697,16 +738,25 @@ public class CompilationEngine {
 		writeLine(outputXml, "</expression>");
 	}
 
-	public void compileTerm() throws IOException{
+	public void compileTerm(Node expressionRoot) throws IOException{
 		writeLine(outputXml, "<term>");
 		indentLevelDown();
+
+		Element term = expressionTree.createElement("term");
+		expressionRoot.appendChild(term);
 
 		switch (tokenizer.tokenType()) {
 		case TOKEN_INT_CONST:
 			writeLine(outputXml, "<integerConstant> " + tokenizer.intVal() + " </integerConstant>");
+			Element integerConstant = expressionTree.createElement("integerConstant");
+			integerConstant.setTextContent(String.valueOf(tokenizer.intVal()));
+			term.appendChild(integerConstant);
 			break;
 		case TOKEN_STRING_CONST:
 			writeLine(outputXml, "<stringConstant> " + tokenizer.stringVal() + " </stringConstant>");
+			Element stringConstant = expressionTree.createElement("stringConstant");
+			stringConstant.setTextContent(tokenizer.stringVal());
+			term.appendChild(stringConstant);
 			break;
 		case TOKEN_KEYWORD:
 			if (!isKeywordConstant())
@@ -732,7 +782,7 @@ public class CompilationEngine {
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 				tokenizer.advance();
-				compileExpression();
+				compileExpression(expressionRoot);
 
 				tokenizer.advance();
 				if (!isCloseSquareBracket())
@@ -811,6 +861,9 @@ public class CompilationEngine {
 			{
 				// 無処理、varName だけだった場合はここにくる
 				writeLine(outputXml, getIdentifierOpenTag(name, false) + name + " </identifier>");
+				Element varName = expressionTree.createElement("varName");
+				varName.setTextContent(name);
+				term.appendChild(varName);
 
 				tokenizer.setPreloaded(true);
 			}
@@ -819,15 +872,19 @@ public class CompilationEngine {
 			if (isUnaryOperator())
 			{
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
+				Element unaryOperator = expressionTree.createElement("unaryOperator");
+				unaryOperator.setTextContent(convertSymbolToString(tokenizer.symbol()));
+				expressionRoot.appendChild(unaryOperator);
+
 				tokenizer.advance();
-				compileTerm();
+				compileTerm(expressionRoot);
 			}
 			else if (isOpenBracket())
 			{
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
-				compileExpression();
+				compileExpression(expressionRoot);
 
 				tokenizer.advance();
 				if (!isCloseBracket())
@@ -862,7 +919,9 @@ public class CompilationEngine {
 
 		while (!isCloseBracket())
 		{
-			compileExpression();
+			this.expressionTree = getNewDocument();
+			compileExpression(this.expressionTree);
+			writeExpressionVMCode(this.expressionTree);
 
 			tokenizer.advance();
 			if (isComma())
@@ -876,7 +935,7 @@ public class CompilationEngine {
 		writeLine(outputXml, "</expressionList>");
 	}
 
-	public void compileSubroutineCall() throws IOException{
+	public void compileSubroutineCall() throws IOException {
 		// 1つ目は identifier
 		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 		{
@@ -950,6 +1009,35 @@ public class CompilationEngine {
 			// 構文エラー
 			writeLine(outputXml, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ( or ., actual: " + tokenizer.stringVal());
 			return;
+		}
+	}
+
+	private void writeExpressionVMCode(Node expNode) throws IOException {
+		if (expNode.getNodeName().equals("integerConstant"))
+		{
+			// expが数字の場合
+			int constantValue = Integer.parseInt(expNode.getFirstChild().getTextContent());
+			vmWriter.writePush(Segment.SEGMENT_CONST, constantValue);
+		}
+		else if (expNode.getNodeName().equals("varName"))
+		{
+			// expが変数の場合
+			String varName = expNode.getFirstChild().getTextContent();
+			SymbolKind kind = this.symbolTable.kindOf(varName);
+			int index = this.symbolTable.indexOf(varName);
+			vmWriter.writePush(convertKindToSegment(kind), index);
+		}
+		else
+		{
+			// TODO writeExpressionVMCode
+			Node childNode = expNode.getFirstChild();
+			while (childNode != null)
+			{
+				writeExpressionVMCode(childNode);
+				// TODO op を出力
+				// TODO "call f"を出力
+				childNode = childNode.getNextSibling();
+			}
 		}
 	}
 
@@ -1072,6 +1160,12 @@ public class CompilationEngine {
 		default:
 			break;
 		}
+
+		return symbolStr;
+	}
+
+	private String convertSymbolToString(char symbol) {
+		String symbolStr = String.valueOf(symbol);
 
 		return symbolStr;
 	}
@@ -1568,12 +1662,12 @@ public class CompilationEngine {
 		}
 
 		retTagStr = "<identifier category=\"" + category + "\" context=\"" + context
-						+ "\" kind=\"" + kindToString(this.symbolTable.kindOf(name)) + "\" index=\"" + this.symbolTable.indexOf(name) + "\"> ";
+						+ "\" kind=\"" + convertKindToString(this.symbolTable.kindOf(name)) + "\" index=\"" + this.symbolTable.indexOf(name) + "\"> ";
 
 		return retTagStr;
 	}
 
-	private String kindToString(SymbolKind kind) {
+	private String convertKindToString(SymbolKind kind) {
 		String kindStr = "none";
 		switch (kind) {
 		case KIND_NONE:
@@ -1596,6 +1690,30 @@ public class CompilationEngine {
 		}
 
 		return kindStr;
+	}
+
+	private Segment convertKindToSegment(SymbolKind kind) {
+		Segment segment = Segment.SEGMENT_CONST;
+		switch (kind) {
+		case KIND_NONE:
+			break;
+		case KIND_STATIC:
+			segment = Segment.SEGMENT_STATIC;
+			break;
+		case KIND_FIELD:
+			// TODO KIND_FIELD はどの Segment に変換すればいい？
+			break;
+		case KIND_ARG:
+			segment = Segment.SEGMENT_ARG;
+			break;
+		case KIND_VAR:
+			segment = Segment.SEGMENT_LOCAL;
+			break;
+		default:
+			break;
+		}
+
+		return segment;
 	}
 
 }
