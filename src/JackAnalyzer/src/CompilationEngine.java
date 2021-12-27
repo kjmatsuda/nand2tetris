@@ -7,6 +7,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class CompilationEngine {
 	private JackTokenizer tokenizer;
@@ -1019,7 +1020,33 @@ public class CompilationEngine {
 	}
 
 	private void writeExpressionVMCode(Node expNode) throws IOException {
-		if (expNode.getNodeName().equals("integerConstant"))
+		NodeList expNodeList = expNode.getChildNodes();
+		if (expNodeList.getLength() == 3)
+		{
+			// exp が (exp1 op exp2) である場合
+			if (isOperatorSymbolStr(expNodeList.item(1).getFirstChild().getTextContent()))
+			{
+				// Operands
+				writeExpressionVMCode(expNodeList.item(0));
+				writeExpressionVMCode(expNodeList.item(2));
+
+				// Operator
+				writeExpressionVMCode(expNodeList.item(1));
+			}
+		}
+		else if (expNodeList.getLength() == 2)
+		{
+			// op (exp1) である場合
+			if (isOperatorSymbolStr(expNodeList.item(0).getTextContent()))
+			{
+				// Operand
+				writeExpressionVMCode(expNodeList.item(1));
+
+				// Operator
+				writeExpressionVMCode(expNodeList.item(0));
+			}
+		}
+		else if (expNode.getNodeName().equals("integerConstant"))
 		{
 			// expが数字の場合
 			int constantValue = Integer.parseInt(expNode.getFirstChild().getTextContent());
@@ -1033,9 +1060,16 @@ public class CompilationEngine {
 			int index = this.symbolTable.indexOf(varName);
 			vmWriter.writePush(convertKindToSegment(kind), index);
 		}
+		else if (expNode.getNodeName().equals("operator"))
+		{
+			// expがoperatorの場合
+			String operatorStr = expNode.getFirstChild().getTextContent();
+			vmWriter.writeArithmetic(convertOperatorStrToCommand(operatorStr));
+		}
 		else
 		{
-			// TODO writeExpressionVMCode
+			// TODO f(exp1,...expN) である場合
+			System.out.println(expNode.getChildNodes().getLength());
 			Node childNode = expNode.getFirstChild();
 			while (childNode != null)
 			{
@@ -1571,6 +1605,28 @@ public class CompilationEngine {
 		return is;
 	}
 
+	private boolean isOperatorSymbolStr(String str) {
+		boolean is = false;
+
+		switch (str) {
+		case "+":
+		case "-":
+		case "*":
+		case "/":
+		case "&":
+		case "|":
+		case "<":
+		case ">":
+		case "=":
+			is = true;
+			break;
+		default:
+			break;
+		}
+
+		return is;
+	}
+
 	private boolean isUnaryOperator() {
 		boolean is = false;
 
@@ -1720,6 +1776,44 @@ public class CompilationEngine {
 		}
 
 		return segment;
+	}
+
+	private Command convertOperatorStrToCommand(String operatorStr) {
+		Command command = Command.COMMAND_ADD;
+
+		switch (operatorStr) {
+		case "+":
+			command = Command.COMMAND_ADD;
+			break;
+		case "-":
+			command = Command.COMMAND_SUB;
+			break;
+		case "*":
+			// TODO * を扱えるようにする
+			break;
+		case "/":
+			// TODO / を扱えるようにする
+			break;
+		case "=":
+			command = Command.COMMAND_EQ;
+			break;
+		case ">":
+			command = Command.COMMAND_GT;
+			break;
+		case "<":
+			command = Command.COMMAND_LT;
+			break;
+		case "&":
+			command = Command.COMMAND_AND;
+			break;
+		case "|":
+			command = Command.COMMAND_OR;
+			break;
+		default:
+			break;
+		}
+
+		return command;
 	}
 
 }
