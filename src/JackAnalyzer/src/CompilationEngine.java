@@ -749,19 +749,22 @@ public class CompilationEngine {
 		indentLevelDown();
 
 		Element term = expressionTree.createElement("term");
-		expressionRoot.appendChild(term);
 
 		switch (tokenizer.tokenType()) {
 		case TOKEN_INT_CONST:
 			writeLine(outputXml, "<integerConstant> " + tokenizer.intVal() + " </integerConstant>");
 			Element integerConstant = expressionTree.createElement("integerConstant");
 			integerConstant.setTextContent(String.valueOf(tokenizer.intVal()));
+
+			expressionRoot.appendChild(term);
 			term.appendChild(integerConstant);
 			break;
 		case TOKEN_STRING_CONST:
 			writeLine(outputXml, "<stringConstant> " + tokenizer.stringVal() + " </stringConstant>");
 			Element stringConstant = expressionTree.createElement("stringConstant");
 			stringConstant.setTextContent(tokenizer.stringVal());
+
+			expressionRoot.appendChild(term);
 			term.appendChild(stringConstant);
 			break;
 		case TOKEN_KEYWORD:
@@ -869,6 +872,8 @@ public class CompilationEngine {
 				writeLine(outputXml, getIdentifierOpenTag(name, false) + name + " </identifier>");
 				Element varName = expressionTree.createElement("varName");
 				varName.setTextContent(name);
+
+				expressionRoot.appendChild(term);
 				term.appendChild(varName);
 
 				tokenizer.setPreloaded(true);
@@ -1069,7 +1074,7 @@ public class CompilationEngine {
 		else
 		{
 			// TODO f(exp1,...expN) である場合
-			System.out.println(expNode.getChildNodes().getLength());
+			// System.out.println(expNode.getChildNodes().getLength());
 			Node childNode = expNode.getFirstChild();
 			while (childNode != null)
 			{
