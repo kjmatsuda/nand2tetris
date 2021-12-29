@@ -807,12 +807,15 @@ public class CompilationEngine {
 			else if (isOpenBracket())
 			{
 				// subroutineName の後に続く'('だった場合
+				String subroutineName = name;
+				int numberOfArguments = 0;
+
 				writeLine(outputXml, "<identifier> " + tokenizer.identifier() + " </identifier>");
 				// '(' expressionList ')'
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
-				compileExpressionList();
+				numberOfArguments = compileExpressionList();
 
 				if (!isCloseBracket())
 				{
@@ -823,10 +826,15 @@ public class CompilationEngine {
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				// ArrayTest の「let length = Keyboard.readInt("HOW MANY NUMBERS? ");」をうまく処理するためにコメントアウト
 				// tokenizer.advance();
+
+				vmWriter.writeCall(subroutineName, numberOfArguments);
 			}
 			else if (isDot())
 			{
 				// '.'だった場合
+				String subroutineName = name;
+				int numberOfArguments = 0;
+
 				writeLine(outputXml, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
 				// '.'
@@ -842,6 +850,7 @@ public class CompilationEngine {
 				}
 				// identifier
 				writeLine(outputXml, "<identifier> " + tokenizer.identifier() + " </identifier>");
+				subroutineName = subroutineName + "." + tokenizer.identifier();
 
 				// '(' expressionList ')'
 				tokenizer.advance();
@@ -854,7 +863,7 @@ public class CompilationEngine {
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
-				compileExpressionList();
+				numberOfArguments = compileExpressionList();
 
 				if (!isCloseBracket())
 				{
@@ -865,6 +874,8 @@ public class CompilationEngine {
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				// ArrayTest の「let length = Keyboard.readInt("HOW MANY NUMBERS? ");」をうまく処理するためにコメントアウト
 				// tokenizer.advance();
+
+				vmWriter.writeCall(subroutineName, numberOfArguments);
 			}
 			else
 			{
@@ -924,16 +935,19 @@ public class CompilationEngine {
 		writeLine(outputXml, "</term>");
 	}
 
-	public void compileExpressionList() throws IOException{
+	public int compileExpressionList() throws IOException{
 		writeLine(outputXml, "<expressionList>");
 		indentLevelDown();
 
+		int numberOfArguments = 0;
+
 		while (!isCloseBracket())
 		{
+			numberOfArguments++;
 			this.expressionTree = getNewDocument();
 			compileExpression(this.expressionTree);
 			writeExpressionVMCode(this.expressionTree);
-			System.out.println(Util.createXMLString(this.expressionTree));
+			// System.out.println(Util.createXMLString(this.expressionTree));
 
 			tokenizer.advance();
 			if (isComma())
@@ -945,6 +959,8 @@ public class CompilationEngine {
 
 		indentLevelUp();
 		writeLine(outputXml, "</expressionList>");
+
+		return numberOfArguments;
 	}
 
 	public void compileSubroutineCall() throws IOException {
@@ -958,6 +974,9 @@ public class CompilationEngine {
 		// identifier
 		writeLine(outputXml, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
+		String subroutineName = tokenizer.identifier();
+		int numberOfArguments = 0;
+
 		tokenizer.advance();
 		if (isOpenBracket())
 		{
@@ -966,7 +985,7 @@ public class CompilationEngine {
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 
-			compileExpressionList();
+			numberOfArguments = compileExpressionList();
 
 			if (!isCloseBracket())
 			{
@@ -993,6 +1012,7 @@ public class CompilationEngine {
 			}
 			// identifier
 			writeLine(outputXml, "<identifier> " + tokenizer.identifier() + " </identifier>");
+			subroutineName = subroutineName + "." + tokenizer.identifier();
 
 			// '(' expressionList ')'
 			tokenizer.advance();
@@ -1005,7 +1025,7 @@ public class CompilationEngine {
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 
-			compileExpressionList();
+			numberOfArguments = compileExpressionList();
 
 			if (!isCloseBracket())
 			{
@@ -1022,6 +1042,7 @@ public class CompilationEngine {
 			writeLine(outputXml, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ( or ., actual: " + tokenizer.stringVal());
 			return;
 		}
+		vmWriter.writeCall(subroutineName, numberOfArguments);
 	}
 
 	private void writeExpressionVMCode(Node expNode) throws IOException {
@@ -1069,18 +1090,27 @@ public class CompilationEngine {
 		{
 			// expがoperatorの場合
 			String operatorStr = expNode.getFirstChild().getTextContent();
-			vmWriter.writeArithmetic(convertOperatorStrToCommand(operatorStr));
+
+			if (operatorStr.equals("*"))
+			{
+				vmWriter.writeCall("Math.multiply", 2);
+			}
+			else if (operatorStr.equals("/"))
+			{
+
+			}
+			else
+			{
+				vmWriter.writeArithmetic(convertOperatorStrToCommand(operatorStr));
+			}
 		}
 		else
 		{
-			// TODO f(exp1,...expN) である場合
 			// System.out.println(expNode.getChildNodes().getLength());
 			Node childNode = expNode.getFirstChild();
 			while (childNode != null)
 			{
 				writeExpressionVMCode(childNode);
-				// TODO op を出力
-				// TODO "call f"を出力
 				childNode = childNode.getNextSibling();
 			}
 		}
@@ -1792,12 +1822,6 @@ public class CompilationEngine {
 			break;
 		case "-":
 			command = Command.COMMAND_SUB;
-			break;
-		case "*":
-			// TODO * を扱えるようにする
-			break;
-		case "/":
-			// TODO / を扱えるようにする
 			break;
 		case "=":
 			command = Command.COMMAND_EQ;
