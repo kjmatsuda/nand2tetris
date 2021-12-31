@@ -1097,12 +1097,19 @@ public class CompilationEngine {
 			}
 			else if (operatorStr.equals("/"))
 			{
-
+				vmWriter.writeCall("Math.divide", 2);
 			}
 			else
 			{
 				vmWriter.writeArithmetic(convertOperatorStrToCommand(operatorStr));
 			}
+		}
+		else if (expNode.getNodeName().equals("unaryOperator"))
+		{
+			// expがunaryOperatorの場合
+			String operatorStr = expNode.getFirstChild().getTextContent();
+
+			vmWriter.writeArithmetic(convertUnaryOperatorStrToCommand(operatorStr));
 		}
 		else
 		{
@@ -1837,6 +1844,23 @@ public class CompilationEngine {
 			break;
 		case "|":
 			command = Command.COMMAND_OR;
+			break;
+		default:
+			break;
+		}
+
+		return command;
+	}
+
+	private Command convertUnaryOperatorStrToCommand(String operatorStr) {
+		Command command = Command.COMMAND_NEG;
+
+		switch (operatorStr) {
+		case "-":
+			command = Command.COMMAND_NEG;
+			break;
+		case "~":
+			command = Command.COMMAND_NOT;
 			break;
 		default:
 			break;
