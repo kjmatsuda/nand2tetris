@@ -947,7 +947,7 @@ public class CompilationEngine {
 			this.expressionTree = getNewDocument();
 			compileExpression(this.expressionTree);
 			writeExpressionVMCode(this.expressionTree);
-			// System.out.println(Util.createXMLString(this.expressionTree));
+			System.out.println(Util.createXMLString(this.expressionTree));
 
 			tokenizer.advance();
 			if (isComma())
