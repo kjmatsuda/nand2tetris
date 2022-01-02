@@ -499,7 +499,7 @@ public class CompilationEngine {
 		tokenizer.advance();
 		this.expressionTree = getNewDocument();
 		compileExpression(this.expressionTree);
-		writeExpressionVMCode(this.expressionTree);
+	//	writeExpressionVMCode(this.expressionTree);
 		System.out.println(Util.createXMLString(this.expressionTree));
 
 		SymbolKind kind = this.symbolTable.kindOf(varName);
