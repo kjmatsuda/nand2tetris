@@ -460,8 +460,8 @@ public class CompilationEngine {
 			return;
 		}
 		// identifier
-		String name = tokenizer.identifier();
-		writeLine(outputXml, getIdentifierOpenTag(name, false) + name + " </identifier>");
+		String varName = tokenizer.identifier();
+		writeLine(outputXml, getIdentifierOpenTag(varName, false) + varName + " </identifier>");
 
 		// ('[' expression ']')?
 		tokenizer.advance();
@@ -501,6 +501,10 @@ public class CompilationEngine {
 		compileExpression(this.expressionTree);
 		writeExpressionVMCode(this.expressionTree);
 		System.out.println(Util.createXMLString(this.expressionTree));
+
+		SymbolKind kind = this.symbolTable.kindOf(varName);
+		int index = this.symbolTable.indexOf(varName);
+		vmWriter.writePop(convertKindToSegment(kind), index);
 
 		// ';'
 		tokenizer.advance();
