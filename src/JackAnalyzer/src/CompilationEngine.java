@@ -202,7 +202,7 @@ public class CompilationEngine {
 		}
 		// identifier
 		writeLine(outputXml, "<identifier> " + tokenizer.identifier() + " </identifier>");
-		vmWriter.writeFunction(className + "." + tokenizer.identifier(), symbolTable.varCount(SymbolKind.KIND_VAR));
+		String subroutineName = tokenizer.identifier();
 
 		// SYMBOL の '('
 		tokenizer.advance();
@@ -227,7 +227,7 @@ public class CompilationEngine {
 		writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		tokenizer.advance();
-		compileSubroutineBody(subroutineType);
+		compileSubroutineBody(subroutineType, subroutineName);
 
 		indentLevelUp();
 		writeLine(outputXml, "</subroutineDec>");
@@ -274,7 +274,7 @@ public class CompilationEngine {
 		writeLine(outputXml, "</parameterList>");
 	}
 
-	public void compileSubroutineBody(KeyWord subroutineType) throws IOException{
+	public void compileSubroutineBody(KeyWord subroutineType, String subroutineName) throws IOException{
 		writeLine(outputXml, "<subroutineBody>");
 		indentLevelDown();
 
@@ -299,6 +299,8 @@ public class CompilationEngine {
 			compileVarDec();
 			tokenizer.advance();
 		}
+
+		vmWriter.writeFunction(className + "." + subroutineName, symbolTable.varCount(SymbolKind.KIND_VAR));
 
 		// statements
 		compileStatements();
