@@ -17,6 +17,7 @@ public class CompilationEngine {
 	private int indentLevel = 0;
 	private String className = "";
 	Document expressionTree;
+	private int labelNum = 1;
 
 	CompilationEngine(JackTokenizer tokenizer, BufferedWriter outputXml, BufferedWriter outputVm) {
 		this.tokenizer = tokenizer;
@@ -529,6 +530,11 @@ public class CompilationEngine {
 		// KEYWORD の'while'(呼び出し元でチェックしているからここではしない)
 		writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
+		String startLabel = "START-WHILE-L" + String.valueOf(this.labelNum++);
+		String endLabel = "END-WHILE-L" + String.valueOf(this.labelNum++);
+
+		vmWriter.writeLabel(startLabel);
+
 		// '('
 		tokenizer.advance();
 		if (!isOpenBracket())
@@ -555,6 +561,9 @@ public class CompilationEngine {
 			return;
 		}
 		writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
+
+		vmWriter.writeArithmetic(Command.COMMAND_NOT);
+		vmWriter.writeIf(endLabel);
 
 		// '{'
 		tokenizer.advance();
