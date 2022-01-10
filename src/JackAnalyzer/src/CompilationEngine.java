@@ -721,7 +721,7 @@ public class CompilationEngine {
 
 	public void compileExpression(Node expressionRoot) throws IOException{
 		writeLine(outputXml, "<expression>");
-		Element expression = expressionTree.createElement("expression");
+		Element expression = this.expressionTree.createElement("expression");
 		expressionRoot.appendChild(expression);
 
 		indentLevelDown();
@@ -744,7 +744,7 @@ public class CompilationEngine {
 				tokenizer.setPreloaded(false);
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
-				Element operator = expressionTree.createElement("operator");
+				Element operator = this.expressionTree.createElement("operator");
 				operator.setTextContent(convertSymbolToString(tokenizer.symbol()));
 				expression.appendChild(operator);
 
@@ -763,12 +763,12 @@ public class CompilationEngine {
 		writeLine(outputXml, "<term>");
 		indentLevelDown();
 
-		Element term = expressionTree.createElement("term");
+		Element term = this.expressionTree.createElement("term");
 
 		switch (tokenizer.tokenType()) {
 		case TOKEN_INT_CONST:
 			writeLine(outputXml, "<integerConstant> " + tokenizer.intVal() + " </integerConstant>");
-			Element integerConstant = expressionTree.createElement("integerConstant");
+			Element integerConstant = this.expressionTree.createElement("integerConstant");
 			integerConstant.setTextContent(String.valueOf(tokenizer.intVal()));
 
 			expressionRoot.appendChild(term);
@@ -776,7 +776,7 @@ public class CompilationEngine {
 			break;
 		case TOKEN_STRING_CONST:
 			writeLine(outputXml, "<stringConstant> " + tokenizer.stringVal() + " </stringConstant>");
-			Element stringConstant = expressionTree.createElement("stringConstant");
+			Element stringConstant = this.expressionTree.createElement("stringConstant");
 			stringConstant.setTextContent(tokenizer.stringVal());
 
 			expressionRoot.appendChild(term);
@@ -896,7 +896,7 @@ public class CompilationEngine {
 			{
 				// 無処理、varName だけだった場合はここにくる
 				writeLine(outputXml, getIdentifierOpenTag(name, false) + name + " </identifier>");
-				Element varName = expressionTree.createElement("varName");
+				Element varName = this.expressionTree.createElement("varName");
 				varName.setTextContent(name);
 
 				expressionRoot.appendChild(term);
@@ -909,7 +909,7 @@ public class CompilationEngine {
 			if (isUnaryOperator())
 			{
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
-				Element unaryOperator = expressionTree.createElement("unaryOperator");
+				Element unaryOperator = this.expressionTree.createElement("unaryOperator");
 				unaryOperator.setTextContent(convertSymbolToString(tokenizer.symbol()));
 				expressionRoot.appendChild(unaryOperator);
 
@@ -971,6 +971,11 @@ public class CompilationEngine {
 				tokenizer.advance();
 			}
 		}
+
+		// 「let value = Memory.peek(8000);」のような式において、compileExpressionList で「push constant 8000」を出力後、
+		// さらに compileLet でも 「push constant 8000」を重複出力していたので、クリア処理を入れる
+		// でもこれだと「let y = 1 + Main.sum(2, 3);」のような式をうまく扱えない気がする...
+		this.expressionTree = getNewDocument();
 
 		indentLevelUp();
 		writeLine(outputXml, "</expressionList>");
