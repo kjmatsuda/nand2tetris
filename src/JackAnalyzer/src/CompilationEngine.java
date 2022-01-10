@@ -585,6 +585,9 @@ public class CompilationEngine {
 			writeLine(outputXml, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: }, actual: " + tokenizer.stringVal());
 			return;
 		}
+
+		vmWriter.writeLabel(endLabel);
+
 		writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		indentLevelUp();
