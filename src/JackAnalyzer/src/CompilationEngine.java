@@ -601,12 +601,13 @@ public class CompilationEngine {
 		// KEYWORD の'return'(呼び出し元でチェックしているからここではしない)
 		writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
-		vmWriter.writePush(Segment.SEGMENT_CONST, 0);
-		vmWriter.writeReturn();
 
 		tokenizer.advance();
 		if (isSemicolon())
 		{
+			vmWriter.writePush(Segment.SEGMENT_CONST, 0);
+			vmWriter.writeReturn();
+
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 		}
 		else
@@ -625,6 +626,9 @@ public class CompilationEngine {
 				writeLine(outputXml, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ;, actual: " + tokenizer.stringVal());
 				return;
 			}
+
+			vmWriter.writeReturn();
+
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 		}
 
