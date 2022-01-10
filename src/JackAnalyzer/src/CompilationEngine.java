@@ -527,11 +527,11 @@ public class CompilationEngine {
 		writeLine(outputXml, "<whileStatement>");
 		indentLevelDown();
 
-		// KEYWORD の'while'(呼び出し元でチェックしているからここではしない)
-		writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
-
 		String startLabel = "START-WHILE-L" + String.valueOf(this.labelNum++);
 		String endLabel = "END-WHILE-L" + String.valueOf(this.labelNum++);
+
+		// KEYWORD の'while'(呼び出し元でチェックしているからここではしない)
+		writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
 		vmWriter.writeLabel(startLabel);
 
@@ -636,6 +636,9 @@ public class CompilationEngine {
 		writeLine(outputXml, "<ifStatement>");
 		indentLevelDown();
 
+		String endIfLabel = "END-IF-L" + String.valueOf(this.labelNum++);
+		String elseLabel = "ELSE-L" + String.valueOf(this.labelNum++);
+
 		// KEYWORD の'if'(呼び出し元でチェックしているからここではしない)
 		writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
@@ -666,6 +669,9 @@ public class CompilationEngine {
 		}
 		writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
+		vmWriter.writeArithmetic(Command.COMMAND_NOT);
+		vmWriter.writeIf(elseLabel);
+
 		// '{'
 		tokenizer.advance();
 		if (!isOpenCurlyBracket())
@@ -678,6 +684,8 @@ public class CompilationEngine {
 
 		tokenizer.advance();
 		compileStatements();
+
+		vmWriter.writeIf(endIfLabel);
 
 		// '}'
 		if (!isCloseCurlyBracket())
@@ -693,6 +701,8 @@ public class CompilationEngine {
 		if (isElse())
 		{
 			writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
+
+			vmWriter.writeLabel(elseLabel);
 
 			tokenizer.advance();
 			if (!isOpenCurlyBracket())
@@ -717,6 +727,8 @@ public class CompilationEngine {
 
 			tokenizer.advance();
 		}
+
+		vmWriter.writeLabel(endIfLabel);
 
 		indentLevelUp();
 		writeLine(outputXml, "</ifStatement>");
