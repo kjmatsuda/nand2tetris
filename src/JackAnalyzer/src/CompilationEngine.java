@@ -809,6 +809,13 @@ public class CompilationEngine {
 				return;
 			}
 			writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
+
+			Element keywordConstant = this.expressionTree.createElement("keywordConstant");
+			keywordConstant.setTextContent(keyWordToString(tokenizer.keyWord()));
+
+			expressionRoot.appendChild(term);
+			term.appendChild(keywordConstant);
+
 			break;
 		case TOKEN_IDENTIFIER:
 			// '(' か '.' なら subroutineCall、そうでなければ varName
@@ -1124,6 +1131,20 @@ public class CompilationEngine {
 			SymbolKind kind = this.symbolTable.kindOf(varName);
 			int index = this.symbolTable.indexOf(varName);
 			vmWriter.writePush(convertKindToSegment(kind), index);
+		}
+		else if (expNode.getNodeName().equals("keywordConstant"))
+		{
+			// expがキーワードの場合
+			String keywordStr = expNode.getFirstChild().getTextContent();
+			if (keywordStr.equals("true"))
+			{
+				vmWriter.writePush(Segment.SEGMENT_CONST, 1);
+				vmWriter.writeArithmetic(Command.COMMAND_NEG);
+			}
+			else
+			{
+				vmWriter.writePush(Segment.SEGMENT_CONST, 0);
+			}
 		}
 		else if (expNode.getNodeName().equals("operator"))
 		{
