@@ -1720,6 +1720,11 @@ public class CompilationEngine {
 		case "<":
 		case ">":
 		case "=":
+			// 二項演算子
+			is = true;
+			break;
+		case "~":
+			// 単項演算子
 			is = true;
 			break;
 		default:
