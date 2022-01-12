@@ -586,6 +586,7 @@ public class CompilationEngine {
 			return;
 		}
 
+		vmWriter.writeGoto(startLabel);
 		vmWriter.writeLabel(endLabel);
 
 		writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
