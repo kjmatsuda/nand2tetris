@@ -690,7 +690,7 @@ public class CompilationEngine {
 		tokenizer.advance();
 		compileStatements();
 
-		vmWriter.writeIf(endIfLabel);
+		vmWriter.writeGoto(endIfLabel);
 
 		// '}'
 		if (!isCloseCurlyBracket())
