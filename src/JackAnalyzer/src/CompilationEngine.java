@@ -999,6 +999,7 @@ public class CompilationEngine {
 			}
 		}
 
+		// TODO 「let y = 1 + Main.mult(2, 3);」のような式を正しく扱えるようにする
 		// 「let value = Memory.peek(8000);」のような式において、compileExpressionList で「push constant 8000」を出力後、
 		// さらに compileLet でも 「push constant 8000」を重複出力していたので、クリア処理を入れる
 		// でもこれだと「let y = 1 + Main.sum(2, 3);」のような式をうまく扱えない気がする...
