@@ -430,7 +430,11 @@ public class CompilationEngine {
 
 		// subroutineCall
 		tokenizer.advance();
-		compileSubroutineCall();
+
+		this.expressionTree = getNewDocument();
+		compileSubroutineCall(this.expressionTree);
+		writeExpressionVMCode(this.expressionTree);
+		System.out.println(Util.createXMLString(this.expressionTree));
 
 		// ';'
 		tokenizer.setPreloaded(false);
@@ -857,7 +861,11 @@ public class CompilationEngine {
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
-				numberOfArguments = compileExpressionList();
+				Element subroutineCall = this.expressionTree.createElement("subroutineCall");
+				subroutineCall.setTextContent(subroutineName);
+				expressionRoot.appendChild(subroutineCall);
+
+				numberOfArguments = compileExpressionList(subroutineCall);
 
 				if (!isCloseBracket())
 				{
@@ -869,6 +877,7 @@ public class CompilationEngine {
 				// ArrayTest の「let length = Keyboard.readInt("HOW MANY NUMBERS? ");」をうまく処理するためにコメントアウト
 				// tokenizer.advance();
 
+				// TODO ここで vmWriter.writeCall(subroutineName, numberOfArguments) すべきではない
 				vmWriter.writeCall(subroutineName, numberOfArguments);
 			}
 			else if (isDot())
@@ -905,7 +914,11 @@ public class CompilationEngine {
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
-				numberOfArguments = compileExpressionList();
+				Element subroutineCall = this.expressionTree.createElement("subroutineCall");
+				subroutineCall.setTextContent(subroutineName);
+				expressionRoot.appendChild(subroutineCall);
+
+				numberOfArguments = compileExpressionList(subroutineCall);
 
 				if (!isCloseBracket())
 				{
@@ -917,6 +930,7 @@ public class CompilationEngine {
 				// ArrayTest の「let length = Keyboard.readInt("HOW MANY NUMBERS? ");」をうまく処理するためにコメントアウト
 				// tokenizer.advance();
 
+				// TODO ここで vmWriter.writeCall(subroutineName, numberOfArguments) すべきではない
 				vmWriter.writeCall(subroutineName, numberOfArguments);
 			}
 			else
@@ -977,7 +991,7 @@ public class CompilationEngine {
 		writeLine(outputXml, "</term>");
 	}
 
-	public int compileExpressionList() throws IOException{
+	public int compileExpressionList(Node expressionRoot) throws IOException{
 		writeLine(outputXml, "<expressionList>");
 		indentLevelDown();
 
@@ -986,10 +1000,10 @@ public class CompilationEngine {
 		while (!isCloseBracket())
 		{
 			numberOfArguments++;
-			this.expressionTree = getNewDocument();
-			compileExpression(this.expressionTree);
-			writeExpressionVMCode(this.expressionTree);
-			System.out.println(Util.createXMLString(this.expressionTree));
+			// this.expressionTree = getNewDocument();
+			compileExpression(expressionRoot);
+//			writeExpressionVMCode(this.expressionTree);
+//			System.out.println(Util.createXMLString(this.expressionTree));
 
 			tokenizer.advance();
 			if (isComma())
@@ -1003,7 +1017,7 @@ public class CompilationEngine {
 		// 「let value = Memory.peek(8000);」のような式において、compileExpressionList で「push constant 8000」を出力後、
 		// さらに compileLet でも 「push constant 8000」を重複出力していたので、クリア処理を入れる
 		// でもこれだと「let y = 1 + Main.sum(2, 3);」のような式をうまく扱えない気がする...
-		this.expressionTree = getNewDocument();
+//		this.expressionTree = getNewDocument();
 
 		indentLevelUp();
 		writeLine(outputXml, "</expressionList>");
@@ -1011,7 +1025,7 @@ public class CompilationEngine {
 		return numberOfArguments;
 	}
 
-	public void compileSubroutineCall() throws IOException {
+	public void compileSubroutineCall(Node expressionRoot) throws IOException {
 		// 1つ目は identifier
 		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 		{
@@ -1033,7 +1047,11 @@ public class CompilationEngine {
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 
-			numberOfArguments = compileExpressionList();
+			Element subroutineCall = this.expressionTree.createElement("subroutineCall");
+			subroutineCall.setTextContent(subroutineName);
+			expressionRoot.appendChild(subroutineCall);
+
+			numberOfArguments = compileExpressionList(subroutineCall);
 
 			if (!isCloseBracket())
 			{
@@ -1073,7 +1091,11 @@ public class CompilationEngine {
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 
-			numberOfArguments = compileExpressionList();
+			Element subroutineCall = this.expressionTree.createElement("subroutineCall");
+			subroutineCall.setTextContent(subroutineName);
+			expressionRoot.appendChild(subroutineCall);
+
+			numberOfArguments = compileExpressionList(subroutineCall);
 
 			if (!isCloseBracket())
 			{
@@ -1090,6 +1112,7 @@ public class CompilationEngine {
 			writeLine(outputXml, new Object(){}.getClass().getEnclosingMethod().getName() + ", Syntax error. expected: ( or ., actual: " + tokenizer.stringVal());
 			return;
 		}
+		// TODO ここで vmWriter.writeCall(subroutineName, numberOfArguments) すべきではない。expression の xml に追加するときに numberOfArguments も追加が必要
 		vmWriter.writeCall(subroutineName, numberOfArguments);
 	}
 
