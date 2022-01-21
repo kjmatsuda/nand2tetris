@@ -64,8 +64,9 @@ public class JackCompiler {
 				JackTokenizer tokenizer = new JackTokenizer(input);
 				CompilationEngine engine = new CompilationEngine(tokenizer, outputXml, outputVm);
 				engine.compileClass();
-				System.out.println("comipilation done.");
+				System.out.println("comipilation done. (" + inputFile.getName() + ")");
 				outputXml.close();
+				outputVm.close();
 				input.close();
 			}
 		} catch(FileNotFoundException e) {

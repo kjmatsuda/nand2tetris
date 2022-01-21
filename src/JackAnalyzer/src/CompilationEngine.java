@@ -434,7 +434,7 @@ public class CompilationEngine {
 		this.expressionTree = getNewDocument();
 		compileSubroutineCall(this.expressionTree);
 		writeExpressionVMCode(this.expressionTree);
-		System.out.println(Util.createXMLString(this.expressionTree));
+		// System.out.println(Util.createXMLString(this.expressionTree));
 
 		// ';'
 		tokenizer.setPreloaded(false);
@@ -480,7 +480,7 @@ public class CompilationEngine {
 			this.expressionTree = getNewDocument();
 			compileExpression(this.expressionTree);
 			writeExpressionVMCode(this.expressionTree);
-			System.out.println(Util.createXMLString(this.expressionTree));
+			// System.out.println(Util.createXMLString(this.expressionTree));
 
 			tokenizer.advance();
 			if (!isCloseSquareBracket())
@@ -507,7 +507,7 @@ public class CompilationEngine {
 		this.expressionTree = getNewDocument();
 		compileExpression(this.expressionTree);
 		writeExpressionVMCode(this.expressionTree);
-		System.out.println(Util.createXMLString(this.expressionTree));
+		// System.out.println(Util.createXMLString(this.expressionTree));
 
 		SymbolKind kind = this.symbolTable.kindOf(varName);
 		int index = this.symbolTable.indexOf(varName);
@@ -554,7 +554,7 @@ public class CompilationEngine {
 		this.expressionTree = getNewDocument();
 		compileExpression(this.expressionTree);
 		writeExpressionVMCode(this.expressionTree);
-		System.out.println(Util.createXMLString(this.expressionTree));
+		// System.out.println(Util.createXMLString(this.expressionTree));
 
 		// ')'
 		tokenizer.advance();
@@ -621,7 +621,7 @@ public class CompilationEngine {
 			this.expressionTree = getNewDocument();
 			compileExpression(this.expressionTree);
 			writeExpressionVMCode(this.expressionTree);
-			System.out.println(Util.createXMLString(this.expressionTree));
+			// System.out.println(Util.createXMLString(this.expressionTree));
 
 			// ';'
 			tokenizer.advance();
@@ -666,7 +666,7 @@ public class CompilationEngine {
 		this.expressionTree = getNewDocument();
 		compileExpression(this.expressionTree);
 		writeExpressionVMCode(this.expressionTree);
-		System.out.println(Util.createXMLString(this.expressionTree));
+		// System.out.println(Util.createXMLString(this.expressionTree));
 
 		// ')'
 		tokenizer.advance();
