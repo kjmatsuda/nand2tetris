@@ -1036,12 +1036,6 @@ public class CompilationEngine {
 			}
 		}
 
-		// TODO 「let y = 1 + Main.mult(2, 3);」のような式を正しく扱えるようにする
-		// 「let value = Memory.peek(8000);」のような式において、compileExpressionList で「push constant 8000」を出力後、
-		// さらに compileLet でも 「push constant 8000」を重複出力していたので、クリア処理を入れる
-		// でもこれだと「let y = 1 + Main.sum(2, 3);」のような式をうまく扱えない気がする...
-//		this.expressionTree = getNewDocument();
-
 		indentLevelUp();
 		writeLine(outputXml, "</expressionList>");
 
@@ -1973,7 +1967,7 @@ public class CompilationEngine {
 			segment = Segment.SEGMENT_STATIC;
 			break;
 		case KIND_FIELD:
-			// TODO KIND_FIELD はどの Segment に変換すればいい？
+			segment = Segment.SEGMENT_THIS;
 			break;
 		case KIND_ARG:
 			segment = Segment.SEGMENT_ARG;
