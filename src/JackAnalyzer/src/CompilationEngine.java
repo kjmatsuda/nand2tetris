@@ -861,6 +861,7 @@ public class CompilationEngine {
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
+				// TODO オブジェクト指向対応
 				Element subroutineCall = this.expressionTree.createElement("subroutineCall");
 				subroutineCall.setTextContent(subroutineName);
 				expressionRoot.appendChild(subroutineCall);
@@ -881,7 +882,16 @@ public class CompilationEngine {
 			else if (isDot())
 			{
 				// '.'だった場合
-				String subroutineName = name;
+				boolean isInstanceMethod = false;
+				String type = name;
+
+				if (this.symbolTable.kindOf(name) != SymbolKind.KIND_NONE)
+				{
+					type = this.symbolTable.typeOf(name);
+					isInstanceMethod = true;
+				}
+
+				String subroutineName = type;
 				int numberOfArguments = 0;
 
 				writeLine(outputXml, "<identifier> " + tokenizer.identifier() + " </identifier>");
@@ -916,7 +926,24 @@ public class CompilationEngine {
 				subroutineCall.setTextContent(subroutineName);
 				expressionRoot.appendChild(subroutineCall);
 
+				if (isInstanceMethod)
+				{
+					// 隠れ引数を渡す
+					Element varName = this.expressionTree.createElement("varName");
+					varName.setTextContent(name);
+
+					subroutineCall.appendChild(term);
+					term.appendChild(varName);
+				}
+
 				numberOfArguments = compileExpressionList(subroutineCall);
+
+				if (isInstanceMethod)
+				{
+					// 隠れ引数として渡した分をインクリメント
+					numberOfArguments++;
+				}
+
 				subroutineCall.setAttribute("numberOfArguments", Integer.toString(numberOfArguments));
 
 				if (!isCloseBracket())
@@ -1032,17 +1059,20 @@ public class CompilationEngine {
 		// identifier
 		writeLine(outputXml, "<identifier> " + tokenizer.identifier() + " </identifier>");
 
-		String subroutineName = tokenizer.identifier();
-		int numberOfArguments = 0;
+		String name = tokenizer.identifier();
 
 		tokenizer.advance();
 		if (isOpenBracket())
 		{
 			// 2つ目が '(' の場合
+			String subroutineName = name;
+			int numberOfArguments = 0;
+
 			// '(' expressionList ')'
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 
+			// TODO オブジェクト指向対応
 			Element subroutineCall = this.expressionTree.createElement("subroutineCall");
 			subroutineCall.setTextContent(subroutineName);
 			expressionRoot.appendChild(subroutineCall);
@@ -1062,6 +1092,18 @@ public class CompilationEngine {
 		else if (isDot())
 		{
 			// 2つ目が '.' の場合
+			boolean isInstanceMethod = false;
+			String type = name;
+
+			if (this.symbolTable.kindOf(name) != SymbolKind.KIND_NONE)
+			{
+				type = this.symbolTable.typeOf(name);
+				isInstanceMethod = true;
+			}
+
+			String subroutineName = type;
+			int numberOfArguments = 0;
+
 			// '.'
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
@@ -1092,7 +1134,26 @@ public class CompilationEngine {
 			subroutineCall.setTextContent(subroutineName);
 			expressionRoot.appendChild(subroutineCall);
 
+			if (isInstanceMethod)
+			{
+				// 隠れ引数を渡す
+				Element varName = this.expressionTree.createElement("varName");
+				varName.setTextContent(name);
+
+				Element term = this.expressionTree.createElement("term");
+
+				subroutineCall.appendChild(term);
+				term.appendChild(varName);
+			}
+
 			numberOfArguments = compileExpressionList(subroutineCall);
+
+			if (isInstanceMethod)
+			{
+				// 隠れ引数として渡した分をインクリメント
+				numberOfArguments++;
+			}
+
 			subroutineCall.setAttribute("numberOfArguments", Integer.toString(numberOfArguments));
 
 			if (!isCloseBracket())
