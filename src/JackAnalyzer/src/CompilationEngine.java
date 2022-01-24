@@ -309,6 +309,7 @@ public class CompilationEngine {
 		{
 			vmWriter.writePush(Segment.SEGMENT_CONST, this.symbolTable.varCount(SymbolKind.KIND_FIELD));
 			vmWriter.writeCall("Memory.alloc", 1);
+			vmWriter.writePop(Segment.SEGMENT_POINTER, 0);
 		}
 
 		// statements
