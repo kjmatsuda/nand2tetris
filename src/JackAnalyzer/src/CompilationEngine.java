@@ -332,6 +332,7 @@ public class CompilationEngine {
 		writeLine(outputXml, "<varDec>");
 		indentLevelDown();
 
+		// TODO テストコメント。あとで消す
 		// KEYWORD の'var'(呼び出し元でチェックしているからここではしない)
 		writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
