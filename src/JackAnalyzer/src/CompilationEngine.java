@@ -1246,6 +1246,10 @@ public class CompilationEngine {
 				vmWriter.writePush(Segment.SEGMENT_CONST, 1);
 				vmWriter.writeArithmetic(Command.COMMAND_NEG);
 			}
+			else if (keywordStr.equals("this"))
+			{
+				vmWriter.writePush(Segment.SEGMENT_POINTER, 0);
+			}
 			else
 			{
 				vmWriter.writePush(Segment.SEGMENT_CONST, 0);
