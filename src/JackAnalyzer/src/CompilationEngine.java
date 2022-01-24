@@ -332,7 +332,6 @@ public class CompilationEngine {
 		writeLine(outputXml, "<varDec>");
 		indentLevelDown();
 
-		// TODO テストコメント。あとで消す
 		// KEYWORD の'var'(呼び出し元でチェックしているからここではしない)
 		writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
@@ -871,12 +870,21 @@ public class CompilationEngine {
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
-				// TODO オブジェクト指向対応
 				Element subroutineCall = this.expressionTree.createElement("subroutineCall");
 				subroutineCall.setTextContent(subroutineName);
 				expressionRoot.appendChild(subroutineCall);
 
+				// 隠れ引数を渡す(this)
+				Element keywordConstantThis = this.expressionTree.createElement("keywordConstant");
+				keywordConstantThis.setTextContent("this");
+
+				subroutineCall.appendChild(term);
+				term.appendChild(keywordConstantThis);
+
 				numberOfArguments = compileExpressionList(subroutineCall);
+				// 隠れ引数として渡した分をインクリメント
+				numberOfArguments++;
+
 				subroutineCall.setAttribute("numberOfArguments", Integer.toString(numberOfArguments));
 
 				if (!isCloseBracket())
@@ -1076,12 +1084,23 @@ public class CompilationEngine {
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 
-			// TODO オブジェクト指向対応
 			Element subroutineCall = this.expressionTree.createElement("subroutineCall");
 			subroutineCall.setTextContent(subroutineName);
 			expressionRoot.appendChild(subroutineCall);
 
+			// 隠れ引数を渡す(this)
+			Element keywordConstant = this.expressionTree.createElement("keywordConstant");
+			keywordConstant.setTextContent("this");
+
+			Element term = this.expressionTree.createElement("term");
+
+			subroutineCall.appendChild(term);
+			term.appendChild(keywordConstant);
+
 			numberOfArguments = compileExpressionList(subroutineCall);
+			// 隠れ引数として渡した分をインクリメント
+			numberOfArguments++;
+
 			subroutineCall.setAttribute("numberOfArguments", Integer.toString(numberOfArguments));
 
 			if (!isCloseBracket())
