@@ -183,6 +183,8 @@ public class CompilationEngine {
 		// KEYWORD の'constructor', 'function', 'method'(呼び出し元でチェックしているからここではしない)
 		writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
+		boolean isConstructor = tokenizer.keyWord() == KeyWord.KEYWORD_CONSTRUCTOR;
+
 		// KEYWORD の type
 		tokenizer.advance();
 		if (!isType())
@@ -228,7 +230,7 @@ public class CompilationEngine {
 		writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		tokenizer.advance();
-		compileSubroutineBody(subroutineType, subroutineName);
+		compileSubroutineBody(subroutineType, subroutineName, isConstructor);
 
 		indentLevelUp();
 		writeLine(outputXml, "</subroutineDec>");
@@ -275,7 +277,7 @@ public class CompilationEngine {
 		writeLine(outputXml, "</parameterList>");
 	}
 
-	public void compileSubroutineBody(KeyWord subroutineType, String subroutineName) throws IOException{
+	public void compileSubroutineBody(KeyWord subroutineType, String subroutineName, boolean isConstructor) throws IOException{
 		writeLine(outputXml, "<subroutineBody>");
 		indentLevelDown();
 
@@ -302,6 +304,12 @@ public class CompilationEngine {
 		}
 
 		vmWriter.writeFunction(className + "." + subroutineName, symbolTable.varCount(SymbolKind.KIND_VAR));
+
+		if (isConstructor)
+		{
+			vmWriter.writePush(Segment.SEGMENT_CONST, this.symbolTable.varCount(SymbolKind.KIND_FIELD));
+			vmWriter.writeCall("Memory.alloc", 1);
+		}
 
 		// statements
 		compileStatements();
