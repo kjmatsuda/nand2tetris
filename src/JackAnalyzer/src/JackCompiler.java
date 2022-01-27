@@ -61,7 +61,7 @@ public class JackCompiler {
 				OutputStreamWriter  oswVm = new OutputStreamWriter(new FileOutputStream(outputFileNameVm), "UTF-8");
 				outputVm = new BufferedWriter(oswVm);
 
-				JackTokenizer tokenizer = new JackTokenizer(input);
+				JackTokenizer tokenizer = new JackTokenizer(input, inputFile.getName());
 				CompilationEngine engine = new CompilationEngine(tokenizer, outputXml, outputVm);
 				engine.compileClass();
 				System.out.println("comipilation done. (" + inputFile.getName() + ")");

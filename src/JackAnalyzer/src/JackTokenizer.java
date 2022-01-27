@@ -5,33 +5,39 @@ import java.util.regex.Pattern;
 
 public class JackTokenizer {
 	private BufferedReader input;
+	private String fileName;
 	private String currentLine;
+	private int currentLineNo;
 	private int tokenStartIdx;
 	private int tokenEndIdx;
 	private String currentToken;
 	private boolean preloaded;
 
-	JackTokenizer(BufferedReader input) {
+	JackTokenizer(BufferedReader input, String fileName) {
 		this.input = input;
+		this.fileName = fileName;
 		this.currentLine = "";
+		this.currentLineNo = 0;
 		this.tokenStartIdx = -1;
 		this.tokenEndIdx = -1;
 		this.preloaded = false;
 	}
 
-	public void setReader(BufferedReader input) {
+	public void setReader(BufferedReader input, String fileName) {
 		this.input = input;
+		this.fileName = fileName;
+		this.currentLineNo = 0;
 	}
 
 	public boolean hasMoreTokens() throws IOException {
 		boolean hasMore = false;
 		input.mark(256);
-		String line = input.readLine();
+		String line = inputReadLine();
 		if (line != null)
 		{
 			while (line.isEmpty())
 			{
-				line = input.readLine();
+				line = inputReadLine();
 				if (line == null)
 				{
 					break;
@@ -144,9 +150,14 @@ public class JackTokenizer {
 	}
 
 	private void advanceCurrentLine() throws IOException {
-		currentLine = input.readLine();
+		currentLine = inputReadLine();
 		tokenStartIdx = 0;
 		tokenEndIdx = 1;
+	}
+
+	private String inputReadLine() throws IOException {
+		this.currentLineNo++;
+		return input.readLine();
 	}
 
 	public TokenType tokenType() {
@@ -272,6 +283,14 @@ public class JackTokenizer {
 
 	public String stringVal() {
 		return currentToken;
+	}
+
+	public String getFileName() {
+		return this.fileName;
+	}
+
+	public int getCurrentLineNo() {
+		return this.currentLineNo;
 	}
 
 	private boolean isKeyword(String token) {
