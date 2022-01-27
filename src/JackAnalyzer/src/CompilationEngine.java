@@ -448,6 +448,9 @@ public class CompilationEngine {
 		writeExpressionVMCode(this.expressionTree);
 		// System.out.println(Util.createXMLString(this.expressionTree));
 
+		// do sub した後は無条件にポップしなければならない(p263)。そうしないとたぶんスタックオーバーフローする
+		vmWriter.writePop(Segment.SEGMENT_TEMP, 0);
+
 		// ';'
 		tokenizer.setPreloaded(false);
 		tokenizer.advance();
