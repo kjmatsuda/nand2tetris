@@ -874,7 +874,7 @@ public class CompilationEngine {
 				tokenizer.advance();
 
 				Element subroutineCall = this.expressionTree.createElement("subroutineCall");
-				subroutineCall.setTextContent(subroutineName);
+				subroutineCall.setTextContent(this.className + ',' + subroutineName);
 				expressionRoot.appendChild(subroutineCall);
 
 				// 隠れ引数を渡す(this)
@@ -1088,7 +1088,7 @@ public class CompilationEngine {
 			tokenizer.advance();
 
 			Element subroutineCall = this.expressionTree.createElement("subroutineCall");
-			subroutineCall.setTextContent(subroutineName);
+			subroutineCall.setTextContent(this.className + '.' + subroutineName);
 			expressionRoot.appendChild(subroutineCall);
 
 			// 隠れ引数を渡す(this)
