@@ -718,12 +718,12 @@ public class CompilationEngine {
 		writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
 		// ('else' '{' statements '}')?
+		vmWriter.writeLabel(elseLabel);
 		tokenizer.advance();
 		if (isElse())
 		{
 			writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
-			vmWriter.writeLabel(elseLabel);
 
 			tokenizer.advance();
 			if (!isOpenCurlyBracket())
