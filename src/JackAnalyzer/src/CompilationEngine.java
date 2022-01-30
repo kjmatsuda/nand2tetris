@@ -1256,6 +1256,18 @@ public class CompilationEngine {
 			int constantValue = Integer.parseInt(expNode.getFirstChild().getTextContent());
 			vmWriter.writePush(Segment.SEGMENT_CONST, constantValue);
 		}
+		else if (expNode.getNodeName().equals("stringConstant"))
+		{
+			// expが文字列の場合
+			String stringConstant = expNode.getFirstChild().getTextContent();
+			vmWriter.writePush(Segment.SEGMENT_CONST, stringConstant.length());
+			vmWriter.writeCall("String.new", 1);
+			for (int ii = 0; ii < stringConstant.length(); ii++)
+			{
+				vmWriter.writePush(Segment.SEGMENT_CONST, stringConstant.charAt(ii));
+				vmWriter.writeCall("String.appendChar", 2);
+			}
+		}
 		else if (expNode.getNodeName().equals("varName"))
 		{
 			// expが変数の場合
