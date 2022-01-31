@@ -863,14 +863,22 @@ public class CompilationEngine {
 			tokenizer.advance();
 			if (isOpenSquareBracket())
 			{
-				// TODO 配列を扱えるようにする
+				// 配列
 				// varName の後に続く'['だった場合
 				writeLine(outputXml, getIdentifierOpenTag(name, false) + name + " </identifier>");
-
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
+				Element arrayTerm = this.expressionTree.createElement("arrayTerm");
+				expressionRoot.appendChild(arrayTerm);
+
+				Element varName = this.expressionTree.createElement("varName");
+				varName.setTextContent(name);
+				arrayTerm.appendChild(term);
+				term.appendChild(varName);
+
+
 				tokenizer.advance();
-				compileExpression(expressionRoot);
+				compileExpression(arrayTerm);
 
 				tokenizer.advance();
 				if (!isCloseSquareBracket())
@@ -1242,6 +1250,24 @@ public class CompilationEngine {
 			}
 
 			vmWriter.writeCall(subroutineName, numberOfArguments);
+		}
+		if (expNode.getNodeName().equals("arrayTerm"))
+		{
+			// 配列要素の場合
+			Node childNode = expNode.getFirstChild();
+
+			// 配列の変数名
+			String varName = childNode.getTextContent();
+			SymbolKind kind = this.symbolTable.kindOf(varName);
+			int index = this.symbolTable.indexOf(varName);
+			vmWriter.writePush(convertKindToSegment(kind), index);
+
+			// 配列の[]内の expression
+			writeExpressionVMCode(childNode.getNextSibling());
+
+			vmWriter.writeArithmetic(Command.COMMAND_ADD);
+			vmWriter.writePop(Segment.SEGMENT_POINTER, 1);
+			vmWriter.writePush(Segment.SEGMENT_THAT, 0);
 		}
 		else if (expNodeList.getLength() == 3)
 		{
