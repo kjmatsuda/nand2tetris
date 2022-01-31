@@ -446,7 +446,7 @@ public class CompilationEngine {
 		this.expressionTree = getNewDocument();
 		compileSubroutineCall(this.expressionTree);
 		writeExpressionVMCode(this.expressionTree);
-		// System.out.println(Util.createXMLString(this.expressionTree));
+		System.out.println(Util.createXMLString(this.expressionTree));
 
 		// do sub した後は無条件にポップしなければならない(p263)。そうしないとたぶんスタックオーバーフローする
 		vmWriter.writePop(Segment.SEGMENT_TEMP, 0);
@@ -470,6 +470,8 @@ public class CompilationEngine {
 		writeLine(outputXml, "<letStatement>");
 		indentLevelDown();
 
+		boolean isArray = false;
+
 		// KEYWORD の'let'(呼び出し元でチェックしているからここではしない)
 		writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
@@ -485,17 +487,27 @@ public class CompilationEngine {
 		String varName = tokenizer.identifier();
 		writeLine(outputXml, getIdentifierOpenTag(varName, false) + varName + " </identifier>");
 
+		SymbolKind varNameKind = this.symbolTable.kindOf(varName);
+		int varNameIndex = this.symbolTable.indexOf(varName);
+
 		// ('[' expression ']')?
 		tokenizer.advance();
 		if (isOpenSquareBracket())
 		{
+			// 配列
+			isArray = true;
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
+
+			vmWriter.writePush(convertKindToSegment(varNameKind), varNameIndex);
 
 			tokenizer.advance();
 			this.expressionTree = getNewDocument();
 			compileExpression(this.expressionTree);
 			writeExpressionVMCode(this.expressionTree);
-			// System.out.println(Util.createXMLString(this.expressionTree));
+			System.out.println(Util.createXMLString(this.expressionTree));
+
+			vmWriter.writeArithmetic(Command.COMMAND_ADD);
+			vmWriter.writePop(Segment.SEGMENT_POINTER, 1);
 
 			tokenizer.advance();
 			if (!isCloseSquareBracket())
@@ -522,11 +534,16 @@ public class CompilationEngine {
 		this.expressionTree = getNewDocument();
 		compileExpression(this.expressionTree);
 		writeExpressionVMCode(this.expressionTree);
-		// System.out.println(Util.createXMLString(this.expressionTree));
+		System.out.println(Util.createXMLString(this.expressionTree));
 
-		SymbolKind kind = this.symbolTable.kindOf(varName);
-		int index = this.symbolTable.indexOf(varName);
-		vmWriter.writePop(convertKindToSegment(kind), index);
+		if (isArray)
+		{
+			vmWriter.writePop(Segment.SEGMENT_THAT, 0);
+		}
+		else
+		{
+			vmWriter.writePop(convertKindToSegment(varNameKind), varNameIndex);
+		}
 
 		// ';'
 		tokenizer.advance();
@@ -569,7 +586,7 @@ public class CompilationEngine {
 		this.expressionTree = getNewDocument();
 		compileExpression(this.expressionTree);
 		writeExpressionVMCode(this.expressionTree);
-		// System.out.println(Util.createXMLString(this.expressionTree));
+		System.out.println(Util.createXMLString(this.expressionTree));
 
 		// ')'
 		tokenizer.advance();
@@ -636,7 +653,7 @@ public class CompilationEngine {
 			this.expressionTree = getNewDocument();
 			compileExpression(this.expressionTree);
 			writeExpressionVMCode(this.expressionTree);
-			// System.out.println(Util.createXMLString(this.expressionTree));
+			System.out.println(Util.createXMLString(this.expressionTree));
 
 			// ';'
 			tokenizer.advance();
@@ -681,7 +698,7 @@ public class CompilationEngine {
 		this.expressionTree = getNewDocument();
 		compileExpression(this.expressionTree);
 		writeExpressionVMCode(this.expressionTree);
-		// System.out.println(Util.createXMLString(this.expressionTree));
+		System.out.println(Util.createXMLString(this.expressionTree));
 
 		// ')'
 		tokenizer.advance();
@@ -846,6 +863,7 @@ public class CompilationEngine {
 			tokenizer.advance();
 			if (isOpenSquareBracket())
 			{
+				// TODO 配列を扱えるようにする
 				// varName の後に続く'['だった場合
 				writeLine(outputXml, getIdentifierOpenTag(name, false) + name + " </identifier>");
 
