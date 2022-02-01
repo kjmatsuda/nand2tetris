@@ -215,6 +215,11 @@ public class CompilationEngine {
 		}
 		writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
+		if (subroutineType == KeyWord.KEYWORD_METHOD)
+		{
+			this.symbolTable.define("this", this.className, SymbolKind.KIND_ARG);
+		}
+
 		tokenizer.advance();
 		compileParameterList();
 
@@ -286,12 +291,6 @@ public class CompilationEngine {
 			return;
 		}
 		writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
-
-
-		if (subroutineType == KeyWord.KEYWORD_METHOD)
-		{
-			this.symbolTable.define("this", this.className, SymbolKind.KIND_ARG);
-		}
 
 		// varDec*
 		tokenizer.advance();
