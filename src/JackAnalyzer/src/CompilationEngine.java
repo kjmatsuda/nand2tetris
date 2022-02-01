@@ -1251,7 +1251,7 @@ public class CompilationEngine {
 
 			vmWriter.writeCall(subroutineName, numberOfArguments);
 		}
-		if (expNode.getNodeName().equals("arrayTerm"))
+		else if (expNode.getNodeName().equals("arrayTerm"))
 		{
 			// 配列要素の場合
 			Node childNode = expNode.getFirstChild();
