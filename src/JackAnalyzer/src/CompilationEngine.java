@@ -16,7 +16,6 @@ public class CompilationEngine {
 	private BufferedWriter outputXml;
 	private int indentLevel = 0;
 	private String className = "";
-	Document expressionTree;
 	private int labelNum = 1;
 
 	CompilationEngine(JackTokenizer tokenizer, BufferedWriter outputXml, BufferedWriter outputVm) {
@@ -24,7 +23,6 @@ public class CompilationEngine {
 		this.outputXml = outputXml;
 		this.symbolTable = new SymbolTable();
 		this.vmWriter = new VMWriter(outputVm);
-		this.expressionTree = getNewDocument();
 	}
 
 	private static Document getNewDocument() {
@@ -442,10 +440,10 @@ public class CompilationEngine {
 		// subroutineCall
 		tokenizer.advance();
 
-		this.expressionTree = getNewDocument();
-		compileSubroutineCall(this.expressionTree);
-		writeExpressionVMCode(this.expressionTree);
-		System.out.println(Util.createXMLString(this.expressionTree));
+		Document expressionTreeDoc = getNewDocument();
+		compileSubroutineCall(expressionTreeDoc, expressionTreeDoc);
+		writeExpressionVMCode(expressionTreeDoc);
+		System.out.println(Util.createXMLString(expressionTreeDoc));
 
 		// do sub した後は無条件にポップしなければならない(p263)。そうしないとたぶんスタックオーバーフローする
 		vmWriter.writePop(Segment.SEGMENT_TEMP, 0);
@@ -468,6 +466,8 @@ public class CompilationEngine {
 	public void compileLet() throws IOException{
 		writeLine(outputXml, "<letStatement>");
 		indentLevelDown();
+
+		Document expressionArrayTarget = null;
 
 		boolean isArray = false;
 
@@ -497,16 +497,9 @@ public class CompilationEngine {
 			isArray = true;
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
-			vmWriter.writePush(convertKindToSegment(varNameKind), varNameIndex);
-
 			tokenizer.advance();
-			this.expressionTree = getNewDocument();
-			compileExpression(this.expressionTree);
-			writeExpressionVMCode(this.expressionTree);
-			System.out.println(Util.createXMLString(this.expressionTree));
-
-			vmWriter.writeArithmetic(Command.COMMAND_ADD);
-			vmWriter.writePop(Segment.SEGMENT_POINTER, 1);
+			expressionArrayTarget = getNewDocument();
+			compileExpression(expressionArrayTarget, expressionArrayTarget);
 
 			tokenizer.advance();
 			if (!isCloseSquareBracket())
@@ -530,13 +523,19 @@ public class CompilationEngine {
 
 		// expression
 		tokenizer.advance();
-		this.expressionTree = getNewDocument();
-		compileExpression(this.expressionTree);
-		writeExpressionVMCode(this.expressionTree);
-		System.out.println(Util.createXMLString(this.expressionTree));
+
+		Document expressionTreeDoc = getNewDocument();
+		compileExpression(expressionTreeDoc, expressionTreeDoc);
+		writeExpressionVMCode(expressionTreeDoc);
+		System.out.println(Util.createXMLString(expressionTreeDoc));
 
 		if (isArray)
 		{
+			vmWriter.writePush(convertKindToSegment(varNameKind), varNameIndex);
+			writeExpressionVMCode(expressionArrayTarget);
+			System.out.println(Util.createXMLString(expressionArrayTarget));
+			vmWriter.writeArithmetic(Command.COMMAND_ADD);
+			vmWriter.writePop(Segment.SEGMENT_POINTER, 1);
 			vmWriter.writePop(Segment.SEGMENT_THAT, 0);
 		}
 		else
@@ -582,10 +581,11 @@ public class CompilationEngine {
 
 		// expression
 		tokenizer.advance();
-		this.expressionTree = getNewDocument();
-		compileExpression(this.expressionTree);
-		writeExpressionVMCode(this.expressionTree);
-		System.out.println(Util.createXMLString(this.expressionTree));
+
+		Document expressionTreeDoc = getNewDocument();
+		compileExpression(expressionTreeDoc, expressionTreeDoc);
+		writeExpressionVMCode(expressionTreeDoc);
+		System.out.println(Util.createXMLString(expressionTreeDoc));
 
 		// ')'
 		tokenizer.advance();
@@ -649,10 +649,10 @@ public class CompilationEngine {
 		else
 		{
 			// expression?
-			this.expressionTree = getNewDocument();
-			compileExpression(this.expressionTree);
-			writeExpressionVMCode(this.expressionTree);
-			System.out.println(Util.createXMLString(this.expressionTree));
+			Document expressionTreeDoc = getNewDocument();
+			compileExpression(expressionTreeDoc, expressionTreeDoc);
+			writeExpressionVMCode(expressionTreeDoc);
+			System.out.println(Util.createXMLString(expressionTreeDoc));
 
 			// ';'
 			tokenizer.advance();
@@ -694,10 +694,11 @@ public class CompilationEngine {
 
 		// expression
 		tokenizer.advance();
-		this.expressionTree = getNewDocument();
-		compileExpression(this.expressionTree);
-		writeExpressionVMCode(this.expressionTree);
-		System.out.println(Util.createXMLString(this.expressionTree));
+
+		Document expressionTreeDoc = getNewDocument();
+		compileExpression(expressionTreeDoc, expressionTreeDoc);
+		writeExpressionVMCode(expressionTreeDoc);
+		System.out.println(Util.createXMLString(expressionTreeDoc));
 
 		// ')'
 		tokenizer.advance();
@@ -774,15 +775,16 @@ public class CompilationEngine {
 		writeLine(outputXml, "</ifStatement>");
 	}
 
-	public void compileExpression(Node expressionRoot) throws IOException{
+	public void compileExpression(Document expressionTreeDoc, Node expressionRoot) throws IOException{
 		writeLine(outputXml, "<expression>");
-		Element expression = this.expressionTree.createElement("expression");
+
+		Element expression = expressionTreeDoc.createElement("expression");
 		expressionRoot.appendChild(expression);
 
 		indentLevelDown();
 
 		// term
-		compileTerm(expression);
+		compileTerm(expressionTreeDoc, expression);
 
 		// (op term)*
 		// if ((y + size) < 254) をうまく扱えるように以下の advance を追加した
@@ -799,12 +801,12 @@ public class CompilationEngine {
 				tokenizer.setPreloaded(false);
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
-				Element operator = this.expressionTree.createElement("operator");
+				Element operator = expressionTreeDoc.createElement("operator");
 				operator.setTextContent(convertSymbolToString(tokenizer.symbol()));
 				expression.appendChild(operator);
 
 				tokenizer.advance();
-				compileTerm(expression);
+				compileTerm(expressionTreeDoc, expression);
 				// ここで advance しないといけないケースあると思うが、コメントアウトすることで ArrayTest/Main.jack のコンパイルが通った
 				//tokenizer.advance();
 			}
@@ -814,16 +816,16 @@ public class CompilationEngine {
 		writeLine(outputXml, "</expression>");
 	}
 
-	public void compileTerm(Node expressionRoot) throws IOException{
+	public void compileTerm(Document expressionTreeDoc, Node expressionRoot) throws IOException{
 		writeLine(outputXml, "<term>");
 		indentLevelDown();
 
-		Element term = this.expressionTree.createElement("term");
+		Element term = expressionTreeDoc.createElement("term");
 
 		switch (tokenizer.tokenType()) {
 		case TOKEN_INT_CONST:
 			writeLine(outputXml, "<integerConstant> " + tokenizer.intVal() + " </integerConstant>");
-			Element integerConstant = this.expressionTree.createElement("integerConstant");
+			Element integerConstant = expressionTreeDoc.createElement("integerConstant");
 			integerConstant.setTextContent(String.valueOf(tokenizer.intVal()));
 
 			expressionRoot.appendChild(term);
@@ -831,7 +833,7 @@ public class CompilationEngine {
 			break;
 		case TOKEN_STRING_CONST:
 			writeLine(outputXml, "<stringConstant> " + tokenizer.stringVal() + " </stringConstant>");
-			Element stringConstant = this.expressionTree.createElement("stringConstant");
+			Element stringConstant = expressionTreeDoc.createElement("stringConstant");
 			stringConstant.setTextContent(tokenizer.stringVal());
 
 			expressionRoot.appendChild(term);
@@ -846,7 +848,7 @@ public class CompilationEngine {
 			}
 			writeLine(outputXml, "<keyword> " + keyWordToString(tokenizer.keyWord()) + " </keyword>");
 
-			Element keywordConstant = this.expressionTree.createElement("keywordConstant");
+			Element keywordConstant = expressionTreeDoc.createElement("keywordConstant");
 			keywordConstant.setTextContent(keyWordToString(tokenizer.keyWord()));
 
 			expressionRoot.appendChild(term);
@@ -867,17 +869,17 @@ public class CompilationEngine {
 				writeLine(outputXml, getIdentifierOpenTag(name, false) + name + " </identifier>");
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 
-				Element arrayTerm = this.expressionTree.createElement("arrayTerm");
+				Element arrayTerm = expressionTreeDoc.createElement("arrayTerm");
 				expressionRoot.appendChild(arrayTerm);
 
-				Element varName = this.expressionTree.createElement("varName");
+				Element varName = expressionTreeDoc.createElement("varName");
 				varName.setTextContent(name);
 				arrayTerm.appendChild(term);
 				term.appendChild(varName);
 
 
 				tokenizer.advance();
-				compileExpression(arrayTerm);
+				compileExpression(expressionTreeDoc, arrayTerm);
 
 				tokenizer.advance();
 				if (!isCloseSquareBracket())
@@ -901,18 +903,18 @@ public class CompilationEngine {
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
-				Element subroutineCall = this.expressionTree.createElement("subroutineCall");
+				Element subroutineCall = expressionTreeDoc.createElement("subroutineCall");
 				subroutineCall.setTextContent(this.className + ',' + subroutineName);
 				expressionRoot.appendChild(subroutineCall);
 
 				// 隠れ引数を渡す(this)
-				Element keywordConstantThis = this.expressionTree.createElement("keywordConstant");
+				Element keywordConstantThis = expressionTreeDoc.createElement("keywordConstant");
 				keywordConstantThis.setTextContent("this");
 
 				subroutineCall.appendChild(term);
 				term.appendChild(keywordConstantThis);
 
-				numberOfArguments = compileExpressionList(subroutineCall);
+				numberOfArguments = compileExpressionList(expressionTreeDoc, subroutineCall);
 				// 隠れ引数として渡した分をインクリメント
 				numberOfArguments++;
 
@@ -971,21 +973,21 @@ public class CompilationEngine {
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
-				Element subroutineCall = this.expressionTree.createElement("subroutineCall");
+				Element subroutineCall = expressionTreeDoc.createElement("subroutineCall");
 				subroutineCall.setTextContent(subroutineName);
 				expressionRoot.appendChild(subroutineCall);
 
 				if (isInstanceMethod)
 				{
 					// 隠れ引数を渡す
-					Element varName = this.expressionTree.createElement("varName");
+					Element varName = expressionTreeDoc.createElement("varName");
 					varName.setTextContent(name);
 
 					subroutineCall.appendChild(term);
 					term.appendChild(varName);
 				}
 
-				numberOfArguments = compileExpressionList(subroutineCall);
+				numberOfArguments = compileExpressionList(expressionTreeDoc, subroutineCall);
 
 				if (isInstanceMethod)
 				{
@@ -1009,7 +1011,7 @@ public class CompilationEngine {
 			{
 				// 無処理、varName だけだった場合はここにくる
 				writeLine(outputXml, getIdentifierOpenTag(name, false) + name + " </identifier>");
-				Element varName = this.expressionTree.createElement("varName");
+				Element varName = expressionTreeDoc.createElement("varName");
 				varName.setTextContent(name);
 
 				expressionRoot.appendChild(term);
@@ -1022,19 +1024,19 @@ public class CompilationEngine {
 			if (isUnaryOperator())
 			{
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
-				Element unaryOperator = this.expressionTree.createElement("unaryOperator");
+				Element unaryOperator = expressionTreeDoc.createElement("unaryOperator");
 				unaryOperator.setTextContent(convertSymbolToString(tokenizer.symbol()));
 				expressionRoot.appendChild(unaryOperator);
 
 				tokenizer.advance();
-				compileTerm(expressionRoot);
+				compileTerm(expressionTreeDoc, expressionRoot);
 			}
 			else if (isOpenBracket())
 			{
 				writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 				tokenizer.advance();
 
-				compileExpression(expressionRoot);
+				compileExpression(expressionTreeDoc, expressionRoot);
 
 				tokenizer.advance();
 				if (!isCloseBracket())
@@ -1063,7 +1065,7 @@ public class CompilationEngine {
 		writeLine(outputXml, "</term>");
 	}
 
-	public int compileExpressionList(Node expressionRoot) throws IOException{
+	public int compileExpressionList(Document expressionTreeDoc, Node expressionRoot) throws IOException{
 		writeLine(outputXml, "<expressionList>");
 		indentLevelDown();
 
@@ -1073,7 +1075,7 @@ public class CompilationEngine {
 		{
 			numberOfArguments++;
 			// this.expressionTree = getNewDocument();
-			compileExpression(expressionRoot);
+			compileExpression(expressionTreeDoc, expressionRoot);
 //			writeExpressionVMCode(this.expressionTree);
 //			System.out.println(Util.createXMLString(this.expressionTree));
 
@@ -1091,7 +1093,7 @@ public class CompilationEngine {
 		return numberOfArguments;
 	}
 
-	public void compileSubroutineCall(Node expressionRoot) throws IOException {
+	public void compileSubroutineCall(Document expressionTreeDoc, Node expressionRoot) throws IOException {
 		// 1つ目は identifier
 		if (!(tokenizer.tokenType() == TokenType.TOKEN_IDENTIFIER))
 		{
@@ -1115,20 +1117,20 @@ public class CompilationEngine {
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 
-			Element subroutineCall = this.expressionTree.createElement("subroutineCall");
+			Element subroutineCall = expressionTreeDoc.createElement("subroutineCall");
 			subroutineCall.setTextContent(this.className + '.' + subroutineName);
 			expressionRoot.appendChild(subroutineCall);
 
 			// 隠れ引数を渡す(this)
-			Element keywordConstant = this.expressionTree.createElement("keywordConstant");
+			Element keywordConstant = expressionTreeDoc.createElement("keywordConstant");
 			keywordConstant.setTextContent("this");
 
-			Element term = this.expressionTree.createElement("term");
+			Element term = expressionTreeDoc.createElement("term");
 
 			subroutineCall.appendChild(term);
 			term.appendChild(keywordConstant);
 
-			numberOfArguments = compileExpressionList(subroutineCall);
+			numberOfArguments = compileExpressionList(expressionTreeDoc, subroutineCall);
 			// 隠れ引数として渡した分をインクリメント
 			numberOfArguments++;
 
@@ -1184,23 +1186,23 @@ public class CompilationEngine {
 			writeLine(outputXml, "<symbol> " + convertSymbolToXmlElement(tokenizer.symbol()) + " </symbol>");
 			tokenizer.advance();
 
-			Element subroutineCall = this.expressionTree.createElement("subroutineCall");
+			Element subroutineCall = expressionTreeDoc.createElement("subroutineCall");
 			subroutineCall.setTextContent(subroutineName);
 			expressionRoot.appendChild(subroutineCall);
 
 			if (isInstanceMethod)
 			{
 				// 隠れ引数を渡す
-				Element varName = this.expressionTree.createElement("varName");
+				Element varName = expressionTreeDoc.createElement("varName");
 				varName.setTextContent(name);
 
-				Element term = this.expressionTree.createElement("term");
+				Element term = expressionTreeDoc.createElement("term");
 
 				subroutineCall.appendChild(term);
 				term.appendChild(varName);
 			}
 
-			numberOfArguments = compileExpressionList(subroutineCall);
+			numberOfArguments = compileExpressionList(expressionTreeDoc, subroutineCall);
 
 			if (isInstanceMethod)
 			{
