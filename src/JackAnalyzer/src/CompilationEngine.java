@@ -443,7 +443,7 @@ public class CompilationEngine {
 		Document expressionTreeDoc = getNewDocument();
 		compileSubroutineCall(expressionTreeDoc, expressionTreeDoc);
 		writeExpressionVMCode(expressionTreeDoc);
-		System.out.println(Util.createXMLString(expressionTreeDoc));
+		// System.out.println(Util.createXMLString(expressionTreeDoc));
 
 		// do sub した後は無条件にポップしなければならない(p263)。そうしないとたぶんスタックオーバーフローする
 		vmWriter.writePop(Segment.SEGMENT_TEMP, 0);
@@ -527,7 +527,7 @@ public class CompilationEngine {
 		Document expressionTreeDoc = getNewDocument();
 		compileExpression(expressionTreeDoc, expressionTreeDoc);
 		writeExpressionVMCode(expressionTreeDoc);
-		System.out.println(Util.createXMLString(expressionTreeDoc));
+		// System.out.println(Util.createXMLString(expressionTreeDoc));
 
 		if (isArray)
 		{
@@ -585,7 +585,7 @@ public class CompilationEngine {
 		Document expressionTreeDoc = getNewDocument();
 		compileExpression(expressionTreeDoc, expressionTreeDoc);
 		writeExpressionVMCode(expressionTreeDoc);
-		System.out.println(Util.createXMLString(expressionTreeDoc));
+		// System.out.println(Util.createXMLString(expressionTreeDoc));
 
 		// ')'
 		tokenizer.advance();
@@ -652,7 +652,7 @@ public class CompilationEngine {
 			Document expressionTreeDoc = getNewDocument();
 			compileExpression(expressionTreeDoc, expressionTreeDoc);
 			writeExpressionVMCode(expressionTreeDoc);
-			System.out.println(Util.createXMLString(expressionTreeDoc));
+			// System.out.println(Util.createXMLString(expressionTreeDoc));
 
 			// ';'
 			tokenizer.advance();
@@ -698,7 +698,7 @@ public class CompilationEngine {
 		Document expressionTreeDoc = getNewDocument();
 		compileExpression(expressionTreeDoc, expressionTreeDoc);
 		writeExpressionVMCode(expressionTreeDoc);
-		System.out.println(Util.createXMLString(expressionTreeDoc));
+		// System.out.println(Util.createXMLString(expressionTreeDoc));
 
 		// ')'
 		tokenizer.advance();
