@@ -533,7 +533,7 @@ public class CompilationEngine {
 		{
 			vmWriter.writePush(convertKindToSegment(varNameKind), varNameIndex);
 			writeExpressionVMCode(expressionArrayTarget);
-			System.out.println(Util.createXMLString(expressionArrayTarget));
+//			System.out.println(Util.createXMLString(expressionArrayTarget));
 			vmWriter.writeArithmetic(Command.COMMAND_ADD);
 			vmWriter.writePop(Segment.SEGMENT_POINTER, 1);
 			vmWriter.writePop(Segment.SEGMENT_THAT, 0);
