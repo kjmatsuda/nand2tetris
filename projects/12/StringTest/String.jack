@@ -14,7 +14,7 @@ class String {
     field int length;
     field int allocLength;
     field Array stringArray;
-    
+
     /** constructs a new empty string with a maximum length of maxLength
      *  and initial length of 0. */
     constructor String new(int maxLength) {
@@ -64,16 +64,67 @@ class String {
         return;
     }
 
-    /** Returns the integer value of this string, 
+    /** Returns the integer value of this string,
      *  until a non-digit character is detected. */
     method int intValue() {
-        // TODO
-        return 0;
+        var int retInt;
+        var int currentIdx;
+        var int endIdx;  
+        var int digit;
+
+        let retInt = 0;
+        let currentIdx = length() - 1;
+        let endIdx = 0;
+        let digit = 1;
+
+        if (charAt(0) = 45) {
+            // 先頭が"-"の場合
+            let endIdx = 1;
+        }
+        
+        while (currentIdx < endIdx - 1) {
+            let retInt = retInt + ((charAt(currentIdx) - 48) * digit);
+            let digit = digit * 10;
+            let currentIdx = currentIdx - 1;
+        }
+
+        if (charAt(0) = 45) {
+            // 先頭が"-"の場合
+            let retInt = -retInt;
+        }
+        
+        return retInt;
     }
 
     /** Sets this string to hold a representation of the given value. */
     method void setInt(int val) {
-        // TODO
+        let length = 0;
+
+        if (val < 0) {
+            do appendChar(45); // -
+            let val = -val;
+        }
+        do appendIntValue(val);
+
+        return;
+    }
+
+    method void appendIntValue(int val) {
+        var int lastDigit;
+        var int quotient;
+
+        let quotient = (val / 10);
+
+        let lastDigit = val - (quotient * 10);
+
+        if (val < 10) {
+            do appendChar(lastDigit + 48);
+        }
+        else {
+            do appendIntValue(val / 10);
+            do appendChar(lastDigit + 48);
+        }
+
         return;
     }
 
