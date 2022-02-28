@@ -208,6 +208,14 @@ class Output {
     /** Displays the given character at the cursor location,
      *  and advances the cursor one column forward. */
     function void printChar(char c) {
+
+        do Output.printCharNoAdvance(c);
+        do Output.advanceCursor();
+
+        return;
+    }
+
+    function void printCharNoAdvance(char c) {
         var int xLoopCount;
         var int yLoopCount;
         var Array charMap;
@@ -227,8 +235,6 @@ class Output {
             }
             let yLoopCount = yLoopCount + 1;
         }
-
-        do Output.advanceCursor();
 
         return;
     }
@@ -296,7 +302,11 @@ class Output {
                 let row = 0;
             }
         }
-
+        // カーソル位置の文字を消す
+        do Screen.setColor(false);
+        do Output.printCharNoAdvance(0);
+        do Screen.setColor(true);
+        
         return;
     }
 }
