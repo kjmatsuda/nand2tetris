@@ -282,7 +282,14 @@ class Output {
 
     /** Moves the cursor one column back. */
     function void backSpace() {
-        // TODO
+        let column = column - 1;
+        if (column < 0) {
+            let row = row - 1;
+            let column = 0;
+            if (row < 0) {
+                let row = 0;
+            }
+        }
         return;
     }
 }
