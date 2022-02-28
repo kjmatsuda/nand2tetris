@@ -208,14 +208,37 @@ class Output {
             }
             let yLoopCount = yLoopCount + 1;
         }
+
+        do Output.advanceCursor();
         
         return;
     }
 
+    function void advanceCursor() {
+        if (column = 63) {
+            let row = row + 1;
+            let column = 0;
+            if (row > 22) {
+                let row = 0;
+            }
+        }
+        else {
+            let column = column + 1;
+        }
+        return;
+    }
+    
     /** displays the given string starting at the cursor location,
      *  and advances the cursor appropriately. */
     function void printString(String s) {
-        // TODO
+        var int charIdx;
+        let charIdx = 0;
+
+        while (charIdx < s.length()) {
+            do Output.printChar(s.charAt(charIdx));
+            let charIdx = charIdx + 1;
+        }
+        
         return;
     }
 
@@ -228,7 +251,13 @@ class Output {
 
     /** Advances the cursor to the beginning of the next line. */
     function void println() {
-        // TODO
+        let row = row + 1;
+        let column = 0;
+
+        if (row > 22) {
+            let row = 0;
+        }
+        
         return;
     }
 
