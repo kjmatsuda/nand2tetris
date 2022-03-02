@@ -10,34 +10,110 @@
  * the screen is indexed (0,0).
  */
 class Screen {
-
+    static boolean black;
+    static int baseAddress;
+    static int columnNum;
+    static int rowNum;
+    static Array decimalOfBit;
+    
     /** Initializes the Screen. */
     function void init() {
+        let black = true;
+        let baseAddress = 16384;
+        let columnNum = 512;
+        let rowNum = 256;
+        do Screen.clearScreen();
+
+        let decimalOfBit = Array.new(16);
+        let decimalOfBit[0] = 1;
+        let decimalOfBit[1] = 2;
+        let decimalOfBit[2] = 4;
+        let decimalOfBit[3] = 8;
+        let decimalOfBit[4] = 16;
+        let decimalOfBit[5] = 32;
+        let decimalOfBit[6] = 64;
+        let decimalOfBit[7] = 128;
+        let decimalOfBit[8] = 256;
+        let decimalOfBit[9] = 512;
+        let decimalOfBit[10] = 1024;
+        let decimalOfBit[11] = 2048;
+        let decimalOfBit[12] = 4096;
+        let decimalOfBit[13] = 8192;
+        let decimalOfBit[14] = 16384;
+        let decimalOfBit[15] = decimalOfBit[14] + decimalOfBit[14];
+
+        return;
     }
 
     /** Erases the entire screen. */
     function void clearScreen() {
+        var int currentRow;
+        var int currentColumn;
+
+        let currentRow = 0;
+        let currentColumn = 0;
+        
+        while (currentRow < rowNum) {
+            while (currentColumn < columnNum) {
+                do Memory.poke(baseAddress + (currentRow * 32) + (currentColumn / 16), 0);
+                let currentColumn = currentColumn + 1;
+            }
+            let currentRow = currentRow + 1;
+        }
+        
+        return;
     }
 
     /** Sets the current color, to be used for all subsequent drawXXX commands.
      *  Black is represented by true, white by false. */
     function void setColor(boolean b) {
+        let black = b;
+        return;
     }
 
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
+        var int value;
+        var int address;
+        var int quotient;
+        var int mod;
+        
+        let quotient = x / 16;
+        let mod = x - (16 * quotient);
+        
+        let address = baseAddress + (y * 32) + (x / 16);
+        
+        let value = Memory.peek(address);
+
+        if (black) {
+            let value = value | decimalOfBit[mod];
+        }
+        else {
+            // ビットを落とす
+            let value = value & (~ decimalOfBit[mod]);
+        }
+
+        do Memory.poke(address, value);
+        
+        return;
     }
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
     function void drawLine(int x1, int y1, int x2, int y2) {
+        // TODO
+        return;
     }
 
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
+        // TODO
+        return;
     }
 
     /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
     function void drawCircle(int x, int y, int r) {
+        // TODO
+        return;
     }
 }
