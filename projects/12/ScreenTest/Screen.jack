@@ -14,7 +14,7 @@ class Screen {
     static int baseAddress;
     static int columnNum;
     static int rowNum;
-    static Array decimalOfBit;
+    static Array twoToThe;
     
     /** Initializes the Screen. */
     function void init() {
@@ -24,23 +24,23 @@ class Screen {
         let rowNum = 256;
         do Screen.clearScreen();
 
-        let decimalOfBit = Array.new(16);
-        let decimalOfBit[0] = 1;
-        let decimalOfBit[1] = 2;
-        let decimalOfBit[2] = 4;
-        let decimalOfBit[3] = 8;
-        let decimalOfBit[4] = 16;
-        let decimalOfBit[5] = 32;
-        let decimalOfBit[6] = 64;
-        let decimalOfBit[7] = 128;
-        let decimalOfBit[8] = 256;
-        let decimalOfBit[9] = 512;
-        let decimalOfBit[10] = 1024;
-        let decimalOfBit[11] = 2048;
-        let decimalOfBit[12] = 4096;
-        let decimalOfBit[13] = 8192;
-        let decimalOfBit[14] = 16384;
-        let decimalOfBit[15] = decimalOfBit[14] + decimalOfBit[14];
+        let twoToThe = Array.new(16);
+        let twoToThe[0] = 1;
+        let twoToThe[1] = 2;
+        let twoToThe[2] = 4;
+        let twoToThe[3] = 8;
+        let twoToThe[4] = 16;
+        let twoToThe[5] = 32;
+        let twoToThe[6] = 64;
+        let twoToThe[7] = 128;
+        let twoToThe[8] = 256;
+        let twoToThe[9] = 512;
+        let twoToThe[10] = 1024;
+        let twoToThe[11] = 2048;
+        let twoToThe[12] = 4096;
+        let twoToThe[13] = 8192;
+        let twoToThe[14] = 16384;
+        let twoToThe[15] = twoToThe[14] + twoToThe[14];
 
         return;
     }
@@ -86,11 +86,11 @@ class Screen {
         let value = Memory.peek(address);
 
         if (black) {
-            let value = value | decimalOfBit[mod];
+            let value = value | twoToThe[mod];
         }
         else {
             // ビットを落とす
-            let value = value & (~ decimalOfBit[mod]);
+            let value = value & (~ twoToThe[mod]);
         }
 
         do Memory.poke(address, value);
@@ -101,42 +101,55 @@ class Screen {
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
     function void drawLine(int x1, int y1, int x2, int y2) {
         var int x, dx;
+        var int xStep;
         var int y, dy;
+        var int yStep;
         var int a, b;
         
-        if (x1 < x2) {
-            let x = x1;
-            let dx = x2 - x1;
-        } else {
-            let x = x2;
-            let dx = x1 - x2;
+        let x = x1;
+        let dx = x2 - x1;
+        
+        if (dx = 0) {
+            let xStep = 0;
+        }
+        else {
+            if (dx > 0) {
+                let xStep = 1;
+            } else {
+                let xStep = -1;
+            }
         }
         
-        if (y1 < y2) {
-            let y = y1;
-            let dy = y2 - y1;
-        } else {
-            let y = y2;
-            let dy = y1 - y2;
+        let y = y1;
+        let dy = y2 - y1;
+        if (dy = 0) {
+            let yStep = 0;
         }
-
+        else {
+            if (dy > 0) {
+                let yStep = 1;
+            } else {
+                let yStep = -1;
+            }
+        }
+        
         let a = 0;
         let b = 0;
 
-        while ((a < (dx + 1)) & (b < (dy + 1))) {
+        while ((Math.abs(a) < Math.abs(dx + 1)) & (Math.abs(b) < Math.abs(dy + 1))) {
             do Screen.drawPixel(x + a, y + b);
 
             if (dx = 0) {
-                let b = b + 1;
+                let b = b + yStep;
             } else {
                 if (dy = 0) {
-                    let a = a + 1;
+                    let a = a + xStep;
                 }
                 else {
-                    if ((a * dy) < (b * dx)) {
-                        let a = a + 1;
+                    if (Math.abs(a * dy) < Math.abs(b * dx)) {
+                        let a = a + xStep;
                     } else {
-                        let b = b + 1;
+                        let b = b + yStep;
                     }                    
                 }
             }
