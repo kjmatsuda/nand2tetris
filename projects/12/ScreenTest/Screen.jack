@@ -105,6 +105,7 @@ class Screen {
         var int y, dy;
         var int yStep;
         var int a, b;
+        var int adyMinusbdx;
         
         let x = x1;
         let dx = x2 - x1;
@@ -135,6 +136,7 @@ class Screen {
         
         let a = 0;
         let b = 0;
+        let adyMinusbdx = 0;
 
         while ((Math.abs(a) < Math.abs(dx + 1)) & (Math.abs(b) < Math.abs(dy + 1))) {
             do Screen.drawPixel(x + a, y + b);
@@ -146,10 +148,12 @@ class Screen {
                     let a = a + xStep;
                 }
                 else {
-                    if (Math.abs(a * dy) < Math.abs(b * dx)) {
+                    if (adyMinusbdx < 0) {
                         let a = a + xStep;
+                        let adyMinusbdx = adyMinusbdx + Math.abs(dy);
                     } else {
                         let b = b + yStep;
+                        let adyMinusbdx = adyMinusbdx - Math.abs(dx);
                     }                    
                 }
             }
