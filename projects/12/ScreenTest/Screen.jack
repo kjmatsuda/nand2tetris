@@ -54,9 +54,10 @@ class Screen {
         let currentColumn = 0;
         
         while (currentRow < rowNum) {
+            let currentColumn = 0;
             while (currentColumn < columnNum) {
                 do Memory.poke(baseAddress + (currentRow * 32) + (currentColumn / 16), 0);
-                let currentColumn = currentColumn + 1;
+                let currentColumn = currentColumn + 16;
             }
             let currentRow = currentRow + 1;
         }
