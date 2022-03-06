@@ -138,23 +138,28 @@ class Screen {
         let b = 0;
         let adyMinusbdx = 0;
 
-        while ((Math.abs(a) < Math.abs(dx + 1)) & (Math.abs(b) < Math.abs(dy + 1))) {
-            do Screen.drawPixel(x + a, y + b);
+        if ((dx = 0) & (dy = 0)) {
+            do Screen.drawPixel(x, y);
+        }
+        else {
+            while ((Math.abs(a) < Math.abs(dx + 1)) & (Math.abs(b) < Math.abs(dy + 1))) {
+                do Screen.drawPixel(x + a, y + b);
 
-            if (dx = 0) {
-                let b = b + yStep;
-            } else {
-                if (dy = 0) {
-                    let a = a + xStep;
-                }
-                else {
-                    if (adyMinusbdx < 0) {
+                if (dx = 0) {
+                    let b = b + yStep;
+                } else {
+                    if (dy = 0) {
                         let a = a + xStep;
-                        let adyMinusbdx = adyMinusbdx + Math.abs(dy);
-                    } else {
-                        let b = b + yStep;
-                        let adyMinusbdx = adyMinusbdx - Math.abs(dx);
-                    }                    
+                    }
+                    else {
+                        if (adyMinusbdx < 0) {
+                            let a = a + xStep;
+                            let adyMinusbdx = adyMinusbdx + Math.abs(dy);
+                        } else {
+                            let b = b + yStep;
+                            let adyMinusbdx = adyMinusbdx - Math.abs(dx);
+                        }                    
+                    }
                 }
             }
         }
