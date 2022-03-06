@@ -7,9 +7,12 @@
  * A library for handling user input from the keyboard.
  */
 class Keyboard {
-
+    static int address;
+    
     /** Initializes the keyboard. */
     function void init() {
+        let address = 24576;
+        return;
     } 
 
     /**
@@ -33,6 +36,7 @@ class Keyboard {
      * F1 - F12 = 141 - 152
      */
     function char keyPressed() {
+        return Memory.peek(address);
     }
 
     /**								
