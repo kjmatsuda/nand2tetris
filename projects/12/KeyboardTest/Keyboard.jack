@@ -20,8 +20,8 @@ class Keyboard {
      * if no key is currently pressed, returns 0.
      *
      * Recognizes all ASCII characters, as well as the following keys:
-     * new line = 128 = String.newline()
-     * backspace = 129 = String.backspace()
+     * new line = 128 = String.newLine()
+     * backspace = 129 = String.backSpace()
      * left arrow = 130
      * up arrow = 131
      * right arrow = 132
@@ -68,8 +68,25 @@ class Keyboard {
      * and returns its value. Also handles user backspaces.
      */
     function String readLine(String message) {
-        // TODO
-        return message;
+        var Char c;
+        var String str;
+
+        let str = String.new(256);
+
+        let c = Keyboard.readChar();
+        while (~(c = String.newLine())) {
+            if (c = String.backSpace()) {
+                if (str.length() > 0) {
+                    do Output.backSpace();
+                    do str.eraseLastChar();
+                }
+            } else {
+                do str.appendChar(c);
+            }
+            let c = Keyboard.readChar();            
+        }
+
+        return str;
     }   
 
     /**								
