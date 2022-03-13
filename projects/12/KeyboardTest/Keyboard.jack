@@ -102,7 +102,35 @@ class Keyboard {
      * entered text is detected). Also handles user backspaces.
      */
     function int readInt(String message) {
-        // TODO
-        return 0;
+        var Char c;
+        var String str;
+        var int maxLength;
+
+        let maxLength = 256;
+        let str = String.new(maxLength);
+
+        do Output.printString(message);
+
+        let c = Keyboard.readChar();
+        while (~(c = String.newLine())) {
+            if (c = String.backSpace()) {
+                if (str.length() > 0) {
+                    do Output.backSpace();
+                    do str.eraseLastChar();
+                }
+            } else {
+                if ((c = 45) & (str.length() = 0)) {
+                    // 先頭が'-'の場合
+                    do str.appendChar(c);
+                } else {
+                    if ((c > (0 + 48 - 1)) & (c < (9 + 48 - 1))) {
+                        do str.appendChar(c);
+                    }
+                }
+            }
+            let c = Keyboard.readChar();
+        }
+
+        return str.intValue();
     }
 }
