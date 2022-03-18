@@ -29,7 +29,15 @@ class Sys {
 
     /** Waits approximately duration milliseconds and returns.  */
     function void wait(int duration) {
-        // TODO
+        // TODO wait を実装したが、どうやって正しく指定された時間に合わせるのか分からない
+        var int count;
+
+        let count = 0;
+        
+        while (count > (duration * 10000)) {
+            let count = count + 1;
+        }
+        
         return;
     }
 
