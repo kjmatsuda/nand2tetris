@@ -13,11 +13,9 @@ class Memory {
 
     /** Initializes the class. */
     function void init() {
-        var Array memory;
-
         let headAdr = 2048;
-        let memory[headAdr] = 16383 - headAdr;
-        let memory[headAdr + 1] = null;
+        let headAdr[0] = 16383 - headAdr;
+        let headAdr[1] = null;
 
         return;
     }
@@ -40,38 +38,39 @@ class Memory {
     /** Finds an available RAM block of the given size and returns
      *  a reference to its base address. */
     function int alloc(int size) {
-        var Array memory;
         var Array blockAdr;
         var Array freeAdr;
-        var Array prevBlockNextAdr;
+        var Array prevBlockAdr;
         var boolean found;
 
         let blockAdr = null;
         let freeAdr = headAdr;
-        let prevBlockNextAdr = null;
+        let prevBlockAdr = null;
         let found = false;
 
         while ((~(freeAdr = null)) | found) {
             // 指定されたサイズとサイズ保持用の領域、合わせて (size + 1) 必要
-            if (memory[freeAdr] = (size + 1)) {
+            if (freeAdr[0] = (size + 1)) {
                 // 必要なサイズと同一のサイズのブロックが見つかった
                 let found = true;
                 let blockAdr = freeAdr + 1;
                 //// freeList の更新
                 // 前のブロックが見つかったブロックの next を指すようにする
-                let memory[prevBlockNextAdr] = memory[freeAdr + 1];
+                let prevBlockAdr[1] = freeAdr[1];
             }
-            if (memory[freeAdr] > (size + 1)) {
+            if (freeAdr[0] > (size + 1)) {
                 // 必要なサイズより大きいサイズのブロックが見つかった
                 let found = true;
                 // 見つかったブロックのサイズから返却用のサイズを引く
-                let memory[freeAdr] = memory[freeAdr] - (size + 1);
-                let blockAdr = (freeAdr + 1) + memory[freeAdr];
-                let memory[blockAdr - 1] = size + 1;
+                let freeAdr[0] = freeAdr[0] - (size + 1);
+
+                // 返却用ブロックを指すようにする
+                let blockAdr = freeAdr[0] + (freeAdr + 1);
+                let blockAdr[-1] = size + 1;
             }
             // 次のブロックへ
-            let prevBlockNextAdr = freeAdr + 1;
-            let freeAdr = memory[freeAdr + 1]; // memory[freeAdr + 1]に next が設定してある
+            let prevBlockAdr = freeAdr;
+            let freeAdr = freeAdr[1]; // freeAdr[1]に next が設定してある
         }
 
         return blockAdr;
@@ -80,7 +79,15 @@ class Memory {
     /** De-allocates the given object (cast as an array) by making
      *  it available for future allocations. */
     function void deAlloc(Array o) {
-        // TODO
+        var Array segment;
+
+        let segment = o - 1;
+        let segment[0] = o[- 1]; // サイズ
+
+        // freeList に segment を追加する
+        let segment[1] = headAdr;
+        let headAdr = segment;
+        
         return;
     }
 }
