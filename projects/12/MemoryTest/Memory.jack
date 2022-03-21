@@ -48,7 +48,7 @@ class Memory {
         let prevBlockAdr = null;
         let found = false;
 
-        while ((~(freeAdr = null)) | found) {
+        while ((~(freeAdr = null)) & ~(found)) {
             // 指定されたサイズとサイズ保持用の領域、合わせて (size + 1) 必要
             if (freeAdr[0] = (size + 1)) {
                 // 必要なサイズと同一のサイズのブロックが見つかった
