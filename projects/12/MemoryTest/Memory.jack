@@ -7,17 +7,18 @@
  * This library provides two services: direct access to the computer's main
  * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
  * consists of 32,768 words, each holding a 16-bit binary number.
- */ 
+ */
 class Memory {
-    static Array head;
-    static int length;
-    static Array next;
-    
+    static Array headAdr;
+
     /** Initializes the class. */
     function void init() {
-        let head = 2048;
-        let length = 16383 - head;
-        let next = null;
+        var Array memory;
+
+        let headAdr = 2048;
+        let memory[headAdr] = 16383 - headAdr;
+        let memory[headAdr + 1] = null;
+
         return;
     }
 
@@ -39,8 +40,41 @@ class Memory {
     /** Finds an available RAM block of the given size and returns
      *  a reference to its base address. */
     function int alloc(int size) {
-        // TODO
-        return 0;
+        var Array memory;
+        var Array blockAdr;
+        var Array freeAdr;
+        var Array prevBlockNextAdr;
+        var boolean found;
+
+        let blockAdr = null;
+        let freeAdr = headAdr;
+        let prevBlockNextAdr = null;
+        let found = false;
+
+        while ((~(freeAdr = null)) | found) {
+            // 指定されたサイズとサイズ保持用の領域、合わせて (size + 1) 必要
+            if (memory[freeAdr] = (size + 1)) {
+                // 必要なサイズと同一のサイズのブロックが見つかった
+                let found = true;
+                let blockAdr = freeAdr + 1;
+                //// freeList の更新
+                // 前のブロックが見つかったブロックの next を指すようにする
+                let memory[prevBlockNextAdr] = memory[freeAdr + 1];
+            }
+            if (memory[freeAdr] > (size + 1)) {
+                // 必要なサイズより大きいサイズのブロックが見つかった
+                let found = true;
+                // 見つかったブロックのサイズから返却用のサイズを引く
+                let memory[freeAdr] = memory[freeAdr] - (size + 1);
+                let blockAdr = (freeAdr + 1) + memory[freeAdr];
+                let memory[blockAdr - 1] = size + 1;
+            }
+            // 次のブロックへ
+            let prevBlockNextAdr = freeAdr + 1;
+            let freeAdr = memory[freeAdr + 1]; // memory[freeAdr + 1]に next が設定してある
+        }
+
+        return blockAdr;
     }
 
     /** De-allocates the given object (cast as an array) by making
@@ -48,5 +82,5 @@ class Memory {
     function void deAlloc(Array o) {
         // TODO
         return;
-    }    
+    }
 }
