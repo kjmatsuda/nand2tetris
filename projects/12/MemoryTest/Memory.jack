@@ -55,8 +55,10 @@ class Memory {
                 let found = true;
                 let blockAdr = freeAdr + 1;
                 //// freeList の更新
-                // 前のブロックが見つかったブロックの next を指すようにする
-                let prevBlockAdr[1] = freeAdr[1];
+                if (~(prevBlockAdr = null)) {
+                    // 前のブロックが見つかったブロックの next を指すようにする
+                    let prevBlockAdr[1] = freeAdr[1];
+                }
             }
             if (freeAdr[0] > (size + 1)) {
                 // 必要なサイズより大きいサイズのブロックが見つかった
@@ -68,9 +70,11 @@ class Memory {
                 let blockAdr = freeAdr[0] + (freeAdr + 1);
                 let blockAdr[-1] = size + 1;
             }
-            // 次のブロックへ
-            let prevBlockAdr = freeAdr;
-            let freeAdr = freeAdr[1]; // freeAdr[1]に next が設定してある
+            if (~found) {
+                // 次のブロックへ
+                let prevBlockAdr = freeAdr;
+                let freeAdr = freeAdr[1]; // freeAdr[1]に next が設定してある
+            }
         }
 
         return blockAdr;
