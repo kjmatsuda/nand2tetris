@@ -55,6 +55,10 @@ class Memory {
                 let found = true;
                 let blockAdr = freeAdr + 1;
                 //// freeList の更新
+                if (headAdr = freeAdr) {
+                    // 見つかったブロックがフリーリストの先頭だった場合
+                    let headAdr = freeAdr[1];
+                }
                 if (~(prevBlockAdr = null)) {
                     // 前のブロックが見つかったブロックの next を指すようにする
                     let prevBlockAdr[1] = freeAdr[1];
