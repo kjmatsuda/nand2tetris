@@ -115,8 +115,19 @@ class Math {
     
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
-        // TODO
-        return 0;
+        var int y, bitPos, maxBitPos;
+        let y = 0;
+        let bitPos = 0;
+        let maxBitPos = (16 / 2);
+
+        while (bitPos < maxBitPos) {
+            if ((y + twoToThe[bitPos]) * (y + twoToThe[bitPos]) < (x + 1)) {
+                let y = y + twoToThe[bitPos];
+            }
+            let bitPos = bitPos + 1;
+        }
+
+        return y;
     }
 
     /** Returns the greater number. */
