@@ -85,13 +85,17 @@ class Math {
         var int result;
 
         let resultPositive = Math.dividePositive(Math.abs(x), Math.abs(y));
+
+        let result = resultPositive;
         
-        if ((x < 0) | (y < 0)) {
-            return (-resultPositive);
+        if (x < 0) {
+            let result = -result;
         }
-        else {
-            return resultPositive;
+
+        if (y < 0) {
+            let result = -result;
         }
+        return result;
     }
 
     function int dividePositive(int x, int y) {
