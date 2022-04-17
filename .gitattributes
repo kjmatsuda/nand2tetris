@@ -1,0 +1,4 @@
+*.tst linguist-detectable=false
+*.asm linguist-detectable=false
+*.html linguist-detectable=false
+*.cmp linguist-detectable=false
